@@ -1,0 +1,12 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="test/ClipboardZenHanConverter.Tests.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="src/ClipboardZenHanConverter.csproj">
+    <Platform Project="x64" />
+    <Deploy />
+  </Project>
+</Solution>

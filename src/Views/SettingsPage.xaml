@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+x:Class="ClipboardZenHanConverter.Views.SettingsPage"
+xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
+xmlns:esc="using:EsUtil.WinUI3.Controls"
+xmlns:h="using:ClipboardZenHanConverter.Core.Helpers"
+xmlns:m="using:ClipboardZenHanConverter.Core.Models"
+xmlns:vm="using:ClipboardZenHanConverter.ViewModels"
+xmlns:v="using:ClipboardZenHanConverter.Views"
+xmlns:local="using:ClipboardZenHanConverter.Views.Controls"
+mc:Ignorable="d">
+
+    <Page.Resources>
+        <DataTemplate x:Key="ZenHanConvertItemTemplate" x:DataType="vm:ZenHanConvertItem">
+            <Grid Padding="0">
+                <Border BorderThickness="0,0,0,1" BorderBrush="Gainsboro">
+                    <StackPanel
+                            Orientation="Horizontal" 
+							HorizontalAlignment="Right"
+							Spacing="8">
+                        <TextBlock Text="{x:Bind Label}" VerticalAlignment="Center"/>
+                        <ctk:Segmented
+                            IsEnabled="{x:Bind IsEnabled, Mode=OneWay}"
+                            ItemsSource="{x:Bind Segments}"
+                            SelectedValue="{x:Bind SelectedLabel, Mode=TwoWay}"
+                            SelectedValuePath="Content"
+                            ItemContainerStyleSelector="{StaticResource SegmentStyleSelector}">
+                            <ctk:Segmented.ItemTemplate>
+                                <DataTemplate x:DataType="m:SegmentItem">
+                                    <TextBlock Text="{x:Bind Content}" />
+                                </DataTemplate>
+                            </ctk:Segmented.ItemTemplate>
+                        </ctk:Segmented>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </DataTemplate>
+
+        <h:EnableStyleSelector
+            x:Key="SegmentStyleSelector"
+            EnabledStyle="{StaticResource EnabledSegmentedItemStyle}"
+            DisabledStyle="{StaticResource DisabledSegmentedItemStyle}" />
+
+        <Style x:Key="EnabledSegmentedItemStyle" TargetType="ctk:SegmentedItem" BasedOn="{StaticResource ButtonSegmentedItemStyle}">
+            <Setter Property="Margin" Value="0,0"/>
+            <Setter Property="Padding" Value="12,4"/>
+            <Setter Property="IsEnabled" Value="True"/>
+        </Style>
+        
+        <Style x:Key="DisabledSegmentedItemStyle" TargetType="ctk:SegmentedItem" BasedOn="{StaticResource ButtonSegmentedItemStyle}">
+            <Setter Property="Margin" Value="0,0"/>
+            <Setter Property="Padding" Value="12,4"/>
+            <Setter Property="IsEnabled" Value="False"/>
+            <Setter Property="Opacity" Value="0.5"/>
+        </Style>
+
+        <Style x:Key="SettingsCardContentStyle" TargetType="StackPanel">
+            <Setter Property="Padding" Value="40,0,0,0"/>
+        </Style>
+
+        <Style x:Key="SettingsCardRemarkStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="20,4,0,0"/>
+        </Style>
+
+        <Style x:Key="SettingsCardStackPanelTopSpaceStyle" TargetType="StackPanel">
+            <Setter Property="Margin" Value="0,16,0,0"/>
+        </Style>
+
+        <Style TargetType="esc:MultiColumnPanel">
+            <Setter Property="ItemTemplate" Value="{StaticResource ZenHanConvertItemTemplate}"/>
+            <Setter Property="RowSpace" Value="4"/>
+            <Setter Property="ColumnSpace" Value="32"/>
+            <Setter Property="ColumnLimit" Value="1"/>
+        </Style>
+
+        <Style TargetType="local:HeaderDescription">
+            <Setter Property="Margin" Value="-24,0,0,8"/>
+        </Style>
+
+        <Style x:Key="StackLikeExpanderStyle" TargetType="ctk:SettingsExpander">
+            <Setter Property="Margin" Value="0,0,0,30"/>
+        </Style>
+    </Page.Resources>
+
+    <ScrollViewer
+            x:Name="RootScrollViewer"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+
+            <!-- 数字 -->
+            <ctk:SettingsExpander
+                    Header="全角/半角の変換設定"
+					Description="各文字ごとに全角⇔半角の変換 や 正規化 を行います。"
+					IsExpanded="True"
+					Style="{StaticResource StackLikeExpanderStyle}">
+                <ctk:SettingsExpander.Content>
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.ConvertConfig.IsEnabledZenHan, Mode=TwoWay}"/>
+                </ctk:SettingsExpander.Content>
+                <ctk:SettingsExpander.Items>
+                    <StackPanel>
+                        <!-- 数字 -->
+                        <ctk:SettingsCard ContentAlignment="Left">
+                            <StackPanel Style="{StaticResource SettingsCardContentStyle}">
+                                <local:HeaderDescription
+                                    Header="[ ０ ] 数字の変換"
+                                    Description="[ 0123456789 ]  の数字の変換を指定します。"/>
+                                <esc:MultiColumnPanel
+                                    ItemsSource="{x:Bind ViewModel.NumberItems}"/>
+                            </StackPanel>
+                        </ctk:SettingsCard>
+                        <!-- 英字 -->
+                        <ctk:SettingsCard ContentAlignment="Left">
+                            <StackPanel Style="{StaticResource SettingsCardContentStyle}">
+                                <local:HeaderDescription
+                                    Header="[ Ａ ] 英字の変換"
+                                    Description="[ A-Z a-z ]  の英字の変換を指定します。"/>
+                                <esc:MultiColumnPanel
+                                    ItemsSource="{x:Bind ViewModel.AlphabetItems}"/>
+                            </StackPanel>
+                        </ctk:SettingsCard>
+                        <!-- カナ -->
+                        <ctk:SettingsCard ContentAlignment="Left">
+                            <StackPanel Style="{StaticResource SettingsCardContentStyle}">
+                                <local:HeaderDescription
+                                    Header="[ ア ] カナの変換"
+                                    Description="[ ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾉﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾋﾛﾜｦﾝｧｨｩｪｫｬｭｮｯｰﾞﾟ ]  のカナ文字の変換を指定します。"/>
+                                <esc:MultiColumnPanel
+                                    ItemsSource="{x:Bind ViewModel.KanaItems}"/>
+                            </StackPanel>
+                        </ctk:SettingsCard>
+                        <!-- 記号 -->
+                        <ctk:SettingsCard ContentAlignment="Left">
+                            <StackPanel Style="{StaticResource SettingsCardContentStyle}">
+                                <local:HeaderDescription
+                                    Header="[ ＠ ] 記号の変換"
+                                    Description="[ ( ) [ ] { } &quot; ' , . : ; &lt; = &gt; + - ! # $ % &amp; * / ? @ ^ _ ` | ~ ー 。 、 ] の記号の変換を指定します。"/>
+                                <esc:MultiColumnPanel
+                                    ItemsSource="{x:Bind ViewModel.SymbolItems}"
+                                    ColumnLimit="10"/>
+                            </StackPanel>
+                        </ctk:SettingsCard>
+                        <!-- その他 -->
+                        <ctk:SettingsCard ContentAlignment="Left">
+                            <StackPanel Style="{StaticResource SettingsCardContentStyle}">
+                                <StackPanel>
+                                    <local:HeaderDescription
+                                        Header="[ その他 ] 特殊な文字の変換"
+                                        Description="[ 長音記号 読点 句点 円記号 スペース 改行 ] などの変換を指定します。"/>
+                                    <esc:MultiColumnPanel
+                                        ItemsSource="{x:Bind ViewModel.EtcZenHanAsciiItems}"/>
+                                </StackPanel>
+                                <StackPanel Style="{StaticResource SettingsCardStackPanelTopSpaceStyle}">
+                                    <esc:MultiColumnPanel
+                                        ItemsSource="{x:Bind ViewModel.EtcBslashYenItems}"/>
+                                    <TextBlock
+                                        Text="※ 半角バックスラッシュは、フォントによっては 円記号￥の表現になります。"
+                                        Style="{StaticResource SettingsCardRemarkStyle}"/>
+                                </StackPanel>
+                                <StackPanel Style="{StaticResource SettingsCardStackPanelTopSpaceStyle}">
+                                    <esc:MultiColumnPanel
+                                        ItemsSource="{x:Bind ViewModel.EtcSpecialItems}"/>
+                                </StackPanel>
+                                <StackPanel Style="{StaticResource SettingsCardStackPanelTopSpaceStyle}">
+                                    <esc:MultiColumnPanel
+                                        ItemsSource="{x:Bind ViewModel.EtcMultiSpaceItems}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </ctk:SettingsCard>
+                    </StackPanel>
+                </ctk:SettingsExpander.Items>
+            </ctk:SettingsExpander>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>
