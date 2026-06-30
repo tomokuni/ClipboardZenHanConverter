@@ -80,7 +80,7 @@ public sealed partial class MainWindow : Window
         // 現在のDPIスケールを取得
         double dpiScale = GetWindowDpiScale(this);
 
-        // 自動保存を一時的に停止して、二重保存を回避
+        // 自動保存を抑制（プロパティ変更による Debounce 予約を防止）
         bool wasAutoSave = _appSetting.IsAutoSave;
         _appSetting.IsAutoSave = false;
 
@@ -88,7 +88,11 @@ public sealed partial class MainWindow : Window
         _appSetting.WindowWidth = AppWindow.Size.Width / dpiScale;
         _appSetting.WindowHeight = AppWindow.Size.Height / dpiScale;
 
+        // 自動保存を元に戻す
         _appSetting.IsAutoSave = wasAutoSave;
+
+        // プロパティ変更で予約された不要な Debounce をキャンセル
+        _appSetting.CancelPendingSave();
 
         // 終了時に確実に保存を実行
         _appSetting.SaveToJsonFile(_appSetting.AutoSaveFileName);

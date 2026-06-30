@@ -97,8 +97,11 @@ namespace ClipboardZenHanConverter
         /// <param name="e">未処理例外イベントの引数情報</param>
         private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
         {
-            // TODO: Log and handle exceptions as appropriate.
-            // https://docs.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.application.unhandledexception.
+            System.Diagnostics.Debug.WriteLine($"[UnhandledException] {e.Exception?.Message}");
+            System.Diagnostics.Debug.WriteLine($"[UnhandledException] StackTrace: {e.Exception?.StackTrace}");
+
+            // アプリの終了を防ぐため、例外を処理済みとしてマーク
+            e.Handled = true;
         }
 
         /// <summary>アプリケーションの起動時に呼び出されるメソッドです。</summary>

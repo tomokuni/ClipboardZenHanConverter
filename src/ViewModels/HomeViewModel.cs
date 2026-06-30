@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Dispatching;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ClipboardZenHanConverter.ViewModels;
@@ -21,13 +22,16 @@ public partial class HomeViewModel : ObservableObject, IDisposable
     private readonly IClipboardService _clipboardService;
     private readonly CharConverter _converter;
     private readonly INavigationService _navigation;
-    private readonly DispatcherQueue _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+    private readonly DispatcherQueue? _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
     [ObservableProperty]
     public partial string BeforeText { get; set; } = "";
 
     [ObservableProperty]
     public partial string ConvertedText { get; set; } = "";
+
+    // 非同期処理の排他制御用 SemaphoreSlim（複数イベントの同時実行を防止）
+    private readonly SemaphoreSlim _clipboardSemaphore = new(1, 1);
 
     // Re-entrancy flag to prevent infinite loops when updating clipboard
     private bool _isUpdatingClipboard;
@@ -64,6 +68,7 @@ public partial class HomeViewModel : ObservableObject, IDisposable
         if (disposing)
         {
             _clipboardService.ContentChanged -= Clipboard_ContentChanged;
+            _clipboardSemaphore.Dispose();
         }
 
         _disposed = true;
@@ -84,19 +89,23 @@ public partial class HomeViewModel : ObservableObject, IDisposable
         }
         else
         {
-            // UnitTest などで DispatcherQueue が未初期化の場合は直接実行する
-            _ = HandleClipboardChangeAsync();
+            // UnitTest などで DispatcherQueue が未初期化の場合は Task.Run でバックグラウンド実行する
+            _ = Task.Run(async () => await HandleClipboardChangeAsync());
         }
     }
 
 
     private async Task HandleClipboardChangeAsync()
     {
-        if (_isUpdatingClipboard)
+        // SemaphoreSlim で排他制御（複数のイベントが同時に処理されるのを防ぐ）
+        if (!await _clipboardSemaphore.WaitAsync(0))
             return;
 
         try
         {
+            if (_isUpdatingClipboard)
+                return;
+
             var text = await _clipboardService.GetTextAsync();
             if (string.IsNullOrEmpty(text))
                 return;
@@ -131,6 +140,10 @@ public partial class HomeViewModel : ObservableObject, IDisposable
         {
             // クリップボードが他のプロセスによってロックされている場合や、
             // アプリがバックグラウンドにありアクセスが拒否された場合は無視します。
+        }
+        finally
+        {
+            _clipboardSemaphore.Release();
         }
     }
 }

@@ -53,7 +53,7 @@ public partial class ZenHanConvertItem(ConvertConfig config, SegmentDefine def) 
                 if (!Equals(current, match.Value))
                 {
                     _pi.SetValue(_config, match.Value);
-                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(SelectedLabel));
                 }
             }
         }

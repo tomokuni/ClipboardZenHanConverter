@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace ClipboardZenHanConverter.Core.Services;
 
 /// <summary>クリップボード操作を抽象化するインターフェース</summary>
-public interface IClipboardService
+public interface IClipboardService : IDisposable
 {
     event EventHandler<object> ContentChanged;
 

@@ -1,13 +1,9 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using ClipboardZenHanConverter.Core.Enums;
 using ClipboardZenHanConverter.Core.Helpers;
 using ClipboardZenHanConverter.Core.Models;
 using EsUtil.Helper.ZenHanConverter;
-using Microsoft.UI.Composition.Scenes;
 
 namespace ClipboardZenHanConverter.Core.Logic;
 

@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics.CodeAnalysis;
 
@@ -25,7 +26,7 @@ namespace ClipboardZenHanConverter.Core.Models;
 /// ObservableObject を継承しており、プロパティ変更通知を行います。<br/>
 /// </remarks>
 [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)]
-public partial class ConvertConfig : ObservableObject
+public partial class ConvertConfig : ObservableObject, IDisposable
 {
 
     /// <summary>全角半角変換機能の有効状態を取得または設定します。</summary>
@@ -219,11 +220,24 @@ public partial class ConvertConfig : ObservableObject
     [JsonIgnore]
     public string AutoSaveFileName { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ClipboardZenHanConverter", "Settings.json");
 
+    // Debounce用の CancellationTokenSource
+    [JsonIgnore]
+    private CancellationTokenSource? _debounceCts;
+
+    // ファイル書き込み中の排他制御用
+    [JsonIgnore]
+    private readonly SemaphoreSlim _saveLock = new(1, 1);
+
 
     public ConvertConfig()
     {
         // プロパティ変更通知の購読
-        this.PropertyChanged += (s, e) => OnSettingsChanged();
+        this.PropertyChanged += OnAnyPropertyChanged;
+    }
+
+    private void OnAnyPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        OnSettingsChanged();
     }
 
     /// <summary>
@@ -241,11 +255,50 @@ public partial class ConvertConfig : ObservableObject
         IsAutoSave = true;
     }
 
+    /// <summary>保留中の Debounce 保存をキャンセルします。</summary>
+    public void CancelPendingSave()
+    {
+        _debounceCts?.Cancel();
+    }
+
     private void OnSettingsChanged()
     {
-        // 設定変更時の自動保存（fire-and-forget）
-        if (IsAutoSave)
-            _ = SaveToJsonFileAsync(AutoSaveFileName);
+        if (!IsAutoSave)
+            return;
+
+        // 既存の Debounce をキャンセル
+        _debounceCts?.Cancel();
+        _debounceCts = new CancellationTokenSource();
+        var token = _debounceCts.Token;
+
+        // 300ms の Debounce 後に保存を実行
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(300, token);
+
+                // キャンセルされていなければ実際に保存
+                await SaveCoreAsync(AutoSaveFileName);
+            }
+            catch (OperationCanceledException)
+            {
+                // Debounce 中に再度変更があった場合は何もしない
+            }
+        });
+    }
+
+    private async Task SaveCoreAsync(string filePath)
+    {
+        await _saveLock.WaitAsync();
+        try
+        {
+            await SaveToJsonFileAsync(filePath);
+        }
+        finally
+        {
+            _saveLock.Release();
+        }
     }
 
 
@@ -284,6 +337,16 @@ public partial class ConvertConfig : ObservableObject
         using var stream = File.OpenRead(filePath);
         var loaded = JsonSerializer.Deserialize<ConvertConfig>(stream, AppJsonContext.Default.ConvertConfig);
         this.ApplyFrom(loaded);
+    }
+
+    /// <summary>
+    /// 使用中のリソースを解放します。
+    /// </summary>
+    public void Dispose()
+    {
+        _debounceCts?.Cancel();
+        _debounceCts?.Dispose();
+        _saveLock.Dispose();
     }
 
     /// <summary>

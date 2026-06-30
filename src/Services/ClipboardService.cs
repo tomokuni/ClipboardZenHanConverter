@@ -5,13 +5,27 @@ using ClipboardZenHanConverter.Core.Services;
 
 namespace ClipboardZenHanConverter.Services;
 
-public class ClipboardService : IClipboardService
+public class ClipboardService : IClipboardService, IDisposable
 {
     public event EventHandler<object>? ContentChanged;
 
+    private bool _disposed;
+
     public ClipboardService()
     {
-        Clipboard.ContentChanged += (s, e) => ContentChanged?.Invoke(this, e);
+        Clipboard.ContentChanged += OnClipboardContentChanged;
+    }
+
+    private void OnClipboardContentChanged(object? sender, object e)
+    {
+        ContentChanged?.Invoke(this, e);
+    }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+        Clipboard.ContentChanged -= OnClipboardContentChanged;
+        _disposed = true;
     }
 
     public async Task<string?> GetTextAsync()
