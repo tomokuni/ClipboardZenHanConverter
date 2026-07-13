@@ -1,9 +1,10 @@
-using System.Text.RegularExpressions;
 using ClipboardZenHanConverter.Core.Enums;
 using ClipboardZenHanConverter.Core.Helpers;
 using ClipboardZenHanConverter.Core.Interfaces;
 using ClipboardZenHanConverter.Core.Models;
 using EsUtil.Helper.ZenHanConverter;
+using System.ComponentModel;
+using System.Text.RegularExpressions;
 using static EsUtil.Helper.ZenHanConverter.Define;
 
 namespace ClipboardZenHanConverter.Core.Logic;
@@ -115,7 +116,7 @@ public partial class CharConverter : ITextConverter, IDisposable
     }
 
     /// <summary>設定変更時にキャッシュを無効化します。</summary>
-    private void OnConfigPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    private void OnConfigPropertyChanged(object? sender, PropertyChangedEventArgs e)
         => _cachedPairs = null;
 
     /// <summary>リソースを解放します。Config.PropertyChanged の購読を解除します。</summary>
@@ -288,7 +289,7 @@ public partial class CharConverter : ITextConverter, IDisposable
                     ? Regex.Replace(text, pair.Search, pair.Replace)
                     : text.Replace(pair.Search, pair.Replace, StringComparison.Ordinal);
             }
-            catch when (pair.IsRegex)
+            catch (ArgumentException) when (pair.IsRegex)
             {
                 // ユーザー入力の正規表現が不正な場合も処理を続行
             }

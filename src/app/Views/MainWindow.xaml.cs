@@ -1,8 +1,8 @@
-using System.Runtime.InteropServices;
-using ClipboardZenHanConverter.Core.Models;
 using ClipboardZenHanConverter.App.ViewModels;
+using ClipboardZenHanConverter.Core.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System.Runtime.InteropServices;
 using Windows.Graphics;
 
 namespace ClipboardZenHanConverter.App.Views;
@@ -74,8 +74,10 @@ public sealed partial class MainWindow : Window
     /// <summary>指定されたウィンドウハンドルの DPI 値を取得します（Win32 API）。</summary>
     /// <param name="hwnd">ウィンドウハンドル</param>
     /// <returns>DPI 値（例: 96, 120, 144）</returns>
-    [LibraryImport("User32.dll")]
-    private static partial int GetDpiForWindow(nint hwnd);
+#pragma warning disable SYSLIB1054 // AllowUnsafeBlocks 不要のため DllImport を使用
+    [DllImport("User32.dll")]
+    private static extern int GetDpiForWindow(nint hwnd);
+#pragma warning restore SYSLIB1054
 
     /// <summary>指定されたウィンドウの DPI スケールを取得します。</summary>
     /// <param name="window">DPI スケールを取得するウィンドウ</param>

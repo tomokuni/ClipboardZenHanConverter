@@ -1,4 +1,4 @@
-using ClipboardZenHanConverter.App.Models;
+using ClipboardZenHanConverter.Core.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 

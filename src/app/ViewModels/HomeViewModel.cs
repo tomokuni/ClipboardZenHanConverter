@@ -3,8 +3,7 @@ using ClipboardZenHanConverter.Core.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Dispatching;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 
 namespace ClipboardZenHanConverter.App.ViewModels;
 
@@ -154,9 +153,13 @@ public partial class HomeViewModel : ObservableObject, IDisposable
                 _isUpdatingClipboard = false;
             }
         }
-        catch
+        catch (UnauthorizedAccessException)
         {
             // バックグラウンド時のクリップボードアクセス拒否は想定内の通常動作。
+        }
+        catch (COMException)
+        {
+            // WinRT クリップボード API の COM 相互運用例外も想定内。
         }
         finally
         {

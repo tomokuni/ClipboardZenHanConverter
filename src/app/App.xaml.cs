@@ -1,12 +1,10 @@
+using ClipboardZenHanConverter.App.Services;
+using ClipboardZenHanConverter.App.Views;
 using ClipboardZenHanConverter.Core.Interfaces;
 using ClipboardZenHanConverter.Core.Models;
-using ClipboardZenHanConverter.App.Services;
-using ClipboardZenHanConverter.App.ViewModels;
-using ClipboardZenHanConverter.App.Views;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using System.Diagnostics;
-using System.Linq;
 
 namespace ClipboardZenHanConverter.App;
 

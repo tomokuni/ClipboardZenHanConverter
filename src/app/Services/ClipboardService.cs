@@ -1,5 +1,6 @@
-using Windows.ApplicationModel.DataTransfer;
 using ClipboardZenHanConverter.Core.Interfaces;
+using System.Runtime.InteropServices;
+using Windows.ApplicationModel.DataTransfer;
 
 namespace ClipboardZenHanConverter.App.Services;
 
@@ -43,10 +44,14 @@ public partial class ClipboardService : IClipboardService
             if (dataPackageView.Contains(StandardDataFormats.Text))
                 return await dataPackageView.GetTextAsync();
         }
-        catch
+        catch (UnauthorizedAccessException)
         {
             // バックグラウンド時などクリップボードアクセスが拒否されるケースは
             // 想定内の通常動作であり、グローバルハンドラに委ねる必要はない。
+        }
+        catch (COMException)
+        {
+            // WinRT クリップボード API の COM 相互運用例外。アプリ動作に影響させない。
         }
         return null;
     }
@@ -73,10 +78,14 @@ public partial class ClipboardService : IClipboardService
         {
             action();
         }
-        catch
+        catch (UnauthorizedAccessException)
         {
             // バックグラウンド時などクリップボードアクセスが拒否されるケースは
             // 想定内の通常動作であり、グローバルハンドラに委ねる必要はない。
+        }
+        catch (COMException)
+        {
+            // WinRT クリップボード API の COM 相互運用例外。アプリ動作に影響させない。
         }
     }
 }

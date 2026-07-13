@@ -1,8 +1,7 @@
+using ClipboardZenHanConverter.Core.Enums;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.Frozen;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using CommunityToolkit.Mvvm.ComponentModel;
-using ClipboardZenHanConverter.Core.Enums;
 
 namespace ClipboardZenHanConverter.Core.Models;
 
@@ -34,8 +33,8 @@ sealed record ModePropDef(
 public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
 {
     /// <summary>シリアライズに使用する JsonSerializerContext と型を取得します。</summary>
-    protected override (JsonSerializerContext Context, Type Type) SerializeInfo
-        => (AppJsonContext.Default, typeof(ConvertConfig));
+    protected override SerializableTypeInfo SerializeInfo
+        => new(AppJsonContext.Default, typeof(ConvertConfig));
 
     /// <summary>ConvertConfig の新しいインスタンスを初期化します。自動保存先を %LOCALAPPDATA% 配下に設定します。</summary>
     public ConvertConfig()
@@ -126,26 +125,32 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
     }
 
     /// <summary>全角/半角変換の有効/無効を取得または設定します。</summary>
+    /// <remarks>このプロパティが false の場合、ZenHan 変換はスキップされユーザー定義置換のみ適用されます。</remarks>
     [ObservableProperty]
     public partial bool IsEnabledZenHan { get; set; }
 
     /// <summary>数字（0-9）の変換モードを取得または設定します。</summary>
+    /// <remarks>全角数字「１２３」と半角数字「123」の相互変換方向を指定します。CharConverter の SymbolMap で参照されます。</remarks>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeNumber { get; set; } = ZenHanMode.None;
 
     /// <summary>英字（A-Z, a-z）の変換モードを取得または設定します。</summary>
+    /// <remarks>全角英字「ＡＢＣ」「ａｂｃ」と半角英字「ABC」「abc」の相互変換方向を指定します。</remarks>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeAlphabet { get; set; } = ZenHanMode.None;
 
     /// <summary>丸括弧（）の変換モードを取得または設定します。</summary>
+    /// <remarks>全角括弧「（）」と半角括弧「()」の相互変換方向を指定します。CharConverter では IsPair=true として左右同時に処理されます。</remarks>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolParenthesis { get; set; } = ZenHanMode.None;
 
     /// <summary>角括弧［］の変換モードを取得または設定します。</summary>
+    /// <remarks>全角角括弧「［］」と半角角括弧「[]」の相互変換方向を指定します。</remarks>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolSquareBracket { get; set; } = ZenHanMode.None;
 
     /// <summary>波括弧｛｝の変換モードを取得または設定します。</summary>
+    /// <remarks>全角波括弧「｛｝」と半角波括弧「{}」の相互変換方向を指定します。</remarks>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolCurlyBracket { get; set; } = ZenHanMode.None;
 
@@ -254,14 +259,17 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
     public partial ZenHanMode ConvertModeSymbolSpace { get; set; } = ZenHanMode.None;
 
     /// <summary>半角カナの変換モードを取得または設定します。</summary>
+    /// <remarks>半角カナ「ｱｲｳｴｵ」の変換方向を指定します。全角カタカナまたは全角ひらがなへの変換が選択可能です。</remarks>
     [ObservableProperty]
     public partial ZenHanKanaMode ConvertModeKanaHan { get; set; } = ZenHanKanaMode.None;
 
     /// <summary>全角カタカナの変換モードを取得または設定します。</summary>
+    /// <remarks>全角カタカナ「アイウエオ」の変換方向を指定します。半角カナまたは全角ひらがなへの変換が選択可能です。</remarks>
     [ObservableProperty]
     public partial ZenHanKanaMode ConvertModeKanaZenKata { get; set; } = ZenHanKanaMode.None;
 
     /// <summary>全角ひらがなの変換モードを取得または設定します。</summary>
+    /// <remarks>全角ひらがな「あいうえお」の変換方向を指定します。半角カナまたは全角カタカナへの変換が選択可能です。</remarks>
     [ObservableProperty]
     public partial ZenHanKanaMode ConvertModeKanaZenHira { get; set; } = ZenHanKanaMode.None;
 
@@ -326,12 +334,9 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
     public partial ZenHanEtcSpecial ConvertModeEtcMultiSpace { get; set; } = ZenHanEtcSpecial.None;
 
     /// <summary>ユーザー定義の置換ルール一覧。</summary>
-    /// <remarks>CommunityToolkit.Mvvm のソースジェネレーターにより、ReplacePairs プロパティとして公開されます。<br/>
-    /// 設定画面の DataGrid で編集され、CharConverter.ApplyUserReplacements で変換時に適用されます。</remarks>
-#pragma warning disable MVVMTK0042 // フィールドベース ObservableProperty は互換性のために維持
+    /// <remarks>設定画面の DataGrid で編集され、CharConverter.ApplyUserReplacements で変換時に適用されます。</remarks>
     [ObservableProperty]
-    private List<ReplacePair> _replacePairs = [];
-#pragma warning restore MVVMTK0042
+    public partial List<ReplacePair> ReplacePairs { get; set; } = [];
 
     /// <summary>組み込みプリセット「全力会計」の定数名。</summary>
     public const string BuiltInPresetAccountingPower = "全力会計（Built-in）";
@@ -339,9 +344,9 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
     /// <summary>組み込みプリセット定義。FrozenDictionary による高速・不変なルックアップ。</summary>
     private static readonly FrozenDictionary<string, Action<ConvertConfig>> BuiltInPresets =
         new Dictionary<string, Action<ConvertConfig>>
-    {
-        [BuiltInPresetAccountingPower] = ApplyAccountingPowerPreset,
-    }.ToFrozenDictionary();
+        {
+            [BuiltInPresetAccountingPower] = ApplyAccountingPowerPreset,
+        }.ToFrozenDictionary();
 
     /// <summary>組み込みプリセット「全力会計」を適用します。</summary>
     /// <param name="c">設定を適用する ConvertConfig インスタンス。</param>
@@ -392,9 +397,9 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
         if (!File.Exists(filePath)) return false;
         try
         {
-            var (ctx, type) = SerializeInfo;
+            var info = SerializeInfo;
             using var stream = File.OpenRead(filePath);
-            if (JsonSerializer.Deserialize(stream, type, ctx) is not ConvertConfig loaded) return false;
+            if (JsonSerializer.Deserialize(stream, info.Type, info.Context) is not ConvertConfig loaded) return false;
             var wasAutoSave = IsAutoSave;
             IsAutoSave = false;
             ApplyFrom(loaded);
@@ -402,10 +407,19 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
             SaveToJsonFile(AutoSaveFileName);
             return true;
         }
-        catch
+        catch (JsonException)
         {
-            // 不正なJSONファイルやアクセス権限不足による読み取り失敗。
-            // 呼び出し元が false を「失敗」として扱いUIに表示するため、false を返す。
+            // 不正なJSONファイルによるデシリアライズ失敗。呼び出し元が false を「失敗」として扱う。
+            return false;
+        }
+        catch (IOException)
+        {
+            // ファイル読み取り権限不足などI/Oエラーも false で報告。
+            return false;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            // アクセス権限不足による読み取り失敗も false で報告。
             return false;
         }
     }
@@ -487,21 +501,28 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
         // ユーザープリセットとの比較
         var dir = PresetDirectory;
         if (!Directory.Exists(dir)) return null;
-        var (ctx, type) = SerializeInfo;
+        var info = SerializeInfo;
         foreach (var fp in Directory.GetFiles(dir, "*.json"))
         {
             try
             {
                 using var stream = File.OpenRead(fp);
-                if (JsonSerializer.Deserialize(stream, type, ctx) is ConvertConfig loaded && PropertiesEqual(this, loaded))
+                if (JsonSerializer.Deserialize(stream, info.Type, info.Context) is ConvertConfig loaded && PropertiesEqual(this, loaded))
                     return Path.GetFileNameWithoutExtension(fp);
             }
-            catch
+            catch (JsonException)
             {
                 // 一部のプリセットファイルが破損していても残りの検索を続行する。
+            }
+            catch (IOException)
+            {
+                // ファイル読み取りエラーでも残りのプリセット検索を続行する。
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // アクセス権限不足のファイルはスキップして続行する。
             }
         }
         return null;
     }
-
-    }
+}

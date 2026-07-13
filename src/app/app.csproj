@@ -9,7 +9,6 @@
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
     <UseWinUI>true</UseWinUI>
     <WindowsPackageType>None</WindowsPackageType>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <IncludeReferencedProjectsInXamlTypeResolution>false</IncludeReferencedProjectsInXamlTypeResolution>
   </PropertyGroup>
 
@@ -39,4 +38,5 @@
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
   </ItemGroup>
 
-</Project>
+
+  </Project>

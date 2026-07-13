@@ -1,7 +1,7 @@
-using Xunit;
+using ClipboardZenHanConverter.Core.Enums;
 using ClipboardZenHanConverter.Core.Logic;
 using ClipboardZenHanConverter.Core.Models;
-using ClipboardZenHanConverter.Core.Enums;
+using Xunit;
 
 namespace ClipboardZenHanConverter.Tests;
 
@@ -23,17 +23,11 @@ public sealed partial class CharConverterTests : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    #region コンストラクタ・プロパティ
-
     [Fact]
     public void Constructor_Configを正しく保持する()
     {
         Assert.Same(_config, _converter.Config);
     }
-
-    #endregion
-
-    #region Convert - null/空文字
 
     [Fact]
     public void Convert_nullを渡すとnullを返す()
@@ -47,10 +41,6 @@ public sealed partial class CharConverterTests : IDisposable
         Assert.Equal(string.Empty, _converter.Convert(string.Empty));
     }
 
-    #endregion
-
-    #region Convert - 無効時
-
     [Fact]
     public void Convert_IsEnabledZenHanがfalseの場合は変換しない()
     {
@@ -61,10 +51,6 @@ public sealed partial class CharConverterTests : IDisposable
 
         Assert.Equal("１２３", result);
     }
-
-    #endregion
-
-    #region Convert - 数字変換
 
     [Theory]
     [InlineData(ZenHanMode.ToHan, "１２３", "123")]
@@ -86,10 +72,6 @@ public sealed partial class CharConverterTests : IDisposable
         Assert.Equal("0123456789", _converter.Convert("０１２３４５６７８９"));
     }
 
-    #endregion
-
-    #region Convert - 英字変換
-
     [Theory]
     [InlineData(ZenHanMode.ToHan, "ＡＢＣ", "ABC")]
     [InlineData(ZenHanMode.ToZen, "ABC", "ＡＢＣ")]
@@ -101,10 +83,6 @@ public sealed partial class CharConverterTests : IDisposable
 
         Assert.Equal(expected, _converter.Convert(input));
     }
-
-    #endregion
-
-    #region Convert - 記号変換
 
     public static TheoryData<ZenHanMode, string, string> SymbolTestData() => new()
     {
@@ -130,10 +108,6 @@ public sealed partial class CharConverterTests : IDisposable
 
         Assert.Equal(expected, _converter.Convert(input));
     }
-
-    #endregion
-
-    #region Convert - カナ変換
 
     [Theory]
     [InlineData(ZenHanKanaMode.ToZenKata, "ｱｲｳｴｵ", "アイウエオ")]
@@ -164,10 +138,6 @@ public sealed partial class CharConverterTests : IDisposable
 
         Assert.Equal(expected, _converter.Convert(input));
     }
-
-    #endregion
-
-    #region Convert - 改行・スペース変換
 
     [Theory]
     [InlineData(ZenHanEtcSpecial.ToHanSpace, "A\r\nB", "A B")]
@@ -202,10 +172,6 @@ public sealed partial class CharConverterTests : IDisposable
         Assert.Equal(expected, _converter.Convert(input));
     }
 
-    #endregion
-
-    #region Convert - タブ変換
-
     [Theory]
     [InlineData(ZenHanEtcSpecial.ToHanSpace, "A\tB", "A B")]
     [InlineData(ZenHanEtcSpecial.ToZenSpace, "A\tB", "A　B")]
@@ -216,10 +182,6 @@ public sealed partial class CharConverterTests : IDisposable
 
         Assert.Equal(expected, _converter.Convert(input));
     }
-
-    #endregion
-
-    #region GetConvertPairs - キャッシュ
 
     [Fact]
     public void GetConvertPairs_同一設定では同じインスタンスを返す()
@@ -240,10 +202,6 @@ public sealed partial class CharConverterTests : IDisposable
 
         Assert.NotSame(pairs1, pairs2);
     }
-
-    #endregion
-
-    #region Dispose
 
     [Fact]
     public void Dispose_複数回呼び出しても例外を送出しない()
@@ -273,10 +231,6 @@ public sealed partial class CharConverterTests : IDisposable
         Assert.Same(pairs1, pairs2);
     }
 
-    #endregion
-
-    #region 複合テスト
-
     [Fact]
     public void Convert_複数の変換設定を同時に適用する()
     {
@@ -298,6 +252,5 @@ public sealed partial class CharConverterTests : IDisposable
         Assert.Equal("漢字とひらがな123", result);
     }
 
-    #endregion
 }
 

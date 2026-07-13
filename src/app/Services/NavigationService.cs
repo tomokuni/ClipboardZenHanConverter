@@ -1,11 +1,10 @@
-using System.Collections.Frozen;
-using System.Collections.Generic;
 using ClipboardZenHanConverter.App.Views;
 using ClipboardZenHanConverter.Core.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System.Collections.Frozen;
 
 namespace ClipboardZenHanConverter.App.Services;
 
@@ -30,6 +29,8 @@ public class NavigationService(IServiceProvider services) : INavigationService
     private Type? _currentPageType;
 
     /// <summary>ナビゲーションサービスを初期化します。</summary>
+    /// <remarks>SettingsPage の事前生成とキャッシュを行い、初回遷移を高速化します。<br/>
+    /// DispatcherQueue.Low 優先度で非同期に実行されるため、UI の応答性を阻害しません。</remarks>
     public virtual void Initialize()
     {
         var dq = DispatcherQueue.GetForCurrentThread();
@@ -38,6 +39,10 @@ public class NavigationService(IServiceProvider services) : INavigationService
     }
 
     /// <summary>指定されたページへ遷移します。</summary>
+    /// <param name="selectedPage">遷移先を示すオブジェクト。<br/>
+    /// NavigationViewItem（Tag プロパティ使用）、文字列（"Home" / "Settings"）、null のいずれか。</param>
+    /// <remarks>遷移先が現在のページと同じ場合は処理をスキップします。<br/>
+    /// null が渡された場合は何も行いません。</remarks>
     public virtual void NavigateTo(object? selectedPage)
     {
         var tag = selectedPage switch
@@ -54,10 +59,13 @@ public class NavigationService(IServiceProvider services) : INavigationService
 
     /// <summary>DIコンテナからメインウィンドウインスタンスを取得します。</summary>
     /// <returns>メインウィンドウインスタンス</returns>
+    /// <exception cref="InvalidOperationException">MainWindow が DI コンテナに登録されていない場合。</exception>
     private MainWindow GetMainWindow() => services.GetRequiredService<MainWindow>();
 
     /// <summary>指定されたタグ名のページへ遷移します。キャッシュがあれば再利用し、なければ生成してキャッシュに追加します。</summary>
     /// <param name="tag">遷移先ページのタグ名（"Home" または "Settings"）</param>
+    /// <remarks>同じページへの連続遷移はスキップされます（_currentPageType による比較）。<br/>
+    /// 前回表示されていたページは Visibility.Collapsed で非表示になります。</remarks>
     private void NavigateToPage(string tag)
     {
         if (!_pageMap.TryGetValue(tag, out var pageType)) return;

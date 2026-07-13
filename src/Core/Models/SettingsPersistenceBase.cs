@@ -1,8 +1,13 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ClipboardZenHanConverter.Core.Models;
+
+/// <summary>シリアライズに使用する JsonSerializerContext と型を保持するレコード。</summary>
+/// <param name="Context">ソース生成された JsonSerializerContext</param>
+/// <param name="Type">シリアライズ対象の型</param>
+public sealed record SerializableTypeInfo(JsonSerializerContext Context, Type Type);
 
 /// <summary>設定のJSONファイルへの自動永続化を提供する基底クラス。</summary>
 /// <remarks>
@@ -17,7 +22,7 @@ namespace ClipboardZenHanConverter.Core.Models;
 public abstract partial class SettingsPersistenceBase<T> : ObservableObject, IDisposable where T : class
 {
     /// <summary>シリアライズに使用する JsonSerializerContext と型を取得します。</summary>
-    protected abstract (JsonSerializerContext Context, Type Type) SerializeInfo { get; }
+    protected abstract SerializableTypeInfo SerializeInfo { get; }
 
     /// <summary>自動保存が有効かどうかを取得または設定します。</summary>
     [JsonIgnore]
@@ -30,6 +35,7 @@ public abstract partial class SettingsPersistenceBase<T> : ObservableObject, IDi
     /// <summary>デバウンスのキャンセルトークンソース。プロパティ変更のたびに新規作成されます。</summary>
     [JsonIgnore]
     private CancellationTokenSource? _debounceCts;
+
     /// <summary>Dispose 済みフラグ。</summary>
     private bool _disposed;
 
@@ -90,7 +96,8 @@ public abstract partial class SettingsPersistenceBase<T> : ObservableObject, IDi
 
     /// <summary>現在の設定を JSON ファイルに非同期で保存します。</summary>
     /// <param name="filePath">保存先のファイルパス。</param>
-    /// <param name="ct">キャンセルトークン。</param>
+    /// <param name="ct">キャンセルトークン。デフォルトは CancellationToken.None。</param>
+    /// <exception cref="OperationCanceledException">キャンセルトークンにより操作が中断された場合。</exception>
     /// <remarks>
     /// ファイルの書き込み中に例外が発生した場合でもアプリケーションの動作には影響しません。<br/>
     /// 自動保存はベストエフォートであり、設定が失われても手動で再設定可能です。</remarks>
@@ -98,19 +105,27 @@ public abstract partial class SettingsPersistenceBase<T> : ObservableObject, IDi
     {
         try
         {
-            var (ctx, type) = SerializeInfo;
+            var info = SerializeInfo;
             await using var stream = File.Create(filePath);
-            await JsonSerializer.SerializeAsync(stream, this, type, ctx, ct);
+            await JsonSerializer.SerializeAsync(stream, this, info.Type, info.Context, ct);
             await stream.FlushAsync(ct);
         }
         catch (OperationCanceledException)
         {
             // キャンセルによる中断は正常動作。
         }
-        catch
+        catch (IOException)
         {
-            // ファイル書き込み権限不足やディスク容量不足などのI/Oエラーは
+            // ファイル書き込み権限不足やディスク容量不足などI/Oエラーは
             // アプリケーションの動作に影響を与えないよう握り潰す。
+        }
+        catch (UnauthorizedAccessException)
+        {
+            // アクセス権限不足による書き込み失敗もベストエフォートとして無視。
+        }
+        catch (JsonException)
+        {
+            // JSONシリアライズ失敗もアプリ動作には影響させない。
         }
     }
 
@@ -121,13 +136,21 @@ public abstract partial class SettingsPersistenceBase<T> : ObservableObject, IDi
     {
         try
         {
-            var (ctx, type) = SerializeInfo;
+            var info = SerializeInfo;
             using var stream = File.Create(filePath);
-            JsonSerializer.Serialize(stream, this, type, ctx);
+            JsonSerializer.Serialize(stream, this, info.Type, info.Context);
         }
-        catch
+        catch (IOException)
         {
             // ファイル書き込み失敗時もアプリケーションの動作は継続する。
+        }
+        catch (UnauthorizedAccessException)
+        {
+            // アクセス権限不足による書き込み失敗も無視。
+        }
+        catch (JsonException)
+        {
+            // JSONシリアライズ失敗も無視して現在の設定を維持。
         }
     }
 
@@ -139,14 +162,22 @@ public abstract partial class SettingsPersistenceBase<T> : ObservableObject, IDi
         if (!File.Exists(filePath)) return;
         try
         {
-            var (ctx, type) = SerializeInfo;
+            var info = SerializeInfo;
             using var stream = File.OpenRead(filePath);
-            if (JsonSerializer.Deserialize(stream, type, ctx) is T loaded)
+            if (JsonSerializer.Deserialize(stream, info.Type, info.Context) is T loaded)
                 ApplyFrom(loaded);
         }
-        catch
+        catch (JsonException)
         {
             // JSON デシリアライズ失敗時も現在の設定を維持する。
+        }
+        catch (IOException)
+        {
+            // ファイル読み込み失敗時も現在の設定を維持する。
+        }
+        catch (UnauthorizedAccessException)
+        {
+            // アクセス権限不足による読み込み失敗も無視。
         }
     }
 

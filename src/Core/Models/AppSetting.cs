@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ClipboardZenHanConverter.Core.Models;
@@ -20,8 +19,8 @@ public partial class AppSetting : SettingsPersistenceBase<AppSetting>
     public partial double WindowHeight { get; set; } = 800;
 
     /// <summary>シリアライズに使用する JsonSerializerContext と型を取得します。</summary>
-    protected override (JsonSerializerContext Context, Type Type) SerializeInfo
-        => (AppJsonContext.Default, typeof(AppSetting));
+    protected override SerializableTypeInfo SerializeInfo
+        => new(AppJsonContext.Default, typeof(AppSetting));
 
     /// <summary>AppSetting の新しいインスタンスを初期化します。自動保存先を %LOCALAPPDATA% 配下に設定します。</summary>
     public AppSetting()

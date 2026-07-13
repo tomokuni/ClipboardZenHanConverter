@@ -1,9 +1,9 @@
-using Xunit;
 using ClipboardZenHanConverter.App.ViewModels;
-using ClipboardZenHanConverter.Core.Interfaces;
-using ClipboardZenHanConverter.Core.Models;
-using ClipboardZenHanConverter.Core.Logic;
 using ClipboardZenHanConverter.Core.Enums;
+using ClipboardZenHanConverter.Core.Interfaces;
+using ClipboardZenHanConverter.Core.Logic;
+using ClipboardZenHanConverter.Core.Models;
+using Xunit;
 
 namespace ClipboardZenHanConverter.Tests;
 

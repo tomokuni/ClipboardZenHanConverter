@@ -1,9 +1,8 @@
-using System.Collections.ObjectModel;
+using ClipboardZenHanConverter.App.Helpers;
+using ClipboardZenHanConverter.Core.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ClipboardZenHanConverter.App.Helpers;
-using ClipboardZenHanConverter.App.Models;
-using ClipboardZenHanConverter.Core.Models;
+using System.Collections.ObjectModel;
 
 namespace ClipboardZenHanConverter.App.ViewModels;
 

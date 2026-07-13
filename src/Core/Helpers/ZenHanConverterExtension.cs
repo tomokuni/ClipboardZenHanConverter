@@ -1,6 +1,6 @@
+using ClipboardZenHanConverter.Core.Enums;
 using EsUtil.Helper.ZenHanConverter;
 using static EsUtil.Helper.ZenHanConverter.Define;
-using ClipboardZenHanConverter.Core.Enums;
 
 namespace ClipboardZenHanConverter.Core.Helpers;
 
