@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 
-namespace ClipboardZenHanConverter.ViewModels.Converters;
+namespace ClipboardZenHanConverter.Converters;
 
 /// <summary>空文字列でない場合に Visible にするコンバーターです。</summary>
 public partial class StringNotEmptyToVisibilityConverter : IValueConverter

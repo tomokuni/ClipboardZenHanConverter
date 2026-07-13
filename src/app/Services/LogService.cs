@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using ClipboardZenHanConverter.Core.Services;
+using ClipboardZenHanConverter.Core.Interfaces;
 
 namespace ClipboardZenHanConverter.Services;
 

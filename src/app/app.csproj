@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
@@ -13,6 +13,9 @@
     <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
     <SelfContained>true</SelfContained>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IncludeReferencedProjectsInXamlTypeResolution>false</IncludeReferencedProjectsInXamlTypeResolution>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -23,6 +26,10 @@
     <AssemblyName>ClipboardZenHanConverter</AssemblyName>
     <PackageTags>clipboard; zen; han; convert</PackageTags>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\core\core.csproj" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
@@ -37,4 +44,5 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.2.0" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
   </ItemGroup>
+
 </Project>

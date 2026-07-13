@@ -1,15 +1,11 @@
-using System;
-using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
-using ClipboardZenHanConverter.Core.Services;
+using ClipboardZenHanConverter.Core.Interfaces;
 
 namespace ClipboardZenHanConverter.Services;
 
-public class ClipboardService : IClipboardService, IDisposable
+public class ClipboardService : IClipboardService
 {
     public event EventHandler<object>? ContentChanged;
-
-    private bool _disposed;
 
     public ClipboardService()
     {
@@ -17,15 +13,11 @@ public class ClipboardService : IClipboardService, IDisposable
     }
 
     private void OnClipboardContentChanged(object? sender, object e)
-    {
-        ContentChanged?.Invoke(this, e);
-    }
+        => ContentChanged?.Invoke(this, e);
 
     public void Dispose()
     {
-        if (_disposed) return;
         Clipboard.ContentChanged -= OnClipboardContentChanged;
-        _disposed = true;
     }
 
     public async Task<string?> GetTextAsync()
@@ -34,14 +26,9 @@ public class ClipboardService : IClipboardService, IDisposable
         {
             var dataPackageView = Clipboard.GetContent();
             if (dataPackageView.Contains(StandardDataFormats.Text))
-            {
                 return await dataPackageView.GetTextAsync();
-            }
         }
-        catch
-        {
-            // Access denied or other errors
-        }
+        catch { }
         return null;
     }
 
@@ -53,21 +40,12 @@ public class ClipboardService : IClipboardService, IDisposable
             data.SetText(text);
             Clipboard.SetContent(data);
         }
-        catch
-        {
-            // Ignore errors
-        }
+        catch { }
     }
 
     public void Flush()
     {
-        try
-        {
-            Clipboard.Flush();
-        }
-        catch
-        {
-            // Ignore errors
-        }
+        try { Clipboard.Flush(); }
+        catch { }
     }
 }

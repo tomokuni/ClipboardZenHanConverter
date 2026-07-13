@@ -1,22 +1,15 @@
-using System;
 using System.Text.RegularExpressions;
 using ClipboardZenHanConverter.Core.Enums;
 using ClipboardZenHanConverter.Core.Helpers;
 using ClipboardZenHanConverter.Core.Models;
 using EsUtil.Helper.ZenHanConverter;
+using static EsUtil.Helper.ZenHanConverter.Define;
 
 namespace ClipboardZenHanConverter.Core.Logic;
 
-/// <summary>文字変換ロジックを提供するクラスです。</summary>
-/// <remarks>
-/// ConvertConfig の設定に基づいて文字列を変換します。<br/>
-/// IDisposable を実装し、イベント購読の解除を行います。<br/>
-/// GetConvertPairs() メソッドにより、設定値から ConvertPairs オブジェクトを生成する。この計算コストを抑えるため、_cachedPairs フィールドに結果をキャッシュする。設定変更時にキャッシュは破棄される。<br/>
-/// </remarks>
 public partial class CharConverter : IDisposable
 {
     public ConvertConfig Config { get; }
-
     private ConvertPairs? _cachedPairs;
     private bool _disposed;
 
@@ -26,37 +19,20 @@ public partial class CharConverter : IDisposable
         Config.PropertyChanged += OnConfigPropertyChanged;
     }
 
-    private void OnConfigPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        _cachedPairs = null;
-    }
+    private void OnConfigPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e) => _cachedPairs = null;
 
     public void Dispose()
     {
-        Dispose(true);
+        if (_disposed) return;
+        Config.PropertyChanged -= OnConfigPropertyChanged;
+        _disposed = true;
         GC.SuppressFinalize(this);
     }
 
-    protected virtual void Dispose(bool disposing)
-    {
-        if (_disposed) return;
-
-        if (disposing)
-        {
-            Config.PropertyChanged -= OnConfigPropertyChanged;
-        }
-
-        _disposed = true;
-    }
-
-    /// <summary>現在の設定に基づいて変換ペアを取得します。</summary>
     public ConvertPairs GetConvertPairs()
     {
-        if (_cachedPairs != null)
-            return _cachedPairs;
-        
+        if (_cachedPairs != null) return _cachedPairs;
         var list = ConvertPairs.Empty;
-
         list = ConvertPairs.Concat(list, GetNumberPairs());
         list = ConvertPairs.Concat(list, GetAlphabetPairs());
         list = ConvertPairs.Concat(list, GetAsciiSymbolPairs());
@@ -66,138 +42,104 @@ public partial class CharConverter : IDisposable
         list = ConvertPairs.Concat(list, GetYenPairs());
         list = ConvertPairs.Concat(list, GetTabSpacePairs());
         list = ConvertPairs.Concat(list, GetNewlinePairs());
-
         _cachedPairs = new ConvertPairs(list);
         return _cachedPairs;
     }
 
-    private ConvertPairs GetNumberPairs()
-        => Config.ConvertModeNumber.GetConvertPairs(GroupOf.Ascii.Numeric);
-
-    private ConvertPairs GetAlphabetPairs()
-        => Config.ConvertModeAlphabet.GetConvertPairs(GroupOf.Ascii.Alphabet);
+    private ConvertPairs GetNumberPairs() => Config.ConvertModeNumber.GetConvertPairs(GroupOf.Ascii.Numeric);
+    private ConvertPairs GetAlphabetPairs() => Config.ConvertModeAlphabet.GetConvertPairs(GroupOf.Ascii.Alphabet);
 
     private ConvertPairs GetAsciiSymbolPairs()
-        => ConvertPairs.Concat(
-            Config.ConvertModeSymbolParenthesis.GetConvertPairs(NameOf.Ascii.ParenthesisLeft),
-            Config.ConvertModeSymbolParenthesis.GetConvertPairs(NameOf.Ascii.ParenthesisRight),
-            Config.ConvertModeSymbolSquareBracket.GetConvertPairs(NameOf.Ascii.SquareBracketLeft),
-            Config.ConvertModeSymbolSquareBracket.GetConvertPairs(NameOf.Ascii.SquareBracketRight),
-            Config.ConvertModeSymbolCurlyBracket.GetConvertPairs(NameOf.Ascii.CurlyBracketLeft),
-            Config.ConvertModeSymbolCurlyBracket.GetConvertPairs(NameOf.Ascii.CurlyBracketRight),
-            Config.ConvertModeSymbolDoubleQuote.GetConvertPairs(NameOf.Ascii.DoubleQuote),
-            Config.ConvertModeSymbolSingleQuote.GetConvertPairs(NameOf.Ascii.SingleQuote),
-            Config.ConvertModeSymbolComma.GetConvertPairs(NameOf.Ascii.Comma),
-            Config.ConvertModeSymbolPeriod.GetConvertPairs(NameOf.Ascii.Period),
-            Config.ConvertModeSymbolColon.GetConvertPairs(NameOf.Ascii.Colon),
-            Config.ConvertModeSymbolSemicolon.GetConvertPairs(NameOf.Ascii.Semicolon),
-            Config.ConvertModeSymbolLessThan.GetConvertPairs(NameOf.Ascii.LessThan),
-            Config.ConvertModeSymbolEqual.GetConvertPairs(NameOf.Ascii.Equal),
-            Config.ConvertModeSymbolGreaterThan.GetConvertPairs(NameOf.Ascii.GreaterThan),
-            Config.ConvertModeSymbolPlus.GetConvertPairs(NameOf.Ascii.Plus),
-            Config.ConvertModeSymbolHyphenMinus.GetConvertPairs(NameOf.Ascii.HyphenMinus),
-            Config.ConvertModeSymbolExclamation.GetConvertPairs(NameOf.Ascii.Exclamation),
-            Config.ConvertModeSymbolSharp.GetConvertPairs(NameOf.Ascii.Sharp),
-            Config.ConvertModeSymbolDollar.GetConvertPairs(NameOf.Ascii.Dollar),
-            Config.ConvertModeSymbolPercent.GetConvertPairs(NameOf.Ascii.Percent),
-            Config.ConvertModeSymbolAmpersand.GetConvertPairs(NameOf.Ascii.Ampersand),
-            Config.ConvertModeSymbolAsterisk.GetConvertPairs(NameOf.Ascii.Asterisk),
-            Config.ConvertModeSymbolSlash.GetConvertPairs(NameOf.Ascii.Slash),
-            Config.ConvertModeSymbolQuestion.GetConvertPairs(NameOf.Ascii.Question),
-            Config.ConvertModeSymbolAt.GetConvertPairs(NameOf.Ascii.At),
-            Config.ConvertModeSymbolCaret.GetConvertPairs(NameOf.Ascii.Caret),
-            Config.ConvertModeSymbolUnderBar.GetConvertPairs(NameOf.Ascii.UnderBar),
-            Config.ConvertModeSymbolBackquote.GetConvertPairs(NameOf.Ascii.Backquote),
-            Config.ConvertModeSymbolVerticalBar.GetConvertPairs(NameOf.Ascii.VerticalBar));
+    {
+        static ConvertPairs Get(ZenHanMode m, IZenHanConverterToHanToZen e) => m.GetConvertPairs(e);
+        return ConvertPairs.Concat(
+            Get(Config.ConvertModeSymbolParenthesis, NameOf.Ascii.ParenthesisLeft),
+            Get(Config.ConvertModeSymbolParenthesis, NameOf.Ascii.ParenthesisRight),
+            Get(Config.ConvertModeSymbolSquareBracket, NameOf.Ascii.SquareBracketLeft),
+            Get(Config.ConvertModeSymbolSquareBracket, NameOf.Ascii.SquareBracketRight),
+            Get(Config.ConvertModeSymbolCurlyBracket, NameOf.Ascii.CurlyBracketLeft),
+            Get(Config.ConvertModeSymbolCurlyBracket, NameOf.Ascii.CurlyBracketRight),
+            Get(Config.ConvertModeSymbolDoubleQuote, NameOf.Ascii.DoubleQuote),
+            Get(Config.ConvertModeSymbolSingleQuote, NameOf.Ascii.SingleQuote),
+            Get(Config.ConvertModeSymbolComma, NameOf.Ascii.Comma),
+            Get(Config.ConvertModeSymbolPeriod, NameOf.Ascii.Period),
+            Get(Config.ConvertModeSymbolColon, NameOf.Ascii.Colon),
+            Get(Config.ConvertModeSymbolSemicolon, NameOf.Ascii.Semicolon),
+            Get(Config.ConvertModeSymbolLessThan, NameOf.Ascii.LessThan),
+            Get(Config.ConvertModeSymbolEqual, NameOf.Ascii.Equal),
+            Get(Config.ConvertModeSymbolGreaterThan, NameOf.Ascii.GreaterThan),
+            Get(Config.ConvertModeSymbolPlus, NameOf.Ascii.Plus),
+            Get(Config.ConvertModeSymbolHyphenMinus, NameOf.Ascii.HyphenMinus),
+            Get(Config.ConvertModeSymbolExclamation, NameOf.Ascii.Exclamation),
+            Get(Config.ConvertModeSymbolSharp, NameOf.Ascii.Sharp),
+            Get(Config.ConvertModeSymbolDollar, NameOf.Ascii.Dollar),
+            Get(Config.ConvertModeSymbolPercent, NameOf.Ascii.Percent),
+            Get(Config.ConvertModeSymbolAmpersand, NameOf.Ascii.Ampersand),
+            Get(Config.ConvertModeSymbolAsterisk, NameOf.Ascii.Asterisk),
+            Get(Config.ConvertModeSymbolSlash, NameOf.Ascii.Slash),
+            Get(Config.ConvertModeSymbolQuestion, NameOf.Ascii.Question),
+            Get(Config.ConvertModeSymbolAt, NameOf.Ascii.At),
+            Get(Config.ConvertModeSymbolCaret, NameOf.Ascii.Caret),
+            Get(Config.ConvertModeSymbolUnderBar, NameOf.Ascii.UnderBar),
+            Get(Config.ConvertModeSymbolBackquote, NameOf.Ascii.Backquote),
+            Get(Config.ConvertModeSymbolVerticalBar, NameOf.Ascii.VerticalBar));
+    }
 
-    private ConvertPairs GetKanaPairs()
-        => ConvertPairs.Concat(
-            Config.ConvertModeKanaHan switch
-            {
-                ZenHanKanaMode.ToZenKata => ConvertPairs.Concat(GroupOf.Kana.Kata.ToZenMap),
-                ZenHanKanaMode.ToZenHira => ConvertPairs.Concat(GroupOf.Kana.Hira.ToZenMap),
-                _ => ConvertPairs.Empty,
-            },
-            Config.ConvertModeKanaZenKata switch
-            {
-                ZenHanKanaMode.ToHan => ConvertPairs.Concat(GroupOf.Kana.Kata.ToHanMap),
-                ZenHanKanaMode.ToZenHira => ConvertPairs.Concat(GroupOf.Kana.ToHiraMap),
-                _ => ConvertPairs.Empty,
-            },
-            Config.ConvertModeKanaZenHira switch
-            {
-                ZenHanKanaMode.ToHan => ConvertPairs.Concat(GroupOf.Kana.Hira.ToHanMap),
-                ZenHanKanaMode.ToZenHira => ConvertPairs.Concat(GroupOf.Kana.ToKataMap),
-                _ => ConvertPairs.Empty,
-            });
+    private ConvertPairs GetKanaPairs() => ConvertPairs.Concat(
+        Config.ConvertModeKanaHan switch { ZenHanKanaMode.ToZenKata => ConvertPairs.Concat(GroupOf.Kana.Kata.ToZenMap), ZenHanKanaMode.ToZenHira => ConvertPairs.Concat(GroupOf.Kana.Hira.ToZenMap), _ => ConvertPairs.Empty },
+        Config.ConvertModeKanaZenKata switch { ZenHanKanaMode.ToHan => ConvertPairs.Concat(GroupOf.Kana.Kata.ToHanMap), ZenHanKanaMode.ToZenHira => ConvertPairs.Concat(GroupOf.Kana.ToHiraMap), _ => ConvertPairs.Empty },
+        Config.ConvertModeKanaZenHira switch { ZenHanKanaMode.ToHan => ConvertPairs.Concat(GroupOf.Kana.Hira.ToHanMap), ZenHanKanaMode.ToZenHira => ConvertPairs.Concat(GroupOf.Kana.ToKataMap), _ => ConvertPairs.Empty });
 
-    private ConvertPairs GetKanaSymbolPairs()
-        => ConvertPairs.Concat(
-            Config.ConvertModeEtcKanaVoice.GetConvertPairs(NameOf.Kana.Voice),
-            Config.ConvertModeEtcKanaSemiVoice.GetConvertPairs(NameOf.Kana.SemiVoice),
-            Config.ConvertModeEtcKanaMiddleDot.GetConvertPairs(NameOf.Kana.MiddleDot),
-            Config.ConvertModeEtcKanaLeftCornerBracket.GetConvertPairs(NameOf.Kana.LeftCornerBracket),
-            Config.ConvertModeEtcKanaRightCornerBracket.GetConvertPairs(NameOf.Kana.RightCornerBracket));
+    private ConvertPairs GetKanaSymbolPairs() => ConvertPairs.Concat(
+        Config.ConvertModeEtcKanaVoice.GetConvertPairs(NameOf.Kana.Voice),
+        Config.ConvertModeEtcKanaSemiVoice.GetConvertPairs(NameOf.Kana.SemiVoice),
+        Config.ConvertModeEtcKanaMiddleDot.GetConvertPairs(NameOf.Kana.MiddleDot),
+        Config.ConvertModeEtcKanaLeftCornerBracket.GetConvertPairs(NameOf.Kana.LeftCornerBracket),
+        Config.ConvertModeEtcKanaRightCornerBracket.GetConvertPairs(NameOf.Kana.RightCornerBracket));
 
-    private ConvertPairs GetKanaEtcPairs()
-        => ConvertPairs.Concat(
-            Config.ConvertModeEtcKanaProlong.GetConvertPairs(NameOf.Kana.Prolong),
-            Config.ConvertModeEtcKanaPeriod.GetConvertPairs(NameOf.Kana.Period),
-            Config.ConvertModeEtcKanaComma.GetConvertPairs(NameOf.Kana.Comma));
+    private ConvertPairs GetKanaEtcPairs() => ConvertPairs.Concat(
+        Config.ConvertModeEtcKanaProlong.GetConvertPairs(NameOf.Kana.Prolong),
+        Config.ConvertModeEtcKanaPeriod.GetConvertPairs(NameOf.Kana.Period),
+        Config.ConvertModeEtcKanaComma.GetConvertPairs(NameOf.Kana.Comma));
 
-    private ConvertPairs GetYenPairs()
-        => ConvertPairs.Concat(
-            GetYenConvertPairs(Config.ConvertModeEtcBSlashHan, "\\"),
-            GetYenConvertPairs(Config.ConvertModeEtcBSlashZen, "＼"),
-            GetYenConvertPairs(Config.ConvertModeEtcYenHan, "¥"),
-            GetYenConvertPairs(Config.ConvertModeEtcYenZen, "￥"));
+    private ConvertPairs GetYenPairs() => ConvertPairs.Concat(
+        GetYenConvertPairs(Config.ConvertModeEtcBSlashHan, "\\"),
+        GetYenConvertPairs(Config.ConvertModeEtcBSlashZen, "＼"),
+        GetYenConvertPairs(Config.ConvertModeEtcYenHan, "¥"),
+        GetYenConvertPairs(Config.ConvertModeEtcYenZen, "￥"));
 
-    private static ConvertPairs GetYenConvertPairs(ZenHanEtcYenMode mode, string source)
-        => mode switch
-        {
-            ZenHanEtcYenMode.ToHanBSlash => new ConvertPairs([(source, "\\")]),
-            ZenHanEtcYenMode.ToZenBSlash => new ConvertPairs([(source, "＼")]),
-            ZenHanEtcYenMode.ToHanYen => new ConvertPairs([(source, "¥")]),
-            ZenHanEtcYenMode.ToZenYen => new ConvertPairs([(source, "￥")]),
-            _ => ConvertPairs.Empty
-        };
+    private static ConvertPairs GetYenConvertPairs(ZenHanEtcYenMode mode, string src) => mode switch
+    {
+        ZenHanEtcYenMode.ToHanBSlash => new ConvertPairs([(src, "\\")]),
+        ZenHanEtcYenMode.ToZenBSlash => new ConvertPairs([(src, "＼")]),
+        ZenHanEtcYenMode.ToHanYen => new ConvertPairs([(src, "¥")]),
+        ZenHanEtcYenMode.ToZenYen => new ConvertPairs([(src, "￥")]),
+        _ => ConvertPairs.Empty
+    };
 
-    private ConvertPairs GetTabSpacePairs()
-        => Config.ConvertModeEtcTabSpace switch
-        {
-            ZenHanEtcSpecial.ToHanSpace => new ConvertPairs([("\t", " ")]),
-            ZenHanEtcSpecial.ToZenSpace => new ConvertPairs([("\t", "　")]),
-            ZenHanEtcSpecial.Remove => new ConvertPairs([("\t", "")]),
-            _ => ConvertPairs.Empty
-        };
+    private ConvertPairs GetTabSpacePairs() => Config.ConvertModeEtcTabSpace switch
+    {
+        ZenHanEtcSpecial.ToHanSpace => new ConvertPairs([("\t", " ")]),
+        ZenHanEtcSpecial.ToZenSpace => new ConvertPairs([("\t", "　")]),
+        ZenHanEtcSpecial.Remove => new ConvertPairs([("\t", "")]),
+        _ => ConvertPairs.Empty
+    };
 
-    private ConvertPairs GetNewlinePairs()
-        => Config.ConvertModeEtcNewline switch
-        {
-            ZenHanEtcSpecial.ToHanSpace => new ConvertPairs([("\r\n", " "), ("\n", " "), ("\r", " ")]),
-            ZenHanEtcSpecial.ToZenSpace => new ConvertPairs([("\r\n", "　"), ("\n", "　"), ("\r", "　")]),
-            ZenHanEtcSpecial.Remove => new ConvertPairs([("\r\n", ""), ("\n", ""), ("\r", "")]),
-            _ => ConvertPairs.Empty
-        };
+    private ConvertPairs GetNewlinePairs() => Config.ConvertModeEtcNewline switch
+    {
+        ZenHanEtcSpecial.ToHanSpace => new ConvertPairs([("\r\n", " "), ("\n", " "), ("\r", " ")]),
+        ZenHanEtcSpecial.ToZenSpace => new ConvertPairs([("\r\n", "　"), ("\n", "　"), ("\r", "　")]),
+        ZenHanEtcSpecial.Remove => new ConvertPairs([("\r\n", ""), ("\n", ""), ("\r", "")]),
+        _ => ConvertPairs.Empty
+    };
 
-    /// <summary>文字列を変換します。</summary>
-    /// <remarks>
-    /// 正規化、文字置換、連続スペース処理を行います。<br/>
-    /// </remarks>
     public string Convert(string text)
     {
-        if (string.IsNullOrEmpty(text))
-            return text;
-
+        if (string.IsNullOrEmpty(text)) return text;
         if (Config.IsEnabledZenHan)
         {
-            // フリンジケースの空白やダッシュ表現、仮名の合成ルールを適用して文字列を正規化します。
-            text = ZenHanConverter.ToNormalize(text);
-
-            var converter = GetConvertPairs();
-            text = converter.Convert(text);
-
-            // 変換後に連続する空白を置換します。
+            text = EsUtil.Helper.ZenHanConverter.ZenHanConverter.ToNormalize(text);
+            text = GetConvertPairs().Convert(text);
             text = Config.ConvertModeEtcMultiSpace switch
             {
                 ZenHanEtcSpecial.ToHanSpace => SingleSpaceRegex().Replace(text, " "),
@@ -206,37 +148,20 @@ public partial class CharConverter : IDisposable
                 _ => text
             };
         }
-
-        // ユーザー定義の文字列置換を適用（全角/半角変換の後に実行、大文字小文字を区別）
-        text = ApplyUserReplacements(text);
-
-        return text;
+        return ApplyUserReplacements(text);
     }
 
-    /// <summary>ユーザー定義の置換ペアを適用します。大文字小文字を区別します。</summary>
     private string ApplyUserReplacements(string text)
     {
         foreach (var pair in Config.ReplacePairs)
         {
             if (string.IsNullOrEmpty(pair.Search)) continue;
-
             try
             {
-                if (pair.IsRegex)
-                {
-                    // 大文字小文字を区別（RegexOptions 指定なし = 既定で区別）
-                    text = Regex.Replace(text, pair.Search, pair.Replace);
-                }
-                else
-                {
-                    // string.Replace は既定で大文字小文字を区別
-                    text = text.Replace(pair.Search, pair.Replace, StringComparison.Ordinal);
-                }
+                text = pair.IsRegex ? Regex.Replace(text, pair.Search, pair.Replace)
+                    : text.Replace(pair.Search, pair.Replace, StringComparison.Ordinal);
             }
-            catch
-            {
-                // 正規表現エラーは無視
-            }
+            catch { }
         }
         return text;
     }

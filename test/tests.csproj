@@ -9,6 +9,7 @@
     <Platforms>x64</Platforms>
     <SelfContained>true</SelfContained>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="10.0.1">
@@ -28,6 +29,7 @@
     <PackageReference Include="xunit.v3" Version="3.2.2" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\ClipboardZenHanConverter.csproj" />
+    <ProjectReference Include="..\src\core\core.csproj" />
+    <ProjectReference Include="..\src\app\app.csproj" />
   </ItemGroup>
 </Project>

@@ -1,11 +1,9 @@
 using ClipboardZenHanConverter.Core.Logic;
 using ClipboardZenHanConverter.Core.Models;
-using ClipboardZenHanConverter.Core.Services;
+using ClipboardZenHanConverter.Core.Interfaces;
 using ClipboardZenHanConverter.Services;
 using ClipboardZenHanConverter.ViewModels;
 using ClipboardZenHanConverter.Views;
-using ClipboardZenHanConverter.Core.Interfaces;
-using ClipboardZenHanConverter.Views.Navigation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;

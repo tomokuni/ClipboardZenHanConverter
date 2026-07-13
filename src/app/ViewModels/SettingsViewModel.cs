@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ClipboardZenHanConverter.Core.Enums;
@@ -22,14 +19,11 @@ public partial class SettingsViewModel : ObservableObject
     public IList<ZenHanConvertItem> EtcSpecialItems { get; }
     public IList<ZenHanConvertItem> EtcMultiSpaceItems { get; }
 
-    /// <summary>利用可能なプリセット名の一覧。</summary>
     public ObservableCollection<string> PresetNames { get; } = [];
 
-    /// <summary>現在編集中のプリセット名（保存時の初期値）。</summary>
     [ObservableProperty]
     public partial string NewPresetName { get; set; } = string.Empty;
 
-    /// <summary>文字列置換テーブルの編集項目一覧。</summary>
     public ObservableCollection<ReplacePairItem> ReplaceItems { get; } = [];
 
     public SettingsViewModel(ConvertConfig convertConfig, SettingsModel model)
@@ -44,11 +38,8 @@ public partial class SettingsViewModel : ObservableObject
         EtcSpecialItems = [.. model.EtcSpecialDefs.Select(d => new ZenHanConvertItem(convertConfig, d))];
         EtcMultiSpaceItems = [.. model.EtcMultiSpaceDefs.Select(d => new ZenHanConvertItem(convertConfig, d))];
 
-        // 置換テーブル初期化（PropertyChanged 無し）
         foreach (var pair in convertConfig.ReplacePairs)
-        {
             ReplaceItems.Add(new ReplacePairItem(pair));
-        }
 
         RefreshPresets();
     }

@@ -1,60 +1,33 @@
-using System;
-using System.Linq;
+using System.Collections.Generic;
 using ClipboardZenHanConverter.Core.Interfaces;
+using ClipboardZenHanConverter.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
-namespace ClipboardZenHanConverter.Views.Navigation;
+namespace ClipboardZenHanConverter.Services;
 
 /// <summary>アプリケーション内のページ遷移を管理するサービス実装です。</summary>
-public class NavigationService : INavigationService
+public class NavigationService(IServiceProvider services) : INavigationService
 {
-    private readonly IServiceProvider _services;
     private bool _isNavigating;
 
-    /// <summary>ページ名とページ型のマッピング辞書です。</summary>
-    private static readonly System.Collections.Generic.Dictionary<string, Type> _pageMap = new()
+    private static readonly Dictionary<string, Type> _pageMap = new()
     {
         { "Home", typeof(HomePage) },
         { "Settings", typeof(SettingsPage) },
     };
 
-    /// <summary>生成済みページインスタンスを保持するキャッシュです（Visual Tree から切り離さず常駐させる）。</summary>
-    private readonly System.Collections.Generic.Dictionary<Type, UIElement> _pageCache = [];
-
-    /// <summary>現在表示中のページタイプです。</summary>
+    private readonly Dictionary<Type, UIElement> _pageCache = [];
     private Type? _currentPageType;
-
-    /// <summary>現在表示中のページの INavigationAware インスタンスです。</summary>
     private INavigationAware? _currentPageAware;
 
-    public NavigationService(IServiceProvider services)
-    {
-        _services = services;
-    }
-
-    /// <summary>初期表示ページに遷移します。</summary>
     public void Initialize()
     {
-        // OnLaunched ですでに SelectedPage が設定されているため、
-        // 改めて初期選択項目を探す必要はない（NavigateTo は再入ガードでスキップされる）
-
-        // 設定画面の Singleton インスタンスを UI スレッドのアイドル時に事前生成する
-        PreloadSettingsPageEagerly();
-    }
-
-    /// <summary>設定ページを UI スレッドのアイドル時に事前生成します。</summary>
-    private void PreloadSettingsPageEagerly()
-    {
+        // SettingsPage を UI スレッドのアイドル時に事前生成
         var dq = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
-        if (dq is null) return;
-
-        dq.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
-        {
-            // Singleton の SettingsPage を DI 解決 → コンストラクタ + InitializeComponent() が実行される
-            _ = _services.GetRequiredService(typeof(SettingsPage));
-        });
+        dq?.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low,
+            () => services.GetRequiredService(typeof(SettingsPage)));
     }
 
     /// <summary>指定されたページへ遷移します。</summary>
@@ -82,7 +55,7 @@ public class NavigationService : INavigationService
     }
 
     private MainWindow GetMainWindow()
-        => _services.GetRequiredService<MainWindow>();
+        => services.GetRequiredService<MainWindow>();
 
     private static string? ResolveTag(object? selectedPage, NavigationView navigationView)
     {
@@ -126,35 +99,27 @@ public class NavigationService : INavigationService
             return;
         }
 
-        // 同じページタイプなら遷移しない
         if (_currentPageType == pageType) return;
 
-        var grid = mainWindow.ContentFrame;
-
-        // 現在のページを非表示にしてライフサイクル終了を通知
         _currentPageAware?.OnNavigatingFrom();
 
-        // 目的のページをキャッシュから取得、なければ DI で生成して Grid に追加
+        var grid = mainWindow.ContentFrame;
         if (!_pageCache.TryGetValue(pageType, out var targetPage))
         {
-            targetPage = (UIElement)_services.GetRequiredService(pageType);
+            targetPage = (UIElement)services.GetRequiredService(pageType);
             _pageCache[pageType] = targetPage;
             grid.Children.Add(targetPage);
         }
 
         targetPage.Visibility = Visibility.Visible;
 
-        // 以前のページを非表示にする（_currentPageType が null の初回はスキップ）
         if (_currentPageType is not null && _pageCache.TryGetValue(_currentPageType, out var prevPage))
         {
             prevPage.Visibility = Visibility.Collapsed;
         }
 
-        // トラッキングを更新
         _currentPageType = pageType;
         _currentPageAware = targetPage as INavigationAware;
-
-        // 新しいページのライフサイクル開始を通知
         _currentPageAware?.OnNavigatedTo(null);
     }
 }

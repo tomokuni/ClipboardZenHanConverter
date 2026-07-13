@@ -4,10 +4,8 @@ using ClipboardZenHanConverter.Core.Enums;
 
 namespace ClipboardZenHanConverter.Core.Helpers;
 
-/// <summary>全角半角変換ペアを取得する拡張メソッドを提供します。</summary>
 public static partial class ZenHanConverterExtension
 {
-    /// <summary>全角半角変換ペアを取得します。</summary>
     public static ConvertPairs GetConvertPairs(this ZenHanMode mode, IZenHanConverterToHanToZen entry)
         => mode switch
         {
@@ -16,7 +14,6 @@ public static partial class ZenHanConverterExtension
             _ => ConvertPairs.Empty,
         };
 
-    /// <summary>かな変換ペアを取得します。</summary>
     public static ConvertPairs GetConvertPairs(this ZenHanKanaMode mode, IZenHanConverterToHanToZen entry)
         => mode switch
         {
@@ -26,7 +23,6 @@ public static partial class ZenHanConverterExtension
             _ => ConvertPairs.Empty,
         };
 
-    /// <summary>その他記号変換ペアを取得します。</summary>
     public static ConvertPairs GetConvertPairs(this ZenHanEtcZenHanAsciiMode mode, object entry)
         => mode switch
         {

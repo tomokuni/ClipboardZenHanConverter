@@ -2,40 +2,18 @@ using ClipboardZenHanConverter.Core.Enums;
 
 namespace ClipboardZenHanConverter.Core.Models;
 
-
-/// <summary>セグメント項目のデータを保持する record です。</summary>
-public record SegmentItem(string Content, object Value, bool IsEnabled = true);
-
-public record SegmentDefine(string Label, string Prop, double Height = double.NaN, SegmentItem[]? Segments = null, bool? ForceEnableState = null);
-
-/// <summary>文字列置換のペアを表す record です。</summary>
-public record ReplacePair(string Search, string Replace, bool IsRegex = false);
-
-
 public partial class SettingsModel
 {
     public const string TextNone = "なし";
     public const string TextToHan = "半角";
     public const string TextToZen = "全角";
-
     public const string TextKanaNone = "なし";
     public const string TextKanaToHan = "半角カナ";
     public const string TextKanaToZenKata = "全角カタカナ";
     public const string TextKanaToZenHira = "全角ひらがな";
 
-    public SettingsModel()
-    {
-    }
-
-    public readonly SegmentDefine[] NumberDefs =
-    [
-        new("数字 の変換", nameof(ConvertConfig.ConvertModeNumber)),
-    ];
-
-    public readonly SegmentDefine[] AlphabetDefs =
-    [
-        new("英字 の変換", nameof(ConvertConfig.ConvertModeAlphabet)),
-    ];
+    public readonly SegmentDefine[] NumberDefs = [new("数字 の変換", nameof(ConvertConfig.ConvertModeNumber))];
+    public readonly SegmentDefine[] AlphabetDefs = [new("英字 の変換", nameof(ConvertConfig.ConvertModeAlphabet))];
 
     public readonly SegmentDefine[] KanaDefs =
     [
@@ -67,8 +45,8 @@ public partial class SettingsModel
         new("丸括弧　（）", nameof(ConvertConfig.ConvertModeSymbolParenthesis)),
         new("角括弧　［］", nameof(ConvertConfig.ConvertModeSymbolSquareBracket)),
         new("波括弧　｛｝", nameof(ConvertConfig.ConvertModeSymbolCurlyBracket)),
-        new("ダブルクォート　”", nameof(ConvertConfig.ConvertModeSymbolDoubleQuote)),
-        new("シングルクォート　’", nameof(ConvertConfig.ConvertModeSymbolSingleQuote)),
+        new("ダブルクォート　\"", nameof(ConvertConfig.ConvertModeSymbolDoubleQuote)),
+        new("シングルクォート　'", nameof(ConvertConfig.ConvertModeSymbolSingleQuote)),
         new("カンマ　，", nameof(ConvertConfig.ConvertModeSymbolComma)),
         new("ピリオド　．", nameof(ConvertConfig.ConvertModeSymbolPeriod)),
         new("コロン　：", nameof(ConvertConfig.ConvertModeSymbolColon)),
@@ -102,21 +80,21 @@ public partial class SettingsModel
 
     public readonly SegmentDefine[] EtcZenHanAsciiDefs =
     [
-        new ("かな 長音記号　ー", nameof(ConvertConfig.ConvertModeEtcKanaProlong), Segments:
+        new("かな 長音記号　ー", nameof(ConvertConfig.ConvertModeEtcKanaProlong), Segments:
         [
             new("なし", ZenHanEtcZenHanAsciiMode.None),
             new("半角 ｰ", ZenHanEtcZenHanAsciiMode.ToHan),
             new("全角 ー", ZenHanEtcZenHanAsciiMode.ToZen),
             new("Ascii -", ZenHanEtcZenHanAsciiMode.ToAscii),
         ]),
-        new ("かな 読点　。", nameof(ConvertConfig.ConvertModeEtcKanaPeriod), Segments:
+        new("かな 読点　。", nameof(ConvertConfig.ConvertModeEtcKanaPeriod), Segments:
         [
             new("なし", ZenHanEtcZenHanAsciiMode.None),
             new("半角 ｡", ZenHanEtcZenHanAsciiMode.ToHan),
             new("全角 。", ZenHanEtcZenHanAsciiMode.ToZen),
             new("Ascii .", ZenHanEtcZenHanAsciiMode.ToAscii),
         ]),
-        new ("かな 句点　、", nameof(ConvertConfig.ConvertModeEtcKanaComma), Segments:
+        new("かな 句点　、", nameof(ConvertConfig.ConvertModeEtcKanaComma), Segments:
         [
             new("なし", ZenHanEtcZenHanAsciiMode.None),
             new("半角 ､", ZenHanEtcZenHanAsciiMode.ToHan),
@@ -127,36 +105,36 @@ public partial class SettingsModel
 
     public readonly SegmentDefine[] EtcBslashYenDefs =
     [
-        new("バックスラッシュ 半角　＼", nameof(ConvertConfig.ConvertModeEtcBSlashHan), Segments:
+        new("バックスラッシュ 半角", nameof(ConvertConfig.ConvertModeEtcBSlashHan), Segments:
         [
             new("なし", ZenHanEtcYenMode.None),
-            new("半角 ＼", ZenHanEtcYenMode.ToHanBSlash, IsEnabled: false),
+            new("半角 \\", ZenHanEtcYenMode.ToHanBSlash, IsEnabled: false),
             new("全角 ＼", ZenHanEtcYenMode.ToZenBSlash),
-            new("半角 ￥", ZenHanEtcYenMode.ToHanYen),
+            new("半角 ¥", ZenHanEtcYenMode.ToHanYen),
             new("全角 ￥", ZenHanEtcYenMode.ToZenYen),
         ]),
-        new("バックスラッシュ 全角　＼", nameof(ConvertConfig.ConvertModeEtcBSlashZen), Segments:
+        new("バックスラッシュ 全角", nameof(ConvertConfig.ConvertModeEtcBSlashZen), Segments:
         [
             new("なし", ZenHanEtcYenMode.None),
-            new("半角 ＼", ZenHanEtcYenMode.ToHanBSlash),
+            new("半角 \\", ZenHanEtcYenMode.ToHanBSlash),
             new("全角 ＼", ZenHanEtcYenMode.ToZenBSlash, IsEnabled: false),
-            new("半角 ￥", ZenHanEtcYenMode.ToHanYen),
+            new("半角 ¥", ZenHanEtcYenMode.ToHanYen),
             new("全角 ￥", ZenHanEtcYenMode.ToZenYen),
         ]),
-        new("円記号 半角　￥", nameof(ConvertConfig.ConvertModeEtcYenHan), Segments:
+        new("円記号 半角", nameof(ConvertConfig.ConvertModeEtcYenHan), Segments:
         [
             new("なし", ZenHanEtcYenMode.None),
-            new("半角 ＼", ZenHanEtcYenMode.ToHanBSlash),
+            new("半角 \\", ZenHanEtcYenMode.ToHanBSlash),
             new("全角 ＼", ZenHanEtcYenMode.ToZenBSlash),
-            new("半角 ￥", ZenHanEtcYenMode.ToHanYen, IsEnabled: false),
+            new("半角 ¥", ZenHanEtcYenMode.ToHanYen, IsEnabled: false),
             new("全角 ￥", ZenHanEtcYenMode.ToZenYen),
         ]),
-        new("円記号 全角　￥", nameof(ConvertConfig.ConvertModeEtcYenZen), Segments:
+        new("円記号 全角", nameof(ConvertConfig.ConvertModeEtcYenZen), Segments:
         [
             new("なし", ZenHanEtcYenMode.None),
-            new("半角 ＼", ZenHanEtcYenMode.ToHanBSlash),
+            new("半角 \\", ZenHanEtcYenMode.ToHanBSlash),
             new("全角 ＼", ZenHanEtcYenMode.ToZenBSlash),
-            new("半角 ￥", ZenHanEtcYenMode.ToHanYen),
+            new("半角 ¥", ZenHanEtcYenMode.ToHanYen),
             new("全角 ￥", ZenHanEtcYenMode.ToZenYen, IsEnabled: false),
         ]),
     ];
@@ -189,5 +167,4 @@ public partial class SettingsModel
             new("単一全角スペース", ZenHanEtcSpecial.ToZenSpace),
         ]),
     ];
-
 }
