@@ -4,7 +4,7 @@ using ClipboardZenHanConverter.ViewModels;
 using ClipboardZenHanConverter.Core.Models;
 using ClipboardZenHanConverter.Core.Logic;
 using ClipboardZenHanConverter.Core.Services;
-using ClipboardZenHanConverter.Views.Navigation;
+using ClipboardZenHanConverter.Core.Interfaces;
 using System.Threading.Tasks;
 using System;
 using ClipboardZenHanConverter.Core.Enums;

@@ -8,6 +8,7 @@ namespace ClipboardZenHanConverter.Core.Models;
     PropertyNamingPolicy = JsonKnownNamingPolicy.Unspecified)]
 [JsonSerializable(typeof(AppSetting))]
 [JsonSerializable(typeof(ConvertConfig))]
+[JsonSerializable(typeof(ReplacePair))]
 internal partial class AppJsonContext : JsonSerializerContext
 {
 }

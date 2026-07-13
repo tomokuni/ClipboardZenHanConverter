@@ -27,7 +27,7 @@
                 Title="title"
                 Subtitle="subtitle"
                 IsBackButtonVisible ="True"
-                IsBackButtonEnabled="{x:Bind ContentFrame.CanGoBack, Mode=OneWay}"
+                IsBackButtonEnabled="False"
                 BackRequested="TitleBar_BackRequested"
                 IsPaneToggleButtonVisible="True"
                 PaneToggleRequested="TitleBar_PaneToggleRequested">
@@ -53,13 +53,7 @@
 				-->
                 <NavigationViewItem Content="ホーム" Tag="Home" Icon="Home" IsSelected="True"/>
             </NavigationView.MenuItems>
-            <Frame x:Name="contentFrame">
-                <Frame.ContentTransitions>
-                    <TransitionCollection>
-                        <NavigationThemeTransition />
-                    </TransitionCollection>
-                </Frame.ContentTransitions>
-            </Frame>
+            <Grid x:Name="contentFrame"/>
         </NavigationView>
     </Grid>
 </Window>

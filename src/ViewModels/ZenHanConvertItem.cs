@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Concurrent;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using ClipboardZenHanConverter.Core.Enums;
@@ -11,17 +13,19 @@ namespace ClipboardZenHanConverter.ViewModels;
 /// <remarks>
 /// モデル定義と設定構成に基づいて、UI表示用のプロパティを提供します。<br/>
 /// </remarks>
-public partial class ZenHanConvertItem(ConvertConfig config, SegmentDefine def) : ObservableObject
+public partial class ZenHanConvertItem : ObservableObject, IDisposable
 {
-    private readonly ConvertConfig _config = config;
-    private readonly SegmentDefine _def = def;
-    private readonly PropertyInfo _pi = typeof(ConvertConfig).GetProperty(def.Prop) 
-        ?? throw new ArgumentException($"Property {def.Prop} not found on ConvertConfig");
+    private readonly ConvertConfig _config;
+    private readonly SegmentDefine _def;
+    private readonly PropertyInfo _pi;
+    private readonly string _propName;
 
+    /// <summary>PropertyInfo のキャッシュ（リフレクション呼び出しを削減）。</summary>
+    private static readonly ConcurrentDictionary<string, PropertyInfo> _propertyCache = new();
 
     /// <summary>項目のラベルを取得します。</summary>
     public string Label => _def.Label;
-    
+
     /// <summary>コントロールの有効状態を返します。</summary>
     public bool IsEnabled => ForceEnableState ?? true;
 
@@ -29,12 +33,7 @@ public partial class ZenHanConvertItem(ConvertConfig config, SegmentDefine def) 
     public bool? ForceEnableState => _def.ForceEnableState;
 
     /// <summary>選択可能なセグメント定義の配列を取得します。</summary>
-    public SegmentItem[] Segments { get; } = def.Segments ??
-        [
-            new SegmentItem(SettingsModel.TextNone, ZenHanMode.None),
-            new SegmentItem(SettingsModel.TextToHan, ZenHanMode.ToHan),
-            new SegmentItem(SettingsModel.TextToZen, ZenHanMode.ToZen),
-        ];
+    public SegmentItem[] Segments { get; }
 
     /// <summary>選択されている項目のラベルを取得または設定します。</summary>
     public string SelectedLabel
@@ -57,5 +56,38 @@ public partial class ZenHanConvertItem(ConvertConfig config, SegmentDefine def) 
                 }
             }
         }
+    }
+
+    public ZenHanConvertItem(ConvertConfig config, SegmentDefine def)
+    {
+        _config = config;
+        _def = def;
+        _propName = def.Prop;
+        _pi = _propertyCache.GetOrAdd(_propName,
+            static name => typeof(ConvertConfig).GetProperty(name)
+                ?? throw new ArgumentException($"Property {name} not found on ConvertConfig"));
+
+        Segments = def.Segments ??
+        [
+            new SegmentItem(SettingsModel.TextNone, ZenHanMode.None),
+            new SegmentItem(SettingsModel.TextToHan, ZenHanMode.ToHan),
+            new SegmentItem(SettingsModel.TextToZen, ZenHanMode.ToZen),
+        ];
+
+        _config.PropertyChanged += OnConfigPropertyChanged;
+    }
+
+    private void OnConfigPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        // 関心のあるプロパティが変更されたときだけ SelectedLabel を再通知
+        if (e.PropertyName == _propName || string.IsNullOrEmpty(e.PropertyName))
+        {
+            OnPropertyChanged(nameof(SelectedLabel));
+        }
+    }
+
+    public void Dispose()
+    {
+        _config.PropertyChanged -= OnConfigPropertyChanged;
     }
 }

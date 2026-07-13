@@ -12,9 +12,14 @@ xmlns:m="using:ClipboardZenHanConverter.Core.Models"
 xmlns:vm="using:ClipboardZenHanConverter.ViewModels"
 xmlns:v="using:ClipboardZenHanConverter.Views"
 xmlns:local="using:ClipboardZenHanConverter.Views.Controls"
+xmlns:converters="using:ClipboardZenHanConverter.ViewModels.Converters"
+xmlns:dg="using:CommunityToolkit.WinUI.UI.Controls"
 mc:Ignorable="d">
 
     <Page.Resources>
+        <converters:StringNotEmptyToVisibilityConverter x:Key="StringNotEmptyToVisibilityConverter"/>
+        <converters:BoolToCheckMarkConverter x:Key="BoolToCheckMarkConverter"/>
+
         <DataTemplate x:Key="ZenHanConvertItemTemplate" x:DataType="vm:ZenHanConvertItem">
             <Grid Padding="0">
                 <Border BorderThickness="0,0,0,1" BorderBrush="Gainsboro">
@@ -50,7 +55,7 @@ mc:Ignorable="d">
             <Setter Property="Padding" Value="12,4"/>
             <Setter Property="IsEnabled" Value="True"/>
         </Style>
-        
+
         <Style x:Key="DisabledSegmentedItemStyle" TargetType="ctk:SegmentedItem" BasedOn="{StaticResource ButtonSegmentedItemStyle}">
             <Setter Property="Margin" Value="0,0"/>
             <Setter Property="Padding" Value="12,4"/>
@@ -60,6 +65,10 @@ mc:Ignorable="d">
 
         <Style x:Key="SettingsCardContentStyle" TargetType="StackPanel">
             <Setter Property="Padding" Value="40,0,0,0"/>
+        </Style>
+
+        <Style x:Key="SettingsCardContentGridStyle" TargetType="Grid">
+            <Setter Property="Padding" Value="40,0,40,0"/>
         </Style>
 
         <Style x:Key="SettingsCardRemarkStyle" TargetType="TextBlock">
@@ -82,101 +91,246 @@ mc:Ignorable="d">
         <Style TargetType="local:HeaderDescription">
             <Setter Property="Margin" Value="-24,0,0,8"/>
         </Style>
-
-        <Style x:Key="StackLikeExpanderStyle" TargetType="ctk:SettingsExpander">
-            <Setter Property="Margin" Value="0,0,0,30"/>
-        </Style>
     </Page.Resources>
 
-    <ScrollViewer
-            x:Name="RootScrollViewer"
-            HorizontalScrollBarVisibility="Disabled"
-            VerticalScrollBarVisibility="Auto">
-        <StackPanel>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+
+		<!-- ヘッダー：全角/半角の変換設定（固定） -->
+		<StackPanel Grid.Row="0" Margin="0,0,0,12">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+				<StackPanel Grid.Column="0" Orientation="Horizontal" >
+					<TextBlock Text="全角/半角の変換設定"
+							   FontSize="20" FontWeight="SemiBold" Margin="30,25,0,0"
+							   VerticalAlignment="Bottom"/>
+					<TextBlock Text="各文字ごとに全角⇔半角の変換 や 正規化 を行います。"
+							   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+							   FontSize="13" Margin="16,0,0,0"
+							   VerticalAlignment="Bottom"/>
+				</StackPanel>
+				<ToggleSwitch Grid.Column="1"
+							  IsOn="{x:Bind ViewModel.ConvertConfig.IsEnabledZenHan, Mode=TwoWay}"
+							  VerticalAlignment="Center"/>
+			</Grid>
+		</StackPanel>
+
+		<ScrollViewer Grid.Row="1"
+					  x:Name="RootScrollViewer"
+					  HorizontalScrollBarVisibility="Disabled"
+					  VerticalScrollBarVisibility="Auto">
+			<StackPanel>
 
             <!-- 数字 -->
-            <ctk:SettingsExpander
-                    Header="全角/半角の変換設定"
-					Description="各文字ごとに全角⇔半角の変換 や 正規化 を行います。"
-					IsExpanded="True"
-					Style="{StaticResource StackLikeExpanderStyle}">
-                <ctk:SettingsExpander.Content>
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.ConvertConfig.IsEnabledZenHan, Mode=TwoWay}"/>
-                </ctk:SettingsExpander.Content>
-                <ctk:SettingsExpander.Items>
-                    <StackPanel>
-                        <!-- 数字 -->
-                        <ctk:SettingsCard ContentAlignment="Left">
-                            <StackPanel Style="{StaticResource SettingsCardContentStyle}">
-                                <local:HeaderDescription
-                                    Header="[ ０ ] 数字の変換"
-                                    Description="[ 0123456789 ]  の数字の変換を指定します。"/>
-                                <esc:MultiColumnPanel
-                                    ItemsSource="{x:Bind ViewModel.NumberItems}"/>
-                            </StackPanel>
-                        </ctk:SettingsCard>
-                        <!-- 英字 -->
-                        <ctk:SettingsCard ContentAlignment="Left">
-                            <StackPanel Style="{StaticResource SettingsCardContentStyle}">
-                                <local:HeaderDescription
-                                    Header="[ Ａ ] 英字の変換"
-                                    Description="[ A-Z a-z ]  の英字の変換を指定します。"/>
-                                <esc:MultiColumnPanel
-                                    ItemsSource="{x:Bind ViewModel.AlphabetItems}"/>
-                            </StackPanel>
-                        </ctk:SettingsCard>
-                        <!-- カナ -->
-                        <ctk:SettingsCard ContentAlignment="Left">
-                            <StackPanel Style="{StaticResource SettingsCardContentStyle}">
-                                <local:HeaderDescription
-                                    Header="[ ア ] カナの変換"
-                                    Description="[ ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾉﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾋﾛﾜｦﾝｧｨｩｪｫｬｭｮｯｰﾞﾟ ]  のカナ文字の変換を指定します。"/>
-                                <esc:MultiColumnPanel
-                                    ItemsSource="{x:Bind ViewModel.KanaItems}"/>
-                            </StackPanel>
-                        </ctk:SettingsCard>
-                        <!-- 記号 -->
-                        <ctk:SettingsCard ContentAlignment="Left">
-                            <StackPanel Style="{StaticResource SettingsCardContentStyle}">
-                                <local:HeaderDescription
-                                    Header="[ ＠ ] 記号の変換"
-                                    Description="[ ( ) [ ] { } &quot; ' , . : ; &lt; = &gt; + - ! # $ % &amp; * / ? @ ^ _ ` | ~ ー 。 、 ] の記号の変換を指定します。"/>
-                                <esc:MultiColumnPanel
-                                    ItemsSource="{x:Bind ViewModel.SymbolItems}"
-                                    ColumnLimit="10"/>
-                            </StackPanel>
-                        </ctk:SettingsCard>
-                        <!-- その他 -->
-                        <ctk:SettingsCard ContentAlignment="Left">
-                            <StackPanel Style="{StaticResource SettingsCardContentStyle}">
-                                <StackPanel>
-                                    <local:HeaderDescription
-                                        Header="[ その他 ] 特殊な文字の変換"
-                                        Description="[ 長音記号 読点 句点 円記号 スペース 改行 ] などの変換を指定します。"/>
-                                    <esc:MultiColumnPanel
-                                        ItemsSource="{x:Bind ViewModel.EtcZenHanAsciiItems}"/>
-                                </StackPanel>
-                                <StackPanel Style="{StaticResource SettingsCardStackPanelTopSpaceStyle}">
-                                    <esc:MultiColumnPanel
-                                        ItemsSource="{x:Bind ViewModel.EtcBslashYenItems}"/>
-                                    <TextBlock
-                                        Text="※ 半角バックスラッシュは、フォントによっては 円記号￥の表現になります。"
-                                        Style="{StaticResource SettingsCardRemarkStyle}"/>
-                                </StackPanel>
-                                <StackPanel Style="{StaticResource SettingsCardStackPanelTopSpaceStyle}">
-                                    <esc:MultiColumnPanel
-                                        ItemsSource="{x:Bind ViewModel.EtcSpecialItems}"/>
-                                </StackPanel>
-                                <StackPanel Style="{StaticResource SettingsCardStackPanelTopSpaceStyle}">
-                                    <esc:MultiColumnPanel
-                                        ItemsSource="{x:Bind ViewModel.EtcMultiSpaceItems}"/>
-                                </StackPanel>
-                            </StackPanel>
-                        </ctk:SettingsCard>
-                    </StackPanel>
-                </ctk:SettingsExpander.Items>
-            </ctk:SettingsExpander>
+            <ctk:SettingsCard ContentAlignment="Left">
+                <StackPanel Style="{StaticResource SettingsCardContentStyle}">
+                    <local:HeaderDescription
+						Header="[ ０ ] 数字の変換"
+						Description="[ 0123456789 ]  の数字の変換を指定します。"/>
+                    <esc:MultiColumnPanel
+						ItemsSource="{x:Bind ViewModel.NumberItems}"/>
+                </StackPanel>
+            </ctk:SettingsCard>
+            <!-- 英字 -->
+            <ctk:SettingsCard ContentAlignment="Left">
+                <StackPanel Style="{StaticResource SettingsCardContentStyle}">
+                    <local:HeaderDescription
+						Header="[ Ａ ] 英字の変換"
+						Description="[ A-Z a-z ]  の英字の変換を指定します。"/>
+                    <esc:MultiColumnPanel
+						ItemsSource="{x:Bind ViewModel.AlphabetItems}"/>
+                </StackPanel>
+            </ctk:SettingsCard>
+            <!-- カナ -->
+            <ctk:SettingsCard ContentAlignment="Left">
+                <StackPanel Style="{StaticResource SettingsCardContentStyle}">
+                    <local:HeaderDescription
+						Header="[ ア ] カナの変換"
+						Description="[ ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾉﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾋﾛﾜｦﾝｧｨｩｪｫｬｭｮｯｰﾞﾟ ]  のカナ文字の変換を指定します。"/>
+                    <esc:MultiColumnPanel
+						ItemsSource="{x:Bind ViewModel.KanaItems}"/>
+                </StackPanel>
+            </ctk:SettingsCard>
+			<!-- 記号 -->
+			<ctk:SettingsCard ContentAlignment="Left">
+				<StackPanel Style="{StaticResource SettingsCardContentStyle}">
+					<local:HeaderDescription
+						Header="[ ＠ ] 記号の変換"
+						Description="[ ( ) [ ] { } &quot; ' , . : ; &lt; = &gt; + - ! # $ % &amp; * / ? @ ^ _ ` | ~ ー 。 、 ] の記号の変換を指定します。"/>
+					<esc:MultiColumnPanel
+						ItemsSource="{x:Bind ViewModel.SymbolItems}"
+						ColumnLimit="10"/>
+				</StackPanel>
+			</ctk:SettingsCard>
+			<!-- その他 -->
+			<ctk:SettingsCard ContentAlignment="Left">
+				<StackPanel Style="{StaticResource SettingsCardContentStyle}">
+					<StackPanel>
+						<local:HeaderDescription
+							Header="[ その他 ] 特殊な文字の変換"
+							Description="[ 長音記号 読点 句点 円記号 スペース 改行 ] などの変換を指定します。"/>
+						<esc:MultiColumnPanel
+							ItemsSource="{x:Bind ViewModel.EtcZenHanAsciiItems}"/>
+					</StackPanel>
+					<StackPanel Style="{StaticResource SettingsCardStackPanelTopSpaceStyle}">
+						<esc:MultiColumnPanel
+							ItemsSource="{x:Bind ViewModel.EtcBslashYenItems}"/>
+						<TextBlock
+							Text="※ 半角バックスラッシュは、フォントによっては 円記号￥の表現になります。"
+							Style="{StaticResource SettingsCardRemarkStyle}"/>
+					</StackPanel>
+					<StackPanel Style="{StaticResource SettingsCardStackPanelTopSpaceStyle}">
+						<esc:MultiColumnPanel
+							ItemsSource="{x:Bind ViewModel.EtcSpecialItems}"/>
+					</StackPanel>
+					<StackPanel Style="{StaticResource SettingsCardStackPanelTopSpaceStyle}">
+						<esc:MultiColumnPanel
+										ItemsSource="{x:Bind ViewModel.EtcMultiSpaceItems}"/>
+					</StackPanel>
+				</StackPanel>
+			</ctk:SettingsCard>
+
+            <!-- 文字列置換 -->
+            <ctk:SettingsCard ContentAlignment="Left">
+                <Grid Style="{StaticResource SettingsCardContentGridStyle}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- ヘッダー行：タイトル + 新規アイコン -->
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <local:HeaderDescription Grid.Column="0" Header="文字列の置換"/>
+                        <Button Grid.Column="1" Content="＋新規"
+                                ToolTipService.ToolTip="新しい置換行を追加します"
+                                Click="OnAddReplaceRowClick"
+                                VerticalAlignment="Center"
+                                Margin="0,0,0,8"/>
+                    </Grid>
+
+                    <dg:DataGrid Grid.Row="1" x:Name="ReplaceDataGrid"
+                                 ItemsSource="{x:Bind ViewModel.ReplaceItems}"
+                                 AutoGenerateColumns="False"
+                                 HeadersVisibility="Column"
+                                 GridLinesVisibility="Horizontal"
+                                 IsReadOnly="True"
+                                 BorderThickness="0"
+                                 SelectionMode="Single">
+                        <dg:DataGrid.Columns>
+                            <!-- 検索文字列欄 -->
+                            <dg:DataGridTemplateColumn Header="検索文字列" Width="*" MinWidth="80">
+                                <dg:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Search}" 
+                                                   TextTrimming="CharacterEllipsis"
+                                                   TextWrapping="NoWrap"
+                                                   VerticalAlignment="Center"
+                                                   Margin="8,0,8,0"
+                                                   ToolTipService.ToolTip="{Binding Search}"
+                                                   IsTextSelectionEnabled="True"/>
+                                    </DataTemplate>
+                                </dg:DataGridTemplateColumn.CellTemplate>
+                            </dg:DataGridTemplateColumn>
+                            <!-- 置換文字列欄 -->
+                            <dg:DataGridTemplateColumn Header="置換文字列" Width="*" MinWidth="80">
+                                <dg:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Replace}"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   TextWrapping="NoWrap"
+                                                   VerticalAlignment="Center"
+                                                   Margin="8,0,8,0"
+                                                   ToolTipService.ToolTip="{Binding Replace}"
+                                                   IsTextSelectionEnabled="True"/>
+                                    </DataTemplate>
+                                </dg:DataGridTemplateColumn.CellTemplate>
+                            </dg:DataGridTemplateColumn>
+                            <!-- 正規表現 -->
+                            <dg:DataGridTemplateColumn Header="正規表現" Width="100" MinWidth="100" MaxWidth="100">
+                                <dg:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding IsRegex, Converter={StaticResource BoolToCheckMarkConverter}}"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   FontSize="16"/>
+                                    </DataTemplate>
+                                </dg:DataGridTemplateColumn.CellTemplate>
+                            </dg:DataGridTemplateColumn>
+                            <!-- 編集・削除 -->
+                            <dg:DataGridTemplateColumn Header="操作" Width="90" MinWidth="90" MaxWidth="90">
+                                <dg:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
+                                            <Button Content="✏"
+                                                    ToolTipService.ToolTip="この行を編集します"
+                                                    IsTabStop="True"
+                                                    Click="OnEditReplaceRowClick"
+                                                    Tag="{Binding}"
+                                                    MinWidth="32" Padding="4,2"/>
+                                            <Button Content="🗑"
+                                                    ToolTipService.ToolTip="この行を削除します"
+                                                    IsTabStop="True"
+                                                    Click="OnDeleteReplaceRowClick"
+                                                    Tag="{Binding}"
+                                                    MinWidth="32" Padding="4,2"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </dg:DataGridTemplateColumn.CellTemplate>
+                            </dg:DataGridTemplateColumn>
+                        </dg:DataGrid.Columns>
+                    </dg:DataGrid>
+                </Grid>
+            </ctk:SettingsCard>
+
+			<!-- 設定の管理 -->
+			<ctk:SettingsCard ContentAlignment="Left">
+				<StackPanel Style="{StaticResource SettingsCardContentStyle}">
+					<local:HeaderDescription Header="設定の管理"/>
+
+					<!-- インポート/エクスポート -->
+					<StackPanel Orientation="Horizontal" Spacing="8">
+						<Button Content="エクスポート (JSON)"
+								ToolTipService.ToolTip="現在の設定をJSONファイルに保存します"
+								Click="OnExportSettingsClick"/>
+						<Button Content="インポート (JSON)"
+								ToolTipService.ToolTip="JSONファイルから設定を読み込みます"
+								Click="OnImportSettingsClick"/>
+					</StackPanel>
+
+					<!-- プリセット -->
+					<StackPanel Spacing="8" Margin="0,8,0,0">
+						<StackPanel Orientation="Horizontal" Spacing="8">
+							<TextBox PlaceholderText="プリセット名を入力"
+									 Text="{x:Bind ViewModel.NewPresetName, Mode=TwoWay}"
+									 MinWidth="220"/>
+							<Button Content="プリセット保存"
+									Command="{x:Bind ViewModel.SavePresetCommand}"/>
+						</StackPanel>
+						<StackPanel Orientation="Horizontal" Spacing="8">
+							<ComboBox x:Name="PresetComboBox"
+									  PlaceholderText="プリセットを選択"
+									  ItemsSource="{x:Bind ViewModel.PresetNames}"
+									  MinWidth="220"/>
+							<Button Content="読み込み"
+									Click="OnLoadPresetClick"/>
+							<Button Content="削除"
+									Click="OnDeletePresetClick"/>
+						</StackPanel>
+					</StackPanel>
+				</StackPanel>
+			</ctk:SettingsCard>
 
         </StackPanel>
     </ScrollViewer>
+</Grid>
 </Page>

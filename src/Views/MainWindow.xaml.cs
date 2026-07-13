@@ -22,8 +22,8 @@ public sealed partial class MainWindow : Window
     /// <summary>アプリケーション設定を保持するクラスです。</summary>
     private readonly AppSetting _appSetting;
 
-    /// <summary>コンテンツ表示用のFrameコントロールです。</summary>
-    public Frame ContentFrame => this.contentFrame;
+    /// <summary>コンテンツ表示用のGridコントロールです。</summary>
+    public Grid ContentFrame => this.contentFrame;
 
     /// <summary>ナビゲーション用のNavigationViewコントロールです。</summary>
     public NavigationView NavigationView => navigationView;
@@ -100,17 +100,11 @@ public sealed partial class MainWindow : Window
 
 
     /// <summary>タイトルバーの「戻る」ボタンが押された時に呼び出されます。</summary>
-
-    /// <remarks>
-    /// ContentFrame が戻れる場合に GoBack を実行します。<br/>
-    /// </remarks>
     /// <param name="sender">TitleBarコントロール</param>
     /// <param name="args">イベント引数</param>
     private void TitleBar_BackRequested(TitleBar sender, object args)
     {
-        // フレームが戻れる場合に前のページに戻る
-        if (this.ContentFrame.CanGoBack)
-            this.ContentFrame.GoBack();
+        // Grid 方式ではナビゲーション履歴を持たないため戻る処理は行わない
     }
 
     /// <summary>タイトルバーのペイン切り替えボタンが押された時に呼び出されます。</summary>
@@ -131,8 +125,8 @@ public sealed partial class MainWindow : Window
     /// </remarks>
     /// <param name="hwnd">DPI値を取得するウィンドウのハンドル</param>
     /// <returns>ウィンドウのDPI値</returns>
-    [LibraryImport("User32.dll")]
-    private static partial int GetDpiForWindow(nint hwnd);
+    [System.Runtime.InteropServices.DllImport("User32.dll")]
+    private static extern int GetDpiForWindow(nint hwnd);
 
     /// <summary>指定した Window のDPIスケールを取得します。</summary>
     /// <remarks>

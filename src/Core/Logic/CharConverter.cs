@@ -54,7 +54,7 @@ public partial class CharConverter : IDisposable
     {
         if (_cachedPairs != null)
             return _cachedPairs;
-
+        
         var list = ConvertPairs.Empty;
 
         list = ConvertPairs.Concat(list, GetNumberPairs());
@@ -207,6 +207,37 @@ public partial class CharConverter : IDisposable
             };
         }
 
+        // ユーザー定義の文字列置換を適用（全角/半角変換の後に実行、大文字小文字を区別）
+        text = ApplyUserReplacements(text);
+
+        return text;
+    }
+
+    /// <summary>ユーザー定義の置換ペアを適用します。大文字小文字を区別します。</summary>
+    private string ApplyUserReplacements(string text)
+    {
+        foreach (var pair in Config.ReplacePairs)
+        {
+            if (string.IsNullOrEmpty(pair.Search)) continue;
+
+            try
+            {
+                if (pair.IsRegex)
+                {
+                    // 大文字小文字を区別（RegexOptions 指定なし = 既定で区別）
+                    text = Regex.Replace(text, pair.Search, pair.Replace);
+                }
+                else
+                {
+                    // string.Replace は既定で大文字小文字を区別
+                    text = text.Replace(pair.Search, pair.Replace, StringComparison.Ordinal);
+                }
+            }
+            catch
+            {
+                // 正規表現エラーは無視
+            }
+        }
         return text;
     }
 

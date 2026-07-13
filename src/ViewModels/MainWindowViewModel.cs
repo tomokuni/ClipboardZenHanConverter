@@ -1,4 +1,4 @@
-using ClipboardZenHanConverter.Views.Navigation;
+using ClipboardZenHanConverter.Core.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ClipboardZenHanConverter.ViewModels;

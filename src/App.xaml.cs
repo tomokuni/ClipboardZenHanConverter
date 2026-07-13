@@ -4,124 +4,126 @@ using ClipboardZenHanConverter.Core.Services;
 using ClipboardZenHanConverter.Services;
 using ClipboardZenHanConverter.ViewModels;
 using ClipboardZenHanConverter.Views;
+using ClipboardZenHanConverter.Core.Interfaces;
 using ClipboardZenHanConverter.Views.Navigation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+namespace ClipboardZenHanConverter;
 
-namespace ClipboardZenHanConverter
+/// <summary>アプリケーションのエントリポイントとなるクラスです。</summary>
+public partial class App : Application
 {
-    /// <summary>アプリケーションのエントリポイントとなるクラスです。</summary>
-    /// <remarks>
-    /// DIコンテナの初期化、サービス・ViewModel・Viewの登録、例外ハンドラの設定、画面遷移サービスの初期化など、アプリ全体のライフサイクル管理を行います。<br/>
-    /// </remarks>
-    public partial class App : Application
+    /// <summary>DIコンテナのサービスプロバイダーです。</summary>
+    public static IServiceProvider Services
     {
-        /// <summary>DIコンテナからサービスを取得するためのアプリケーション全体で利用可能なプロバイダーです。</summary>
-        /// <remarks>
-        /// 初期化前にアクセスすると InvalidOperationException がスローされます。<br/>
-        /// </remarks>
-        public static IServiceProvider Services
+        get => field ?? throw new InvalidOperationException("ServiceProvider is not initialized.");
+        private set;
+    }
+
+    /// <summary>DIコンテナから指定した型のサービスを取得します。</summary>
+    public static T GetService<T>() where T : class
+    {
+        if (Services.GetService(typeof(T)) is not T service)
         {
-            get => field ?? throw new InvalidOperationException("ServiceProvider is not initialized  within App.xaml.cs.");
-            private set;
+            throw new ArgumentException($"{typeof(T)} needs to be registered in DI container.");
+        }
+        return service;
+    }
+
+    public App()
+    {
+        InitializeComponent();
+
+        UnhandledException += App_UnhandledException;
+        AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+        TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+
+        var builder = Host.CreateApplicationBuilder();
+
+        // サービス登録
+        RegisterServices(builder.Services);
+
+        var host = builder.Build();
+        Services = host.Services;
+
+        // 各種設定の初期化
+        GetService<AppSetting>().Initialize();
+        GetService<ConvertConfig>().Initialize();
+    }
+
+    private static void RegisterServices(IServiceCollection services)
+    {
+        // ログサービス
+        services.AddSingleton<ILogService, LogService>();
+
+        // ナビゲーション
+        services.AddSingleton<INavigationService, NavigationService>();
+
+        // クリップボード
+        services.AddSingleton<IClipboardService, ClipboardService>();
+
+        // コアロジック
+        services.AddSingleton<CharConverter>();
+
+        // モデル
+        services.AddSingleton<AppSetting>();
+        services.AddSingleton<ConvertConfig>();
+        services.AddSingleton<SettingsModel>();
+
+        // ViewModels
+        services.AddSingleton<MainWindowViewModel>();
+        services.AddSingleton<HomeViewModel>();
+        services.AddSingleton<SettingsViewModel>();
+
+        // Views
+        services.AddSingleton<MainWindow>();
+        services.AddSingleton<HomePage>();
+        services.AddSingleton<SettingsPage>();
+    }
+
+    private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+    {
+        GetService<ILogService>().LogException(e.Exception, "App_UnhandledException");
+        e.Handled = true;
+    }
+
+    private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
+    {
+        if (e.ExceptionObject is Exception ex)
+        {
+            GetService<ILogService>().LogException(ex, "CurrentDomain_UnhandledException");
+        }
+    }
+
+    private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
+    {
+        GetService<ILogService>().LogException(e.Exception, "TaskScheduler_UnobservedTaskException");
+        e.SetObserved();
+    }
+
+    protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+    {
+        var mainWindow = GetService<MainWindow>();
+
+        // ViewModel の SelectedPage を初期選択項目（Home）で設定
+        var navigationView = mainWindow.NavigationView;
+        var homeItem = navigationView.MenuItems.OfType<Microsoft.UI.Xaml.Controls.NavigationViewItem>().FirstOrDefault();
+        if (homeItem is not null)
+        {
+            mainWindow.ViewModel.SelectedPage = homeItem;
         }
 
-        /// <summary>DIコンテナから指定した型のサービスを取得します。</summary>
-        /// <typeparam name="T">取得するサービスの型。クラス型のみ指定可能です。</typeparam>
-        /// <returns>登録済みのサービスインスタンス</returns>
-        /// <exception cref="ArgumentException">指定した型 T のサービスが DI コンテナに登録されていない場合にスローされます。</exception>
-        public static T GetService<T>() where T : class
+        var navigationService = GetService<INavigationService>();
+        if (navigationService is NavigationService navService)
         {
-            // DIコンテナから指定した型のサービスを取得
-            if (Services.GetService(typeof(T)) is not T service)
-            {
-                throw new ArgumentException($"{typeof(T)} needs to be registered in ConfigureServices within App.xaml.cs.");
-            }
-            return service;
+            navService.Initialize();
         }
 
-        /// <summary>アプリケーションのエントリポイントとなるコンストラクタです。</summary>
-        /// <remarks>
-        /// DIコンテナの初期化、サービス・ViewModel・Viewの登録、例外ハンドラの設定を行います。<br/>
-        /// </remarks>
-        public App()
-        {
-            // WinUI コンポーネントの初期化
-            InitializeComponent();
-
-            // 未処理例外のイベントハンドラを設定
-            UnhandledException += App_UnhandledException;
-
-            // ホストビルダーを作成
-            var builder = Host.CreateApplicationBuilder();
-
-            // NavigationService をインターフェースとして登録
-            builder.Services.AddSingleton<INavigationService, NavigationService>();
-            
-            // ClipboardService をインターフェースとして登録
-            builder.Services.AddSingleton<IClipboardService, ClipboardService>();
-
-            // Views and ViewModels をシングルトンとして登録
-            builder.Services.AddSingleton<MainWindow>();
-            builder.Services.AddSingleton<MainWindowViewModel>();
-            builder.Services.AddSingleton<HomePage>();
-            builder.Services.AddSingleton<HomeViewModel>();
-            builder.Services.AddSingleton<SettingsPage>();
-            builder.Services.AddSingleton<SettingsViewModel>(); 
-            builder.Services.AddSingleton<SettingsModel>();
-            builder.Services.AddSingleton<AppSetting>();
-            builder.Services.AddSingleton<ConvertConfig>();
-            builder.Services.AddSingleton<CharConverter>();
-
-            // ホストをビルドし、サービスプロバイダーを設定
-            var host = builder.Build();
-            Services = host.Services;
-
-            // 各種設定の初期化
-            GetService<AppSetting>().Initialize();
-            GetService<ConvertConfig>().Initialize();
-        }
-
-
-        /// <summary>アプリケーション全体の未処理例外を捕捉するイベントハンドラです。</summary>
-        /// <remarks>
-        /// このメソッド内で例外のロギングやユーザーへの通知など、適切な例外処理を実装してください。<br/>
-        /// 詳細は Microsoft Docs を参照してください。<br/>
-        /// </remarks>
-        /// <param name="sender">例外発生元のオブジェクト</param>
-        /// <param name="e">未処理例外イベントの引数情報</param>
-        private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
-        {
-            System.Diagnostics.Debug.WriteLine($"[UnhandledException] {e.Exception?.Message}");
-            System.Diagnostics.Debug.WriteLine($"[UnhandledException] StackTrace: {e.Exception?.StackTrace}");
-
-            // アプリの終了を防ぐため、例外を処理済みとしてマーク
-            e.Handled = true;
-        }
-
-        /// <summary>アプリケーションの起動時に呼び出されるメソッドです。</summary>
-        /// <remarks>
-        /// DIコンテナから INavigationService を取得し、初期化処理を行います。<br/>
-        /// </remarks>
-        /// <param name="args">起動イベントの引数情報</param>
-        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
-        {
-            // DIコンテナから NavigationService を取得
-            var navigationService = App.GetService<INavigationService>();
-
-            // NavigationService が具象型の場合、初期化を実行
-            if (navigationService is NavigationService navService)
-            {
-                navService.Initialize();
-            }
-
-            // メインウィンドウをアクティブ化
-            App.GetService<MainWindow>().Activate();
-        }
+        mainWindow.Activate();
     }
 }

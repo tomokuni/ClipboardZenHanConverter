@@ -24,11 +24,7 @@
 
     
     <StackPanel Orientation="Horizontal">
-        <TextBlock
-            x:Name="HeaderText"
-            Text="{x:Bind Header, Mode=OneWay}"/>
-        <TextBlock
-            x:Name="DescriptionText"
-            Text="{x:Bind Description, Mode=OneWay}"/>
+        <TextBlock x:Name="HeaderText" Text="{x:Bind Header, Mode=OneWay}"/>
+        <TextBlock x:Name="DescriptionText" Text="{x:Bind Description, Mode=OneWay}"/>
     </StackPanel>
 </UserControl>

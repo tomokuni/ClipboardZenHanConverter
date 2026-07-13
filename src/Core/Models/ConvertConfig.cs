@@ -1,51 +1,78 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Diagnostics.CodeAnalysis;
-
 using CommunityToolkit.Mvvm.ComponentModel;
 using ClipboardZenHanConverter.Core.Enums;
-
 
 namespace ClipboardZenHanConverter.Core.Models;
 
 // ToDo: 文字列のリプレース
-// ToDo: 設定のインポート/エクスポート、プリセット保存/読み込み
-// ToDo: 半角の記号は一部を除き使用できません。使用可能な記号 ( ) ― / , . 半角スペースの7つ。
-// ToDo: タブ,カンマで区切られたテキストからMarkDownのtable形式に変換
-// ToDo: 連続スペースの除去
-// ToDo: 半角スペースを _ に置き換え、半角 _ をスペースに置き換え
 
 /// <summary>変換設定を保持するクラスです。</summary>
 /// <remarks>
 /// 各種文字種の変換モード（全角・半角・変換なし等）をプロパティとして管理します。<br/>
-/// ObservableObject を継承しており、プロパティ変更通知を行います。<br/>
+/// プロパティ変更時は JSON ファイルに自動保存されます。<br/>
 /// </remarks>
 [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)]
-public partial class ConvertConfig : ObservableObject, IDisposable
+public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
 {
+    protected override (JsonSerializerContext Context, Type Type) SerializeInfo
+        => (AppJsonContext.Default, typeof(ConvertConfig));
+
+    public ConvertConfig()
+    {
+        AutoSaveFileName = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "ClipboardZenHanConverter",
+            "Settings.json");
+    }
+
+    protected override void ApplyFrom(ConvertConfig other)
+    {
+        [UnconditionalSuppressMessage("Trimming", "IL2075", Justification = "Class is annotated with DynamicallyAccessedMembers")]
+        static void CopyProperties(ConvertConfig source, ConvertConfig target)
+        {
+            var type = typeof(ConvertConfig);
+            foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                if (prop.CanWrite && prop.CanRead && prop.GetCustomAttribute<JsonIgnoreAttribute>() == null)
+                {
+                    var value = prop.GetValue(source);
+                    prop.SetValue(target, value);
+                }
+            }
+        }
+
+        CopyProperties(other, this);
+    }
+
+    // ====================================================================
+    // 変換機能の有効/無効
+    // ====================================================================
 
     /// <summary>全角半角変換機能の有効状態を取得または設定します。</summary>
     [ObservableProperty]
-    public partial bool IsEnabledZenHan { get; set; } = false;
+    public partial bool IsEnabledZenHan { get; set; }
 
+    // ====================================================================
+    // 数字・英字
+    // ====================================================================
 
-    // 数字の変換設定
-    /// <summary>数字の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeNumber { get; set; } = ZenHanMode.None;
 
-
-    // 英字の変換設定
     [ObservableProperty]
     public partial ZenHanMode ConvertModeAlphabet { get; set; } = ZenHanMode.None;
 
+    // ====================================================================
+    // Ascii記号
+    // ====================================================================
 
-    // Ascii記号の変換設定
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolParenthesis { get; set; } = ZenHanMode.None;
 
@@ -133,19 +160,10 @@ public partial class ConvertConfig : ObservableObject, IDisposable
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolSpace { get; set; } = ZenHanMode.None;
 
+    // ====================================================================
+    // カナ
+    // ====================================================================
 
-    // バックスラッシュの変換設定
-    [ObservableProperty]
-    public partial ZenHanMode ConvertModeZenbshHanbsh { get; set; } = ZenHanMode.None;
-
-    [ObservableProperty]
-    public partial ZenHanMode ConvertModeZenyenHanbsh { get; set; } = ZenHanMode.None;
-
-    [ObservableProperty]
-    public partial ZenHanMode ConvertModeZenyenHanyen { get; set; } = ZenHanMode.None;
-
-
-    // カナの変換設定
     [ObservableProperty]
     public partial ZenHanKanaMode ConvertModeKanaHan { get; set; } = ZenHanKanaMode.None;
 
@@ -155,8 +173,10 @@ public partial class ConvertConfig : ObservableObject, IDisposable
     [ObservableProperty]
     public partial ZenHanKanaMode ConvertModeKanaZenHira { get; set; } = ZenHanKanaMode.None;
 
+    // ====================================================================
+    // カナ記号（濁点、半濁点、中点、括弧）
+    // ====================================================================
 
-    // カナ記号（濁点、半濁点、中点、括弧）の変換設定
     [ObservableProperty]
     public partial ZenHanMode ConvertModeEtcKanaVoice { get; set; } = ZenHanMode.None;
 
@@ -172,8 +192,10 @@ public partial class ConvertConfig : ObservableObject, IDisposable
     [ObservableProperty]
     public partial ZenHanMode ConvertModeEtcKanaRightCornerBracket { get; set; } = ZenHanMode.None;
 
+    // ====================================================================
+    // カナ記号（長音記号、句読点）
+    // ====================================================================
 
-    // カナ記号（長音記号、区読点）の変換設定
     [ObservableProperty]
     public partial ZenHanEtcZenHanAsciiMode ConvertModeEtcKanaProlong { get; set; } = ZenHanEtcZenHanAsciiMode.None;
 
@@ -183,8 +205,10 @@ public partial class ConvertConfig : ObservableObject, IDisposable
     [ObservableProperty]
     public partial ZenHanEtcZenHanAsciiMode ConvertModeEtcKanaComma { get; set; } = ZenHanEtcZenHanAsciiMode.None;
 
+    // ====================================================================
+    // バックスラッシュ・円記号
+    // ====================================================================
 
-    // 記号（バックスラッシュ、円記号）の変換設定
     [ObservableProperty]
     public partial ZenHanEtcYenMode ConvertModeEtcBSlashHan { get; set; } = ZenHanEtcYenMode.None;
 
@@ -197,183 +221,331 @@ public partial class ConvertConfig : ObservableObject, IDisposable
     [ObservableProperty]
     public partial ZenHanEtcYenMode ConvertModeEtcYenZen { get; set; } = ZenHanEtcYenMode.None;
 
-    // タブの変換設定
+    // ====================================================================
+    // タブ・改行・連続スペース
+    // ====================================================================
+
     [ObservableProperty]
     public partial ZenHanEtcSpecial ConvertModeEtcTabSpace { get; set; } = ZenHanEtcSpecial.None;
 
-
-    // 改行の変換設定
     [ObservableProperty]
     public partial ZenHanEtcSpecial ConvertModeEtcNewline { get; set; } = ZenHanEtcSpecial.None;
 
-
-    // 連続スペースの変換設定
     [ObservableProperty]
     public partial ZenHanEtcSpecial ConvertModeEtcMultiSpace { get; set; } = ZenHanEtcSpecial.None;
 
+    // ====================================================================
+    // 文字列置換
+    // ====================================================================
 
-    [JsonIgnore]
-    public bool IsAutoSave { get; set; } = false;
-
-
-
-    [JsonIgnore]
-    public string AutoSaveFileName { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ClipboardZenHanConverter", "Settings.json");
-
-    // Debounce用の CancellationTokenSource
-    [JsonIgnore]
-    private CancellationTokenSource? _debounceCts;
-
-    // ファイル書き込み中の排他制御用
-    [JsonIgnore]
-    private readonly SemaphoreSlim _saveLock = new(1, 1);
-
-
-    public ConvertConfig()
+    /// <summary>ユーザー定義の文字列置換ペア一覧（単純置換または正規表現）。</summary>
+    public List<ReplacePair> ReplacePairs
     {
-        // プロパティ変更通知の購読
-        this.PropertyChanged += OnAnyPropertyChanged;
-    }
-
-    private void OnAnyPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        OnSettingsChanged();
-    }
-
-    /// <summary>
-    /// 設定の初期化を行います。ファイルから読み込み、自動保存を有効にします。
-    /// </summary>
-    public void Initialize()
-    {
-        var dir = Path.GetDirectoryName(AutoSaveFileName);
-        if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+        get => _replacePairs;
+        set
         {
-            Directory.CreateDirectory(dir);
+            if (!ReferenceEquals(_replacePairs, value))
+            {
+                _replacePairs = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+    private List<ReplacePair> _replacePairs = [];
+
+    // ====================================================================
+    // 組込みプリセット
+    // ====================================================================
+
+    /// <summary>組込みプリセット名「全力会計」です。</summary>
+    public const string BuiltInPresetAccountingPower = "全力会計（Built-in）";
+
+    /// <summary>組込みプリセットの定義を取得します。</summary>
+    private static readonly Dictionary<string, Action<ConvertConfig>> BuiltInPresets = new()
+    {
+        [BuiltInPresetAccountingPower] = ApplyAccountingPowerPreset,
+    };
+
+    /// <summary>組込みプリセット「全力会計」を適用します。</summary>
+    private static void ApplyAccountingPowerPreset(ConvertConfig c)
+    {
+        c.IsEnabledZenHan = true;
+
+        // 数字・英字 → 半角
+        c.ConvertModeNumber = ZenHanMode.ToHan;
+        c.ConvertModeAlphabet = ZenHanMode.ToHan;
+
+        // ( ) ― / , . SP → 半角
+        c.ConvertModeSymbolParenthesis = ZenHanMode.ToHan;
+        c.ConvertModeSymbolHyphenMinus = ZenHanMode.ToHan;
+        c.ConvertModeSymbolSlash = ZenHanMode.ToHan;
+        c.ConvertModeSymbolComma = ZenHanMode.ToHan;
+        c.ConvertModeSymbolPeriod = ZenHanMode.ToHan;
+        c.ConvertModeSymbolSpace = ZenHanMode.ToHan;
+
+        // それ以外の記号 → 全角
+        c.ConvertModeSymbolSquareBracket = ZenHanMode.ToZen;
+        c.ConvertModeSymbolCurlyBracket = ZenHanMode.ToZen;
+        c.ConvertModeSymbolDoubleQuote = ZenHanMode.ToZen;
+        c.ConvertModeSymbolSingleQuote = ZenHanMode.ToZen;
+        c.ConvertModeSymbolColon = ZenHanMode.ToZen;
+        c.ConvertModeSymbolSemicolon = ZenHanMode.ToZen;
+        c.ConvertModeSymbolLessThan = ZenHanMode.ToZen;
+        c.ConvertModeSymbolEqual = ZenHanMode.ToZen;
+        c.ConvertModeSymbolGreaterThan = ZenHanMode.ToZen;
+        c.ConvertModeSymbolPlus = ZenHanMode.ToZen;
+        c.ConvertModeSymbolExclamation = ZenHanMode.ToZen;
+        c.ConvertModeSymbolSharp = ZenHanMode.ToZen;
+        c.ConvertModeSymbolDollar = ZenHanMode.ToZen;
+        c.ConvertModeSymbolPercent = ZenHanMode.ToZen;
+        c.ConvertModeSymbolAmpersand = ZenHanMode.ToZen;
+        c.ConvertModeSymbolAsterisk = ZenHanMode.ToZen;
+        c.ConvertModeSymbolQuestion = ZenHanMode.ToZen;
+        c.ConvertModeSymbolAt = ZenHanMode.ToZen;
+        c.ConvertModeSymbolCaret = ZenHanMode.ToZen;
+        c.ConvertModeSymbolUnderBar = ZenHanMode.ToZen;
+        c.ConvertModeSymbolBackquote = ZenHanMode.ToZen;
+        c.ConvertModeSymbolVerticalBar = ZenHanMode.ToZen;
+        c.ConvertModeSymbolTilde = ZenHanMode.ToZen;
+
+        // カナ → 全角(カタカナ)
+        c.ConvertModeKanaHan = ZenHanKanaMode.ToZenKata;
+        c.ConvertModeKanaZenKata = ZenHanKanaMode.None;
+        c.ConvertModeKanaZenHira = ZenHanKanaMode.None;
+
+        // かな記号 → 全角
+        c.ConvertModeEtcKanaVoice = ZenHanMode.ToZen;
+        c.ConvertModeEtcKanaSemiVoice = ZenHanMode.ToZen;
+        c.ConvertModeEtcKanaMiddleDot = ZenHanMode.ToZen;
+        c.ConvertModeEtcKanaLeftCornerBracket = ZenHanMode.ToZen;
+        c.ConvertModeEtcKanaRightCornerBracket = ZenHanMode.ToZen;
+
+        // 長音記号 → ASCII, 読点・句点 → 半角
+        c.ConvertModeEtcKanaProlong = ZenHanEtcZenHanAsciiMode.ToAscii;
+        c.ConvertModeEtcKanaPeriod = ZenHanEtcZenHanAsciiMode.ToHan;
+        c.ConvertModeEtcKanaComma = ZenHanEtcZenHanAsciiMode.ToHan;
+
+        // バックスラッシュ・円記号
+        //   半角バックスラッシュ → ¥, 全角バックスラッシュ → 変換なし
+        //   半角円記号 → 変換なし, 全角円記号 → ¥
+        c.ConvertModeEtcBSlashHan = ZenHanEtcYenMode.ToHanYen;
+        c.ConvertModeEtcBSlashZen = ZenHanEtcYenMode.None;
+        c.ConvertModeEtcYenHan = ZenHanEtcYenMode.None;
+        c.ConvertModeEtcYenZen = ZenHanEtcYenMode.ToHanYen;
+
+        // タブ・改行 → 半角SP
+        c.ConvertModeEtcTabSpace = ZenHanEtcSpecial.ToHanSpace;
+        c.ConvertModeEtcNewline = ZenHanEtcSpecial.ToHanSpace;
+
+        // 連続SP → 単一半角SP
+        c.ConvertModeEtcMultiSpace = ZenHanEtcSpecial.ToHanSpace;
+    }
+
+    // ====================================================================
+    // インポート/エクスポート
+    // ====================================================================
+
+    /// <summary>設定をJSONファイルにエクスポートします。</summary>
+    /// <param name="filePath">エクスポート先のファイルパス</param>
+    public void ExportToFile(string filePath) => SaveToJsonFile(filePath);
+
+    /// <summary>設定をJSONファイルからインポートします。</summary>
+    /// <param name="filePath">インポート元のファイルパス</param>
+    /// <returns>インポートに成功したかどうか</returns>
+    public bool ImportFromFile(string filePath)
+    {
+        if (!File.Exists(filePath)) return false;
+
+        try
+        {
+            var (ctx, type) = SerializeInfo;
+            using var stream = File.OpenRead(filePath);
+            if (JsonSerializer.Deserialize(stream, type, ctx) is not ConvertConfig loaded) return false;
+
+            var wasAutoSave = IsAutoSave;
+            IsAutoSave = false;
+            ApplyFrom(loaded);
+            IsAutoSave = wasAutoSave;
+
+            SaveToJsonFile(AutoSaveFileName);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    // ====================================================================
+    // プリセット管理
+    // ====================================================================
+
+    /// <summary>プリセット保存先のディレクトリパス。</summary>
+    [JsonIgnore]
+    private static string PresetDirectory => Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "ClipboardZenHanConverter",
+        "Presets");
+
+    /// <summary>利用可能なプリセット名の一覧を取得します（組込み＋ユーザー保存）。</summary>
+    public static string[] GetPresetNames()
+    {
+        var names = new List<string>(BuiltInPresets.Keys);
+
+        var dir = PresetDirectory;
+        if (Directory.Exists(dir))
+        {
+            names.AddRange(Directory.GetFiles(dir, "*.json")
+                .Select(Path.GetFileNameWithoutExtension)
+                .Where(name => !string.IsNullOrEmpty(name))!);
         }
 
-        LoadFromJsonFile(AutoSaveFileName);
-        IsAutoSave = true;
+        return [.. names];
     }
 
-    /// <summary>保留中の Debounce 保存をキャンセルします。</summary>
-    public void CancelPendingSave()
+    /// <summary>現在の設定をプリセットとして保存します。</summary>
+    /// <param name="name">プリセット名</param>
+    public void SavePreset(string name)
     {
-        _debounceCts?.Cancel();
+        if (string.IsNullOrWhiteSpace(name)) return;
+
+        var dir = PresetDirectory;
+        Directory.CreateDirectory(dir);
+
+        var filePath = Path.Combine(dir, $"{name}.json");
+        SaveToJsonFile(filePath);
     }
 
-    private void OnSettingsChanged()
+    /// <summary>プリセットを読み込んで現在の設定に適用します。</summary>
+    /// <param name="name">プリセット名</param>
+    /// <returns>読み込みに成功したかどうか</returns>
+    public bool LoadPreset(string name)
     {
-        if (!IsAutoSave)
-            return;
+        if (string.IsNullOrWhiteSpace(name)) return false;
 
-        // 既存の Debounce をキャンセル
-        _debounceCts?.Cancel();
-        _debounceCts = new CancellationTokenSource();
-        var token = _debounceCts.Token;
+        // 組込みプリセットを優先
+        if (BuiltInPresets.TryGetValue(name, out var apply))
+        {
+            apply(this);
+            // 適用後、自動保存をトリガー（PropertyChanged で保存される）
+            return true;
+        }
 
-        // 300ms の Debounce 後に保存を実行
-        _ = Task.Run(async () =>
+        // ファイルベースのプリセット
+        var filePath = Path.Combine(PresetDirectory, $"{name}.json");
+        return ImportFromFile(filePath);
+    }
+
+    /// <summary>プリセットを削除します。</summary>
+    /// <param name="name">プリセット名</param>
+    public static void DeletePreset(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return;
+        if (BuiltInPresets.ContainsKey(name)) return; // 組込みプリセットは削除不可
+
+        var filePath = Path.Combine(PresetDirectory, $"{name}.json");
+        if (File.Exists(filePath))
+        {
+            File.Delete(filePath);
+        }
+    }
+
+    // ====================================================================
+    // プリセット一致検出
+    // ====================================================================
+
+    /// <summary>比較対象のプロパティ一覧（ReplacePairs は別途比較）。</summary>
+    private static readonly PropertyInfo[] _comparableProperties = typeof(ConvertConfig)
+        .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+        .Where(p => p.CanWrite && p.CanRead
+            && p.GetCustomAttribute<JsonIgnoreAttribute>() == null
+            && p.Name != nameof(ReplacePairs))
+        .ToArray();
+
+    /// <summary>組込みプリセットのスナップショットキャッシュです。</summary>
+    private static Dictionary<string, Dictionary<string, object?>>? _builtInSnapshotCache;
+
+    /// <summary>2つの ReplacePair リストが等しいか判定します。</summary>
+    private static bool ReplacePairsEqual(List<ReplacePair> a, List<ReplacePair> b)
+        => a.Count == b.Count && a.Zip(b).All(p => p.First == p.Second);
+
+    /// <summary>指定された2つの ConvertConfig の全比較対象プロパティが等しいかどうかを判定します。</summary>
+    private static bool PropertiesEqual(ConvertConfig a, ConvertConfig b)
+    {
+        foreach (var prop in _comparableProperties)
+        {
+            var va = prop.GetValue(a);
+            var vb = prop.GetValue(b);
+            if (!Equals(va, vb)) return false;
+        }
+        // ReplacePairs は要素ごとに比較
+        return ReplacePairsEqual(a.ReplacePairs, b.ReplacePairs);
+    }
+
+    /// <summary>組込みプリセットのプロパティスナップショットを取得します。</summary>
+    private static Dictionary<string, Dictionary<string, object?>> GetBuiltInSnapshots()
+    {
+        if (_builtInSnapshotCache is not null) return _builtInSnapshotCache;
+
+        _builtInSnapshotCache = [];
+        foreach (var (name, apply) in BuiltInPresets)
+        {
+            var temp = new ConvertConfig();
+            apply(temp);
+            var snapshot = new Dictionary<string, object?>(_comparableProperties.Length);
+            foreach (var prop in _comparableProperties)
+            {
+                snapshot[prop.Name] = prop.GetValue(temp);
+            }
+            _builtInSnapshotCache[name] = snapshot;
+        }
+        return _builtInSnapshotCache;
+    }
+
+    /// <summary>現在の設定に一致するプリセット名を検索します。見つからない場合は null を返します。</summary>
+    public string? FindMatchingPreset()
+    {
+        // 組込みプリセットと比較
+        foreach (var (name, snapshot) in GetBuiltInSnapshots())
+        {
+            var match = true;
+            foreach (var prop in _comparableProperties)
+            {
+                if (!Equals(prop.GetValue(this), snapshot.GetValueOrDefault(prop.Name)))
+                {
+                    match = false;
+                    break;
+                }
+            }
+            if (match) return name;
+        }
+
+        // ユーザー保存プリセットと比較
+        var dir = PresetDirectory;
+        if (!Directory.Exists(dir)) return null;
+
+        var (ctx, type) = SerializeInfo;
+        foreach (var filePath in Directory.GetFiles(dir, "*.json"))
         {
             try
             {
-                await Task.Delay(300, token);
-
-                // キャンセルされていなければ実際に保存
-                await SaveCoreAsync(AutoSaveFileName);
-            }
-            catch (OperationCanceledException)
-            {
-                // Debounce 中に再度変更があった場合は何もしない
-            }
-        });
-    }
-
-    private async Task SaveCoreAsync(string filePath)
-    {
-        await _saveLock.WaitAsync();
-        try
-        {
-            await SaveToJsonFileAsync(filePath);
-        }
-        finally
-        {
-            _saveLock.Release();
-        }
-    }
-
-
-    /// <summary>
-    /// このインスタンスをJSONとして指定ファイルに上書き保存します。
-    /// </summary>
-    public async Task SaveToJsonFileAsync(string filePath)
-    {
-        try
-        {
-            using var stream = File.Create(filePath);
-            await JsonSerializer.SerializeAsync(stream, this, AppJsonContext.Default.ConvertConfig);
-        }
-        catch { }
-    }
-
-    /// <summary>
-    /// このインスタンスをJSONとして指定ファイルに同期的に上書き保存します。
-    /// </summary>
-    public void SaveToJsonFile(string filePath)
-    {
-        try
-        {
-            using var stream = File.Create(filePath);
-            JsonSerializer.Serialize(stream, this, AppJsonContext.Default.ConvertConfig);
-        }
-        catch { }
-    }
-
-
-    public void LoadFromJsonFile(string filePath)
-    {
-        if (!File.Exists(filePath))
-            return;
-
-        using var stream = File.OpenRead(filePath);
-        var loaded = JsonSerializer.Deserialize<ConvertConfig>(stream, AppJsonContext.Default.ConvertConfig);
-        this.ApplyFrom(loaded);
-    }
-
-    /// <summary>
-    /// 使用中のリソースを解放します。
-    /// </summary>
-    public void Dispose()
-    {
-        _debounceCts?.Cancel();
-        _debounceCts?.Dispose();
-        _saveLock.Dispose();
-    }
-
-    /// <summary>
-    /// 他のSettingsModelインスタンスの値をリフレクションで自身にコピーします。
-    /// </summary>
-    public void ApplyFrom(ConvertConfig? other)
-    {
-        if (other == null)
-            return;
-
-        [UnconditionalSuppressMessage("Trimming", "IL2075:Select-String", Justification = "Class is annotated with DynamicallyAccessedMembers")]
-        static void CopyProperties(ConvertConfig source, ConvertConfig target)
-        {
-            var type = typeof(ConvertConfig);
-            foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
-            {
-                if (prop.CanWrite && prop.CanRead && prop.GetCustomAttribute<JsonIgnoreAttribute>() == null)
+                using var stream = File.OpenRead(filePath);
+                if (JsonSerializer.Deserialize(stream, type, ctx) is ConvertConfig loaded)
                 {
-                    var value = prop.GetValue(source);
-                    prop.SetValue(target, value);
+                    if (PropertiesEqual(this, loaded))
+                    {
+                        return Path.GetFileNameWithoutExtension(filePath);
+                    }
                 }
             }
+            catch
+            {
+                // 読み込みエラーは無視
+            }
         }
 
-        CopyProperties(other, this);
+        return null;
     }
-
-
 }
+
 

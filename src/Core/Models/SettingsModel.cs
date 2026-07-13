@@ -8,6 +8,9 @@ public record SegmentItem(string Content, object Value, bool IsEnabled = true);
 
 public record SegmentDefine(string Label, string Prop, double Height = double.NaN, SegmentItem[]? Segments = null, bool? ForceEnableState = null);
 
+/// <summary>文字列置換のペアを表す record です。</summary>
+public record ReplacePair(string Search, string Replace, bool IsRegex = false);
+
 
 public partial class SettingsModel
 {
@@ -178,7 +181,7 @@ public partial class SettingsModel
 
     public readonly SegmentDefine[] EtcMultiSpaceDefs =
     [
-        new("連続半角スペース", nameof(ConvertConfig.ConvertModeEtcMultiSpace), Height: 80, Segments:
+        new("連続スペース", nameof(ConvertConfig.ConvertModeEtcMultiSpace), Height: 80, Segments:
         [
             new("そのまま", ZenHanEtcSpecial.None),
             new("単純除去", ZenHanEtcSpecial.Remove),

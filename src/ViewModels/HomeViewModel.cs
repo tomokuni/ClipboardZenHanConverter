@@ -2,7 +2,7 @@ using ClipboardZenHanConverter.Core.Logic;
 using ClipboardZenHanConverter.Core.Models;
 using ClipboardZenHanConverter.Core.Services;
 using ClipboardZenHanConverter.Services;
-using ClipboardZenHanConverter.Views.Navigation;
+using ClipboardZenHanConverter.Core.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Dispatching;
