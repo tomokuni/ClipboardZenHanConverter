@@ -1,26 +1,124 @@
 using System.Text.RegularExpressions;
 using ClipboardZenHanConverter.Core.Enums;
 using ClipboardZenHanConverter.Core.Helpers;
+using ClipboardZenHanConverter.Core.Interfaces;
 using ClipboardZenHanConverter.Core.Models;
 using EsUtil.Helper.ZenHanConverter;
 using static EsUtil.Helper.ZenHanConverter.Define;
 
 namespace ClipboardZenHanConverter.Core.Logic;
 
-public partial class CharConverter : IDisposable
+/// <summary>ConvertConfig の設定に基づいて文字列の全角/半角変換を実行します。</summary>
+/// <remarks>
+/// 提供機能: <br/>
+/// - 数字・英字の全角/半角変換<br/>
+/// - 記号類（括弧・引用符・演算子等）の全角/半角変換<br/>
+/// - かな文字（半角カナ、全角カタカナ、全角ひらがな）の相互変換<br/>
+/// - 円記号/バックスラッシュの変換<br/>
+/// - タブ/改行/連続スペースの整形<br/>
+/// - ユーザー定義の置換ルール適用<br/><br/>
+/// 特徴: <br/>
+/// - EsUtil.Helper.ZenHanConverter ライブラリに基づく正確な変換ペア<br/>
+/// - 結果はキャッシュされてパフォーマンスを最適化<br/>
+/// - Config 変更時にキャッシュ自動無効化<br/><br/>
+/// 最適化手法: <br/>
+/// - ConvertPairs をキャッシュし Config 変更時のみ再計算<br/>
+/// - SymbolMap による宣言的なマッピング定義<br/>
+/// - ソースジェネレーターによる正規表現の事前コンパイル<br/><br/>
+/// 注意点: <br/>
+/// - 変換は文字単位のペアテーブル置換に基づく<br/>
+/// - ユーザー定義置換は正規表現エラー時も無視（処理継続）</remarks>
+public partial class CharConverter : ITextConverter, IDisposable
 {
-    public ConvertConfig Config { get; }
+    /// <summary>変換設定を取得します。</summary>
+    /// <value>このコンバーターが使用する ConvertConfig インスタンス。</value>
+    public ConvertConfig Config { get; private set; }
+
+    /// <summary>キャッシュされた変換ペア。Config 変更時に null にリセットされます。</summary>
     private ConvertPairs? _cachedPairs;
+    /// <summary>Dispose 済みフラグ。</summary>
     private bool _disposed;
 
+    // ─── 単一のシンボルマップ定義 ───
+
+    /// <summary>モード取得デリゲートと EsUtil エントリのペア。</summary>
+    /// <param name="GetMode">ConvertConfig からモード値を取得するデリゲート</param>
+    /// <param name="Entry">EsUtil の変換エントリ（IZenHanConverterToHanToZen または特殊オブジェクト）</param>
+    /// <param name="IsPair">true の場合 Entry は IZenHanConverterToHanToZen[]（左右ペア）</param>
+    private sealed record MapEntry(
+        Func<ConvertConfig, Enum> GetMode,
+        object Entry,
+        bool IsPair = false);
+
+    /// <summary>全ての記号マップエントリを宣言的に定義します。</summary>
+    /// <remarks>各エントリは ConvertConfig のモードプロパティと EsUtil の変換エントリを対応付けます。<br/>
+    /// IsPair=true のエントリは左右のペア（例: （ と ））を同時に処理します。</remarks>
+    private static readonly MapEntry[] SymbolMap =
+    [
+        // ─── 数字・英字 ───
+        new(c => c.ConvertModeNumber, GroupOf.Ascii.Numeric),
+        new(c => c.ConvertModeAlphabet, GroupOf.Ascii.Alphabet),
+
+        // ─── Ascii 記号（ペアは IsPair=true） ───
+        new(c => c.ConvertModeSymbolParenthesis, new IZenHanConverterToHanToZen[]
+            { NameOf.Ascii.ParenthesisLeft, NameOf.Ascii.ParenthesisRight }, IsPair: true),
+        new(c => c.ConvertModeSymbolSquareBracket, new IZenHanConverterToHanToZen[]
+            { NameOf.Ascii.SquareBracketLeft, NameOf.Ascii.SquareBracketRight }, IsPair: true),
+        new(c => c.ConvertModeSymbolCurlyBracket, new IZenHanConverterToHanToZen[]
+            { NameOf.Ascii.CurlyBracketLeft, NameOf.Ascii.CurlyBracketRight }, IsPair: true),
+        new(c => c.ConvertModeSymbolDoubleQuote, NameOf.Ascii.DoubleQuote),
+        new(c => c.ConvertModeSymbolSingleQuote, NameOf.Ascii.SingleQuote),
+        new(c => c.ConvertModeSymbolComma, NameOf.Ascii.Comma),
+        new(c => c.ConvertModeSymbolPeriod, NameOf.Ascii.Period),
+        new(c => c.ConvertModeSymbolColon, NameOf.Ascii.Colon),
+        new(c => c.ConvertModeSymbolSemicolon, NameOf.Ascii.Semicolon),
+        new(c => c.ConvertModeSymbolLessThan, NameOf.Ascii.LessThan),
+        new(c => c.ConvertModeSymbolEqual, NameOf.Ascii.Equal),
+        new(c => c.ConvertModeSymbolGreaterThan, NameOf.Ascii.GreaterThan),
+        new(c => c.ConvertModeSymbolPlus, NameOf.Ascii.Plus),
+        new(c => c.ConvertModeSymbolHyphenMinus, NameOf.Ascii.HyphenMinus),
+        new(c => c.ConvertModeSymbolExclamation, NameOf.Ascii.Exclamation),
+        new(c => c.ConvertModeSymbolSharp, NameOf.Ascii.Sharp),
+        new(c => c.ConvertModeSymbolDollar, NameOf.Ascii.Dollar),
+        new(c => c.ConvertModeSymbolPercent, NameOf.Ascii.Percent),
+        new(c => c.ConvertModeSymbolAmpersand, NameOf.Ascii.Ampersand),
+        new(c => c.ConvertModeSymbolAsterisk, NameOf.Ascii.Asterisk),
+        new(c => c.ConvertModeSymbolSlash, NameOf.Ascii.Slash),
+        new(c => c.ConvertModeSymbolQuestion, NameOf.Ascii.Question),
+        new(c => c.ConvertModeSymbolAt, NameOf.Ascii.At),
+        new(c => c.ConvertModeSymbolCaret, NameOf.Ascii.Caret),
+        new(c => c.ConvertModeSymbolUnderBar, NameOf.Ascii.UnderBar),
+        new(c => c.ConvertModeSymbolBackquote, NameOf.Ascii.Backquote),
+        new(c => c.ConvertModeSymbolVerticalBar, NameOf.Ascii.VerticalBar),
+        new(c => c.ConvertModeSymbolTilde, NameOf.Ascii.Tilde),
+        new(c => c.ConvertModeSymbolSpace, NameOf.Ascii.Space),
+
+        // ─── かな記号 ───
+        new(c => c.ConvertModeEtcKanaVoice, NameOf.Kana.Voice),
+        new(c => c.ConvertModeEtcKanaSemiVoice, NameOf.Kana.SemiVoice),
+        new(c => c.ConvertModeEtcKanaMiddleDot, NameOf.Kana.MiddleDot),
+        new(c => c.ConvertModeEtcKanaLeftCornerBracket, NameOf.Kana.LeftCornerBracket),
+        new(c => c.ConvertModeEtcKanaRightCornerBracket, NameOf.Kana.RightCornerBracket),
+
+        // ─── かな約物（長音/読点/句点） ───
+        new(c => c.ConvertModeEtcKanaProlong, NameOf.Kana.Prolong),
+        new(c => c.ConvertModeEtcKanaPeriod, NameOf.Kana.Period),
+        new(c => c.ConvertModeEtcKanaComma, NameOf.Kana.Comma),
+    ];
+
+    /// <summary>CharConverter の新しいインスタンスを初期化します。</summary>
+    /// <param name="config">変換設定。この設定の変更を監視し、キャッシュを自動無効化します。</param>
     public CharConverter(ConvertConfig config)
     {
         Config = config;
         Config.PropertyChanged += OnConfigPropertyChanged;
     }
 
-    private void OnConfigPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e) => _cachedPairs = null;
+    /// <summary>設定変更時にキャッシュを無効化します。</summary>
+    private void OnConfigPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        => _cachedPairs = null;
 
+    /// <summary>リソースを解放します。Config.PropertyChanged の購読を解除します。</summary>
     public void Dispose()
     {
         if (_disposed) return;
@@ -29,116 +127,134 @@ public partial class CharConverter : IDisposable
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>モード種別と EsUtil エントリから変換ペアを解決します。</summary>
+    /// <param name="mode">変換モード（列挙型）。ZenHanMode / ZenHanKanaMode / ZenHanEtcZenHanAsciiMode のいずれか。</param>
+    /// <param name="entry">EsUtil の変換エントリオブジェクト。</param>
+    /// <returns>解決された変換ペア。該当なしの場合は ConvertPairs.Empty。</returns>
+    static ConvertPairs ResolvePairs(Enum mode, object entry)
+        => mode switch
+        {
+            ZenHanMode m when entry is IZenHanConverterToHanToZen e => m.GetConvertPairs(e),
+            ZenHanKanaMode m when entry is IZenHanConverterToHanToZen e => m.GetConvertPairs(e),
+            ZenHanEtcZenHanAsciiMode m => m.GetConvertPairs(entry),
+            _ => ConvertPairs.Empty,
+        };
+
+    /// <summary>円記号/バックスラッシュ変換モードに応じた変換ペアを生成します。</summary>
+    /// <param name="mode">変換モード。</param>
+    /// <param name="src">変換元の文字（"\", "＼", "¥", "￥"）。</param>
+    /// <returns>対応する1件の変換ペア。該当なしの場合は ConvertPairs.Empty。</returns>
+    static ConvertPairs GetYenConvertPairs(ZenHanEtcYenMode mode, string src)
+        => mode switch
+        {
+            ZenHanEtcYenMode.ToHanBSlash => new ConvertPairs([(src, "\\")]),
+            ZenHanEtcYenMode.ToZenBSlash => new ConvertPairs([(src, "＼")]),
+            ZenHanEtcYenMode.ToHanYen => new ConvertPairs([(src, "¥")]),
+            ZenHanEtcYenMode.ToZenYen => new ConvertPairs([(src, "￥")]),
+            _ => ConvertPairs.Empty,
+        };
+
+    /// <summary>現在の Config に基づいて全ての変換ペアを生成します。</summary>
+    /// <remarks>結果はキャッシュされ、Config が変更されるまで再利用されます。<br/>
+    /// 変換ペアの生成順序: <br/>
+    /// 1. SymbolMap のループ処理（記号類）<br/>
+    /// 2. かな変換（半角/全角カタカナ/全角ひらがな）<br/>
+    /// 3. 円記号/バックスラッシュ変換<br/>
+    /// 4. タブ/改行変換<br/>
+    /// 5. 単一の ConvertPairs に統合</remarks>
+    /// <returns>現在の設定に基づく変換ペア</returns>
     public ConvertPairs GetConvertPairs()
     {
-        if (_cachedPairs != null) return _cachedPairs;
-        var list = ConvertPairs.Empty;
-        list = ConvertPairs.Concat(list, GetNumberPairs());
-        list = ConvertPairs.Concat(list, GetAlphabetPairs());
-        list = ConvertPairs.Concat(list, GetAsciiSymbolPairs());
-        list = ConvertPairs.Concat(list, GetKanaPairs());
-        list = ConvertPairs.Concat(list, GetKanaSymbolPairs());
-        list = ConvertPairs.Concat(list, GetKanaEtcPairs());
-        list = ConvertPairs.Concat(list, GetYenPairs());
-        list = ConvertPairs.Concat(list, GetTabSpacePairs());
-        list = ConvertPairs.Concat(list, GetNewlinePairs());
-        _cachedPairs = new ConvertPairs(list);
+        if (_cachedPairs is not null)
+            return _cachedPairs;
+
+        List<(string From, string To)> pairs = [];
+
+        // 1. SymbolMap のループ処理
+        foreach (var entry in SymbolMap)
+        {
+            var mode = entry.GetMode(Config);
+
+            if (entry.IsPair && entry.Entry is IZenHanConverterToHanToZen[] pairEntries)
+            {
+                foreach (var pe in pairEntries)
+                    pairs.AddRange(ResolvePairs(mode, pe));
+            }
+            else
+            {
+                pairs.AddRange(ResolvePairs(mode, entry.Entry));
+            }
+        }
+
+        // 2. かな変換
+        pairs.AddRange(Config.ConvertModeKanaHan switch
+        {
+            ZenHanKanaMode.ToZenKata => GroupOf.Kana.Kata.ToZenMap,
+            ZenHanKanaMode.ToZenHira => GroupOf.Kana.Hira.ToZenMap,
+            _ => ConvertPairs.Empty,
+        });
+        pairs.AddRange(Config.ConvertModeKanaZenKata switch
+        {
+            ZenHanKanaMode.ToHan => GroupOf.Kana.Kata.ToHanMap,
+            ZenHanKanaMode.ToZenHira => GroupOf.Kana.ToHiraMap,
+            _ => ConvertPairs.Empty,
+        });
+        pairs.AddRange(Config.ConvertModeKanaZenHira switch
+        {
+            ZenHanKanaMode.ToHan => GroupOf.Kana.Hira.ToHanMap,
+            ZenHanKanaMode.ToZenHira => GroupOf.Kana.ToKataMap,
+            _ => ConvertPairs.Empty,
+        });
+
+        // 3. 円記号/バックスラッシュ変換
+        pairs.AddRange(GetYenConvertPairs(Config.ConvertModeEtcBSlashHan, "\\"));
+        pairs.AddRange(GetYenConvertPairs(Config.ConvertModeEtcBSlashZen, "＼"));
+        pairs.AddRange(GetYenConvertPairs(Config.ConvertModeEtcYenHan, "¥"));
+        pairs.AddRange(GetYenConvertPairs(Config.ConvertModeEtcYenZen, "￥"));
+
+        // 4. タブ/改行変換
+        pairs.AddRange(Config.ConvertModeEtcTabSpace switch
+        {
+            ZenHanEtcSpecial.ToHanSpace => new ConvertPairs([("\t", " ")]),
+            ZenHanEtcSpecial.ToZenSpace => new ConvertPairs([("\t", "　")]),
+            ZenHanEtcSpecial.Remove => new ConvertPairs([("\t", "")]),
+            _ => ConvertPairs.Empty,
+        });
+        pairs.AddRange(Config.ConvertModeEtcNewline switch
+        {
+            ZenHanEtcSpecial.ToHanSpace => new ConvertPairs([("\r\n", " "), ("\n", " "), ("\r", " ")]),
+            ZenHanEtcSpecial.ToZenSpace => new ConvertPairs([("\r\n", "　"), ("\n", "　"), ("\r", "　")]),
+            ZenHanEtcSpecial.Remove => new ConvertPairs([("\r\n", ""), ("\n", ""), ("\r", "")]),
+            _ => ConvertPairs.Empty,
+        });
+
+        _cachedPairs = new ConvertPairs([.. pairs]);
         return _cachedPairs;
     }
 
-    private ConvertPairs GetNumberPairs() => Config.ConvertModeNumber.GetConvertPairs(GroupOf.Ascii.Numeric);
-    private ConvertPairs GetAlphabetPairs() => Config.ConvertModeAlphabet.GetConvertPairs(GroupOf.Ascii.Alphabet);
-
-    private ConvertPairs GetAsciiSymbolPairs()
-    {
-        static ConvertPairs Get(ZenHanMode m, IZenHanConverterToHanToZen e) => m.GetConvertPairs(e);
-        return ConvertPairs.Concat(
-            Get(Config.ConvertModeSymbolParenthesis, NameOf.Ascii.ParenthesisLeft),
-            Get(Config.ConvertModeSymbolParenthesis, NameOf.Ascii.ParenthesisRight),
-            Get(Config.ConvertModeSymbolSquareBracket, NameOf.Ascii.SquareBracketLeft),
-            Get(Config.ConvertModeSymbolSquareBracket, NameOf.Ascii.SquareBracketRight),
-            Get(Config.ConvertModeSymbolCurlyBracket, NameOf.Ascii.CurlyBracketLeft),
-            Get(Config.ConvertModeSymbolCurlyBracket, NameOf.Ascii.CurlyBracketRight),
-            Get(Config.ConvertModeSymbolDoubleQuote, NameOf.Ascii.DoubleQuote),
-            Get(Config.ConvertModeSymbolSingleQuote, NameOf.Ascii.SingleQuote),
-            Get(Config.ConvertModeSymbolComma, NameOf.Ascii.Comma),
-            Get(Config.ConvertModeSymbolPeriod, NameOf.Ascii.Period),
-            Get(Config.ConvertModeSymbolColon, NameOf.Ascii.Colon),
-            Get(Config.ConvertModeSymbolSemicolon, NameOf.Ascii.Semicolon),
-            Get(Config.ConvertModeSymbolLessThan, NameOf.Ascii.LessThan),
-            Get(Config.ConvertModeSymbolEqual, NameOf.Ascii.Equal),
-            Get(Config.ConvertModeSymbolGreaterThan, NameOf.Ascii.GreaterThan),
-            Get(Config.ConvertModeSymbolPlus, NameOf.Ascii.Plus),
-            Get(Config.ConvertModeSymbolHyphenMinus, NameOf.Ascii.HyphenMinus),
-            Get(Config.ConvertModeSymbolExclamation, NameOf.Ascii.Exclamation),
-            Get(Config.ConvertModeSymbolSharp, NameOf.Ascii.Sharp),
-            Get(Config.ConvertModeSymbolDollar, NameOf.Ascii.Dollar),
-            Get(Config.ConvertModeSymbolPercent, NameOf.Ascii.Percent),
-            Get(Config.ConvertModeSymbolAmpersand, NameOf.Ascii.Ampersand),
-            Get(Config.ConvertModeSymbolAsterisk, NameOf.Ascii.Asterisk),
-            Get(Config.ConvertModeSymbolSlash, NameOf.Ascii.Slash),
-            Get(Config.ConvertModeSymbolQuestion, NameOf.Ascii.Question),
-            Get(Config.ConvertModeSymbolAt, NameOf.Ascii.At),
-            Get(Config.ConvertModeSymbolCaret, NameOf.Ascii.Caret),
-            Get(Config.ConvertModeSymbolUnderBar, NameOf.Ascii.UnderBar),
-            Get(Config.ConvertModeSymbolBackquote, NameOf.Ascii.Backquote),
-            Get(Config.ConvertModeSymbolVerticalBar, NameOf.Ascii.VerticalBar));
-    }
-
-    private ConvertPairs GetKanaPairs() => ConvertPairs.Concat(
-        Config.ConvertModeKanaHan switch { ZenHanKanaMode.ToZenKata => ConvertPairs.Concat(GroupOf.Kana.Kata.ToZenMap), ZenHanKanaMode.ToZenHira => ConvertPairs.Concat(GroupOf.Kana.Hira.ToZenMap), _ => ConvertPairs.Empty },
-        Config.ConvertModeKanaZenKata switch { ZenHanKanaMode.ToHan => ConvertPairs.Concat(GroupOf.Kana.Kata.ToHanMap), ZenHanKanaMode.ToZenHira => ConvertPairs.Concat(GroupOf.Kana.ToHiraMap), _ => ConvertPairs.Empty },
-        Config.ConvertModeKanaZenHira switch { ZenHanKanaMode.ToHan => ConvertPairs.Concat(GroupOf.Kana.Hira.ToHanMap), ZenHanKanaMode.ToZenHira => ConvertPairs.Concat(GroupOf.Kana.ToKataMap), _ => ConvertPairs.Empty });
-
-    private ConvertPairs GetKanaSymbolPairs() => ConvertPairs.Concat(
-        Config.ConvertModeEtcKanaVoice.GetConvertPairs(NameOf.Kana.Voice),
-        Config.ConvertModeEtcKanaSemiVoice.GetConvertPairs(NameOf.Kana.SemiVoice),
-        Config.ConvertModeEtcKanaMiddleDot.GetConvertPairs(NameOf.Kana.MiddleDot),
-        Config.ConvertModeEtcKanaLeftCornerBracket.GetConvertPairs(NameOf.Kana.LeftCornerBracket),
-        Config.ConvertModeEtcKanaRightCornerBracket.GetConvertPairs(NameOf.Kana.RightCornerBracket));
-
-    private ConvertPairs GetKanaEtcPairs() => ConvertPairs.Concat(
-        Config.ConvertModeEtcKanaProlong.GetConvertPairs(NameOf.Kana.Prolong),
-        Config.ConvertModeEtcKanaPeriod.GetConvertPairs(NameOf.Kana.Period),
-        Config.ConvertModeEtcKanaComma.GetConvertPairs(NameOf.Kana.Comma));
-
-    private ConvertPairs GetYenPairs() => ConvertPairs.Concat(
-        GetYenConvertPairs(Config.ConvertModeEtcBSlashHan, "\\"),
-        GetYenConvertPairs(Config.ConvertModeEtcBSlashZen, "＼"),
-        GetYenConvertPairs(Config.ConvertModeEtcYenHan, "¥"),
-        GetYenConvertPairs(Config.ConvertModeEtcYenZen, "￥"));
-
-    private static ConvertPairs GetYenConvertPairs(ZenHanEtcYenMode mode, string src) => mode switch
-    {
-        ZenHanEtcYenMode.ToHanBSlash => new ConvertPairs([(src, "\\")]),
-        ZenHanEtcYenMode.ToZenBSlash => new ConvertPairs([(src, "＼")]),
-        ZenHanEtcYenMode.ToHanYen => new ConvertPairs([(src, "¥")]),
-        ZenHanEtcYenMode.ToZenYen => new ConvertPairs([(src, "￥")]),
-        _ => ConvertPairs.Empty
-    };
-
-    private ConvertPairs GetTabSpacePairs() => Config.ConvertModeEtcTabSpace switch
-    {
-        ZenHanEtcSpecial.ToHanSpace => new ConvertPairs([("\t", " ")]),
-        ZenHanEtcSpecial.ToZenSpace => new ConvertPairs([("\t", "　")]),
-        ZenHanEtcSpecial.Remove => new ConvertPairs([("\t", "")]),
-        _ => ConvertPairs.Empty
-    };
-
-    private ConvertPairs GetNewlinePairs() => Config.ConvertModeEtcNewline switch
-    {
-        ZenHanEtcSpecial.ToHanSpace => new ConvertPairs([("\r\n", " "), ("\n", " "), ("\r", " ")]),
-        ZenHanEtcSpecial.ToZenSpace => new ConvertPairs([("\r\n", "　"), ("\n", "　"), ("\r", "　")]),
-        ZenHanEtcSpecial.Remove => new ConvertPairs([("\r\n", ""), ("\n", ""), ("\r", "")]),
-        _ => ConvertPairs.Empty
-    };
-
+    /// <summary>テキスト変換を実行します。</summary>
+    /// <remarks>
+    /// 処理フロー: <br/>
+    /// 1. null/空文字チェック（そのまま返す）<br/>
+    /// 2. 全角/半角変換（IsEnabledZenHan が true の場合のみ）<br/>
+    ///    2a. ZenHanConverter.ToNormalize で正規化<br/>
+    ///    2b. 変換ペアに基づく置換<br/>
+    ///    2c. 連続スペースの整形<br/>
+    /// 3. ユーザー定義の置換ルール適用<br/><br/>
+    /// 注意点: <br/>
+    /// - ユーザー定義の置換ルールは ZenHan 変換の有無に関わらず常に適用される</remarks>
+    /// <param name="text">変換対象のテキスト。null の場合は null を返す。</param>
+    /// <returns>変換結果のテキスト</returns>
     public string Convert(string text)
     {
-        if (string.IsNullOrEmpty(text)) return text;
+        // Step 1: null/空文字チェック
+        if (string.IsNullOrEmpty(text))
+            return text;
+
+        // Step 2: 全角/半角変換
         if (Config.IsEnabledZenHan)
         {
-            text = EsUtil.Helper.ZenHanConverter.ZenHanConverter.ToNormalize(text);
+            text = ZenHanConverter.ToNormalize(text);
             text = GetConvertPairs().Convert(text);
             text = Config.ConvertModeEtcMultiSpace switch
             {
@@ -148,24 +264,39 @@ public partial class CharConverter : IDisposable
                 _ => text
             };
         }
+
+        // Step 3: ユーザー定義の置換ルール適用
         return ApplyUserReplacements(text);
     }
 
+    /// <summary>ユーザー定義の置換ルールを適用します。</summary>
+    /// <param name="text">置換対象のテキスト</param>
+    /// <returns>置換結果のテキスト</returns>
+    /// <remarks>正規表現エラーは無視して処理を続行します。<br/>
+    /// 空の検索文字列を持つルールはスキップされます。<br/>
+    /// 置換は定義順に逐次適用されます。</remarks>
     private string ApplyUserReplacements(string text)
     {
         foreach (var pair in Config.ReplacePairs)
         {
-            if (string.IsNullOrEmpty(pair.Search)) continue;
+            if (string.IsNullOrEmpty(pair.Search))
+                continue;
+
             try
             {
-                text = pair.IsRegex ? Regex.Replace(text, pair.Search, pair.Replace)
+                text = pair.IsRegex
+                    ? Regex.Replace(text, pair.Search, pair.Replace)
                     : text.Replace(pair.Search, pair.Replace, StringComparison.Ordinal);
             }
-            catch { }
+            catch when (pair.IsRegex)
+            {
+                // ユーザー入力の正規表現が不正な場合も処理を続行
+            }
         }
         return text;
     }
 
+    /// <summary>連続するスペース（半角/全角混在）を検出する正規表現。</summary>
     [GeneratedRegex("[ 　]{2,}")]
     private static partial Regex SingleSpaceRegex();
 }

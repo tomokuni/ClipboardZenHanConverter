@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Xunit;
 using ClipboardZenHanConverter.Core.Logic;
 using ClipboardZenHanConverter.Core.Models;
@@ -7,7 +5,7 @@ using ClipboardZenHanConverter.Core.Enums;
 
 namespace ClipboardZenHanConverter.Tests;
 
-public partial class CharConverterTests : IDisposable
+public sealed partial class CharConverterTests : IDisposable
 {
     private readonly ConvertConfig _config;
     private readonly CharConverter _converter;
@@ -108,11 +106,11 @@ public partial class CharConverterTests : IDisposable
 
     #region Convert - 記号変換
 
-    public static IEnumerable<object[]> SymbolTestData()
+    public static TheoryData<ZenHanMode, string, string> SymbolTestData() => new()
     {
-        yield return [ZenHanMode.ToHan, "！", "!"];
-        yield return [ZenHanMode.ToZen, "!", "！"];
-    }
+        { ZenHanMode.ToHan, "！", "!" },
+        { ZenHanMode.ToZen, "!", "！" },
+    };
 
     [Theory]
     [MemberData(nameof(SymbolTestData))]

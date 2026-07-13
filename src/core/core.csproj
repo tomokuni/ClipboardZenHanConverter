@@ -2,15 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <LangVersion>preview</LangVersion>
     <RootNamespace>ClipboardZenHanConverter.Core</RootNamespace>
     <AssemblyName>ClipboardZenHanConverter.Core</AssemblyName>
     <Description>Core logic and models for ClipboardZenHanConverter</Description>
-    <Platforms>x64</Platforms>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <Version>0.0.1</Version>
+    <Copyright>Copyright (c) 2025</Copyright>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,21 +1,23 @@
+using ClipboardZenHanConverter.App.Models;
 using ClipboardZenHanConverter.Core.Enums;
+using ClipboardZenHanConverter.Core.Models;
 
-namespace ClipboardZenHanConverter.Core.Models;
+namespace ClipboardZenHanConverter.App.Helpers;
 
-public partial class SettingsModel
+/// <summary>設定画面のセグメントコントロール定義を提供する静的クラス。</summary>
+/// <remarks>各変換カテゴリ（数字/英字/かな/記号/約物/BS/YEN/特殊）の SegmentDefine 配列を一元管理します。<br/>
+/// 設定画面の ViewModel（SettingsViewModel）から参照され、UI の表示項目を定義します。<br/>
+/// これらの定義を Core から分離することで、UI 依存を App プロジェクトに閉じ込めています。</remarks>
+public static class SegmentDefinitions
 {
-    public const string TextNone = "なし";
-    public const string TextToHan = "半角";
-    public const string TextToZen = "全角";
-    public const string TextKanaNone = "なし";
-    public const string TextKanaToHan = "半角カナ";
-    public const string TextKanaToZenKata = "全角カタカナ";
-    public const string TextKanaToZenHira = "全角ひらがな";
+    /// <summary>数字変換モードのセグメント定義配列。</summary>
+    public static readonly SegmentDefine[] NumberDefs = [new("数字 の変換", nameof(ConvertConfig.ConvertModeNumber))];
 
-    public readonly SegmentDefine[] NumberDefs = [new("数字 の変換", nameof(ConvertConfig.ConvertModeNumber))];
-    public readonly SegmentDefine[] AlphabetDefs = [new("英字 の変換", nameof(ConvertConfig.ConvertModeAlphabet))];
+    /// <summary>英字変換モードのセグメント定義配列。</summary>
+    public static readonly SegmentDefine[] AlphabetDefs = [new("英字 の変換", nameof(ConvertConfig.ConvertModeAlphabet))];
 
-    public readonly SegmentDefine[] KanaDefs =
+    /// <summary>かな変換モードのセグメント定義配列（半角カナ/全角カタカナ/全角ひらがな）。</summary>
+    public static readonly SegmentDefine[] KanaDefs =
     [
         new("半角カナ の変換", nameof(ConvertConfig.ConvertModeKanaHan), Segments:
         [
@@ -31,7 +33,7 @@ public partial class SettingsModel
             new("全角 カタカナ", ZenHanKanaMode.ToZenKata, IsEnabled: false),
             new("全角 ひらがな", ZenHanKanaMode.ToZenHira),
         ]),
-        new ("全角ひらがな の変換", nameof(ConvertConfig.ConvertModeKanaZenHira), Segments:
+        new("全角ひらがな の変換", nameof(ConvertConfig.ConvertModeKanaZenHira), Segments:
         [
             new("なし", ZenHanKanaMode.None),
             new("半角 カナ", ZenHanKanaMode.ToHan),
@@ -40,7 +42,8 @@ public partial class SettingsModel
         ]),
     ];
 
-    public readonly SegmentDefine[] SymbolDefs =
+    /// <summary>記号変換モードのセグメント定義配列（括弧/引用符/演算子等）。</summary>
+    public static readonly SegmentDefine[] SymbolDefs =
     [
         new("丸括弧　（）", nameof(ConvertConfig.ConvertModeSymbolParenthesis)),
         new("角括弧　［］", nameof(ConvertConfig.ConvertModeSymbolSquareBracket)),
@@ -78,7 +81,8 @@ public partial class SettingsModel
         new("かな 右下括弧　」", nameof(ConvertConfig.ConvertModeEtcKanaRightCornerBracket)),
     ];
 
-    public readonly SegmentDefine[] EtcZenHanAsciiDefs =
+    /// <summary>約物（長音/読点/句点）変換モードのセグメント定義配列。</summary>
+    public static readonly SegmentDefine[] EtcZenHanAsciiDefs =
     [
         new("かな 長音記号　ー", nameof(ConvertConfig.ConvertModeEtcKanaProlong), Segments:
         [
@@ -103,7 +107,8 @@ public partial class SettingsModel
         ]),
     ];
 
-    public readonly SegmentDefine[] EtcBslashYenDefs =
+    /// <summary>バックスラッシュ/円記号変換モードのセグメント定義配列。</summary>
+    public static readonly SegmentDefine[] EtcBslashYenDefs =
     [
         new("バックスラッシュ 半角", nameof(ConvertConfig.ConvertModeEtcBSlashHan), Segments:
         [
@@ -139,7 +144,8 @@ public partial class SettingsModel
         ]),
     ];
 
-    public readonly SegmentDefine[] EtcSpecialDefs =
+    /// <summary>特殊文字（タブ/改行）変換モードのセグメント定義配列。</summary>
+    public static readonly SegmentDefine[] EtcSpecialDefs =
     [
         new("タブ記号", nameof(ConvertConfig.ConvertModeEtcTabSpace), Segments:
         [
@@ -157,7 +163,8 @@ public partial class SettingsModel
         ]),
     ];
 
-    public readonly SegmentDefine[] EtcMultiSpaceDefs =
+    /// <summary>連続スペース変換モードのセグメント定義配列。</summary>
+    public static readonly SegmentDefine[] EtcMultiSpaceDefs =
     [
         new("連続スペース", nameof(ConvertConfig.ConvertModeEtcMultiSpace), Height: 80, Segments:
         [

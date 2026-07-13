@@ -1,147 +1,89 @@
 using System.Runtime.InteropServices;
 using ClipboardZenHanConverter.Core.Models;
-using ClipboardZenHanConverter.ViewModels;
+using ClipboardZenHanConverter.App.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Graphics;
 
-namespace ClipboardZenHanConverter.Views;
+namespace ClipboardZenHanConverter.App.Views;
 
-/// <summary>アプリケーションのメインウィンドウを表示します。WinUIのWindowを継承し、タイトルバー、ナビゲーション、フレーム管理などのUI要素を管理します。</summary>
-/// <remarks>
-/// メインウィンドウの初期化、タイトルバーの設定、ウィンドウサイズの調整を行います。<br/>
-/// <br/>
-/// 【実装の詳細】<br/>
-/// - DPIスケーリングを考慮したウィンドウサイズ設定を行います。<br/>
-/// </remarks>
+/// <summary>アプリケーションのメインウィンドウを表します。</summary>
+/// <remarks>NavigationView と TitleBar を備え、ページ遷移のコンテナとして機能します。<br/>
+/// 特徴: <br/>
+/// - アクティブ化時に AppSetting のウィンドウサイズを復元<br/>
+/// - クローズ時に現在のウィンドウサイズを AppSetting に保存<br/>
+/// - MicaBackdrop による高速な背景レンダリング<br/>
+/// - タイトルバーの拡張（ExtendsContentIntoTitleBar）</remarks>
 public sealed partial class MainWindow : Window
 {
-    /// <summary>メインウィンドウ用のViewModelです。</summary>
+    /// <summary>メインウィンドウの ViewModel を取得します。</summary>
     public MainWindowViewModel ViewModel { get; }
-
-    /// <summary>アプリケーション設定を保持するクラスです。</summary>
+    /// <summary>ウィンドウサイズ保存用のアプリケーション設定。</summary>
     private readonly AppSetting _appSetting;
 
-    /// <summary>コンテンツ表示用のGridコントロールです。</summary>
+    /// <summary>ページコンテンツを表示する Grid。XAML の x:Name="contentFrame" にバインド。</summary>
     public Grid ContentFrame => this.contentFrame;
-
-    /// <summary>ナビゲーション用のNavigationViewコントロールです。</summary>
+    /// <summary>ナビゲーションメニュー。XAML の x:Name="navigationView" にバインド。</summary>
     public NavigationView NavigationView => navigationView;
-
-    /// <summary>タイトルバーコントロールです。</summary>
+    /// <summary>カスタムタイトルバー。XAML の x:Name="titleBar" にバインド。</summary>
     public TitleBar TitleBar => this.titleBar;
 
     /// <summary>MainWindow の新しいインスタンスを初期化します。</summary>
-    /// <remarks>
-    /// ViewModel を設定し、タイトルバーを拡張し、ウィンドウサイズを調整します。<br/>
-    /// </remarks>
-    /// <param name="viewModel">MainWindow用のViewModel</param>
-    /// <param name="appSetting">アプリケーション設定クラス</param>
-    public MainWindow(MainWindowViewModel viewModel, AppSetting appSetting) : base()
+    /// <param name="viewModel">メインウィンドウの ViewModel</param>
+    /// <param name="appSetting">ウィンドウサイズ保存用の AppSetting</param>
+    public MainWindow(MainWindowViewModel viewModel, AppSetting appSetting)
     {
-        // WinUIコンポーネントの初期化
         this.InitializeComponent();
         this.ViewModel = viewModel;
         this._appSetting = appSetting;
 
-        // デフォルトのタイトルバー拡張を有効に
         ExtendsContentIntoTitleBar = true;
-        // WinUIのTitleBarでタイトルバーをカスタマイズ
         SetTitleBar(this.TitleBar);
 
-        // ウィンドウがアクティブになったときに一度だけリサイズを実行
         this.Activated += MainWindow_Activated;
-        // ウィンドウが閉じるときにサイズを保存
         this.Closed += MainWindow_Closed;
     }
 
+    /// <summary>ウィンドウアクティブ化時に AppSetting からウィンドウサイズを復元します。</summary>
     private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
     {
         this.Activated -= MainWindow_Activated;
 
-        // DPIスケールを取得
         double dpiScale = GetWindowDpiScale(this);
-        // ウィンドウサイズを設定ファイル（またはデフォルト値）とDPIスケールに基づいて設定
-        AppWindow?.Resize(new Windows.Graphics.SizeInt32(
+        AppWindow?.Resize(new SizeInt32(
                 (int)(_appSetting.WindowWidth * dpiScale),
                 (int)(_appSetting.WindowHeight * dpiScale)));
     }
 
-    /// <summary>ウィンドウが閉じられる時に呼び出されます。</summary>
-    /// <remarks>
-    /// 現在のウィンドウサイズをDPIスケールを考慮して論理ピクセルで保存します。<br/>
-    /// </remarks>
-    /// <param name="sender">Windowオブジェクト</param>
-    /// <param name="args">イベント引数</param>
+    /// <summary>ウィンドウクローズ時に現在のサイズを AppSetting に保存します。</summary>
     private void MainWindow_Closed(object sender, WindowEventArgs args)
     {
         if (AppWindow == null) return;
-
-        // 現在のDPIスケールを取得
         double dpiScale = GetWindowDpiScale(this);
-
-        // 自動保存を抑制（プロパティ変更による Debounce 予約を防止）
-        bool wasAutoSave = _appSetting.IsAutoSave;
-        _appSetting.IsAutoSave = false;
-
-        // 現在の物理サイズから論理サイズを計算して保存
         _appSetting.WindowWidth = AppWindow.Size.Width / dpiScale;
         _appSetting.WindowHeight = AppWindow.Size.Height / dpiScale;
-
-        // 自動保存を元に戻す
-        _appSetting.IsAutoSave = wasAutoSave;
-
-        // プロパティ変更で予約された不要な Debounce をキャンセル
-        _appSetting.CancelPendingSave();
-
-        // 終了時に確実に保存を実行
         _appSetting.SaveToJsonFile(_appSetting.AutoSaveFileName);
     }
 
-
-    /// <summary>タイトルバーの「戻る」ボタンが押された時に呼び出されます。</summary>
-    /// <param name="sender">TitleBarコントロール</param>
-    /// <param name="args">イベント引数</param>
-    private void TitleBar_BackRequested(TitleBar sender, object args)
-    {
-        // Grid 方式ではナビゲーション履歴を持たないため戻る処理は行わない
-    }
-
-    /// <summary>タイトルバーのペイン切り替えボタンが押された時に呼び出されます。</summary>
-    /// <remarks>
-    /// NavigationView のペインを開閉します。<br/>
-    /// </remarks>
-    /// <param name="sender">TitleBarコントロール</param>
-    /// <param name="args">イベント引数</param>
+    /// <summary>タイトルバーのパネルトグルリクエストを処理します。</summary>
     private void TitleBar_PaneToggleRequested(TitleBar sender, object args)
     {
-        // ナビゲーションペインの開閉をトグル
         this.NavigationView.IsPaneOpen = !this.NavigationView.IsPaneOpen;
     }
 
-    /// <summary>指定したウィンドウハンドルのDPI値を取得します。</summary>
-    /// <remarks>
-    /// Windows API User32.dll の GetDpiForWindow を呼び出します。<br/>
-    /// </remarks>
-    /// <param name="hwnd">DPI値を取得するウィンドウのハンドル</param>
-    /// <returns>ウィンドウのDPI値</returns>
-    [System.Runtime.InteropServices.DllImport("User32.dll")]
-    private static extern int GetDpiForWindow(nint hwnd);
+    /// <summary>指定されたウィンドウハンドルの DPI 値を取得します（Win32 API）。</summary>
+    /// <param name="hwnd">ウィンドウハンドル</param>
+    /// <returns>DPI 値（例: 96, 120, 144）</returns>
+    [LibraryImport("User32.dll")]
+    private static partial int GetDpiForWindow(nint hwnd);
 
-    /// <summary>指定した Window のDPIスケールを取得します。</summary>
-    /// <remarks>
-    /// ウィンドウのハンドルからDPI値を取得し、デフォルトDPIで割ってスケールを計算します。<br/>
-    /// デフォルト96DPIを基準としています。<br/>
-    /// </remarks>
-    /// <param name="window">DPIスケールを取得する対象のウィンドウ</param>
-    /// <returns>DPIスケール (例: 1.0, 1.25など)</returns>
+    /// <summary>指定されたウィンドウの DPI スケールを取得します。</summary>
+    /// <param name="window">DPI スケールを取得するウィンドウ</param>
+    /// <returns>DPI スケール値（例: 1.0, 1.25, 1.5）</returns>
     public static double GetWindowDpiScale(Window window)
     {
-        // ウィンドウハンドルを取得
         nint windowHandle = WinRT.Interop.WindowNative.GetWindowHandle(window);
         if (windowHandle == 0) return 1.0;
-        const double DefaultPixelsPerInch = 96D;
-        // DPIスケールを計算して返す
-        return GetDpiForWindow(windowHandle) / DefaultPixelsPerInch;
+        return GetDpiForWindow(windowHandle) / 96D;
     }
 }

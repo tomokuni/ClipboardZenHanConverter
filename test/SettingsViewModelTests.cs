@@ -1,8 +1,8 @@
 using Xunit;
-using ClipboardZenHanConverter.ViewModels;
+using ClipboardZenHanConverter.App.Helpers;
+using ClipboardZenHanConverter.App.ViewModels;
 using ClipboardZenHanConverter.Core.Models;
 using ClipboardZenHanConverter.Core.Enums;
-using System.Linq;
 
 namespace ClipboardZenHanConverter.Tests;
 
@@ -13,16 +13,15 @@ public class SettingsViewModelTests
     {
         // Arrange
         var config = new ConvertConfig();
-        var model = new SettingsModel();
 
         // Act
-        var vm = new SettingsViewModel(config, model);
+        var vm = new SettingsViewModel(config);
 
         // Assert
         Assert.NotEmpty(vm.NumberItems);
         Assert.NotEmpty(vm.AlphabetItems);
-        Assert.Equal(model.NumberDefs.Length, vm.NumberItems.Count);
-        Assert.Equal(model.AlphabetDefs.Length, vm.AlphabetItems.Count);
+        Assert.Equal(SegmentDefinitions.NumberDefs.Length, vm.NumberItems.Count);
+        Assert.Equal(SegmentDefinitions.AlphabetDefs.Length, vm.AlphabetItems.Count);
     }
 
     [Fact]
@@ -30,12 +29,11 @@ public class SettingsViewModelTests
     {
         // Arrange
         var config = new ConvertConfig { ConvertModeNumber = ZenHanMode.None };
-        var model = new SettingsModel();
-        var vm = new SettingsViewModel(config, model);
-        
+        var vm = new SettingsViewModel(config);
+
         var numberItem = vm.NumberItems.First(); // Def: "数字 の変換"
         // Ensure we pick a segment that is different from current val (None)
-        var toHanSegment = numberItem.Segments.First(s => s.Content == SettingsModel.TextToHan);
+        var toHanSegment = numberItem.Segments.First(s => s.Content == "半角");
 
         // Act
         numberItem.SelectedLabel = toHanSegment.Content;
@@ -49,14 +47,13 @@ public class SettingsViewModelTests
     {
         // Arrange
         var config = new ConvertConfig { ConvertModeNumber = ZenHanMode.None };
-        var model = new SettingsModel();
-        var vm = new SettingsViewModel(config, model);
+        var vm = new SettingsViewModel(config);
         var numberItem = vm.NumberItems.First();
 
         // Act
         config.ConvertModeNumber = ZenHanMode.ToZen;
 
         // Assert
-        Assert.Equal(SettingsModel.TextToZen, numberItem.SelectedLabel);
+        Assert.Equal("全角", numberItem.SelectedLabel);
     }
 }

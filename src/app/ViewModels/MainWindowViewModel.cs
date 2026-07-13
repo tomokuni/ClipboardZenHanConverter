@@ -1,16 +1,11 @@
 using ClipboardZenHanConverter.Core.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace ClipboardZenHanConverter.ViewModels;
+namespace ClipboardZenHanConverter.App.ViewModels;
 
-/// <summary>メインウィンドウのデータを管理し、ナビゲーションサービスを利用してページ間遷移を管理します。</summary>
-/// <remarks>
-/// INavigationService をコンストラクタで受け取り、SelectedPage プロパティの変更時にページ遷移を実行します。<br/>
-/// <br/>
-/// 【実装の詳細】<br/>
-/// - DI で INavigationService を注入します。<br/>
-/// - SelectedPage の変更時に自動で遷移します。<br/>
-/// </remarks>
+/// <summary>メインウィンドウのデータを管理し、ページ間遷移を制御します。</summary>
+/// <remarks>SelectedPage プロパティの変更時に自動的に INavigationService.NavigateTo を呼び出します。</remarks>
+/// <param name="navigation">ページ遷移に使用するナビゲーションサービス。</param>
 public partial class MainWindowViewModel(INavigationService navigation) : ObservableObject
 {
     /// <summary>現在選択されているページです。</summary>

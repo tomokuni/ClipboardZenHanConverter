@@ -1,13 +1,11 @@
-using System;
-using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
+using ClipboardZenHanConverter.App.Models;
 using ClipboardZenHanConverter.Core.Enums;
 using ClipboardZenHanConverter.Core.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace ClipboardZenHanConverter.ViewModels;
+namespace ClipboardZenHanConverter.App.ViewModels;
 
 /// <summary>設定画面の変換項目を表すViewModelクラスです。</summary>
 /// <remarks>
@@ -15,13 +13,14 @@ namespace ClipboardZenHanConverter.ViewModels;
 /// </remarks>
 public partial class ZenHanConvertItem : ObservableObject, IDisposable
 {
+    /// <summary>バインド先の変換設定インスタンス。</summary>
     private readonly ConvertConfig _config;
+    /// <summary>この項目のセグメント定義（ラベル・プロパティ名・セグメント配列）。</summary>
     private readonly SegmentDefine _def;
-    private readonly PropertyInfo _pi;
-    private readonly string _propName;
-
-    /// <summary>PropertyInfo のキャッシュ（リフレクション呼び出しを削減）。</summary>
-    private static readonly ConcurrentDictionary<string, PropertyInfo> _propertyCache = new();
+    /// <summary>ConvertConfig から現在値を取得するデリゲート（リフレクション生成）。</summary>
+    private readonly Func<ConvertConfig, object?> _getValue;
+    /// <summary>ConvertConfig に選択値を設定するデリゲート（リフレクション生成）。</summary>
+    private readonly Action<ConvertConfig, object?> _setValue;
 
     /// <summary>項目のラベルを取得します。</summary>
     public string Label => _def.Label;
@@ -40,7 +39,7 @@ public partial class ZenHanConvertItem : ObservableObject, IDisposable
     {
         get
         {
-            var value = _pi.GetValue(_config);
+            var value = _getValue(_config);
             return Segments.FirstOrDefault(x => Equals(x.Value, value))?.Content ?? "";
         }
         set
@@ -48,46 +47,53 @@ public partial class ZenHanConvertItem : ObservableObject, IDisposable
             var match = Segments.FirstOrDefault(x => x.Content == value);
             if (match is not null && match.IsEnabled)
             {
-                var current = _pi.GetValue(_config);
+                var current = _getValue(_config);
                 if (!Equals(current, match.Value))
                 {
-                    _pi.SetValue(_config, match.Value);
+                    _setValue(_config, match.Value);
                     OnPropertyChanged(nameof(SelectedLabel));
                 }
             }
         }
     }
 
+    /// <summary>ZenHanConvertItem の新しいインスタンスを初期化します。</summary>
+    /// <param name="config">変換設定。この設定の変更を監視し、SelectedLabel を自動更新します。</param>
+    /// <param name="def">セグメント定義（ラベル、バインド先プロパティ、セグメント配列）。</param>
+    /// <exception cref="ArgumentException">def.Prop が ConvertConfig に存在しない場合。</exception>
     public ZenHanConvertItem(ConvertConfig config, SegmentDefine def)
     {
         _config = config;
         _def = def;
-        _propName = def.Prop;
-        _pi = _propertyCache.GetOrAdd(_propName,
-            static name => typeof(ConvertConfig).GetProperty(name)
-                ?? throw new ArgumentException($"Property {name} not found on ConvertConfig"));
+        var pi = typeof(ConvertConfig).GetProperty(def.Prop)
+            ?? throw new ArgumentException($"Property {def.Prop} not found on ConvertConfig");
+        _getValue = c => pi.GetValue(c);
+        _setValue = (c, v) => pi.SetValue(c, v);
 
         Segments = def.Segments ??
         [
-            new SegmentItem(SettingsModel.TextNone, ZenHanMode.None),
-            new SegmentItem(SettingsModel.TextToHan, ZenHanMode.ToHan),
-            new SegmentItem(SettingsModel.TextToZen, ZenHanMode.ToZen),
+            new SegmentItem("なし", ZenHanMode.None),
+            new SegmentItem("半角", ZenHanMode.ToHan),
+            new SegmentItem("全角", ZenHanMode.ToZen),
         ];
 
         _config.PropertyChanged += OnConfigPropertyChanged;
     }
 
+    /// <summary>ConvertConfig のプロパティ変更時に SelectedLabel を再通知します。</summary>
+    /// <remarks>関心のあるプロパティ（_def.Prop）が変更された場合のみ通知することで無駄な再描画を防止します。</remarks>
     private void OnConfigPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        // 関心のあるプロパティが変更されたときだけ SelectedLabel を再通知
-        if (e.PropertyName == _propName || string.IsNullOrEmpty(e.PropertyName))
+        if (e.PropertyName == _def.Prop || string.IsNullOrEmpty(e.PropertyName))
         {
             OnPropertyChanged(nameof(SelectedLabel));
         }
     }
 
+    /// <summary>リソースを解放します。ConvertConfig.PropertyChanged の購読を解除します。</summary>
     public void Dispose()
     {
         _config.PropertyChanged -= OnConfigPropertyChanged;
+        GC.SuppressFinalize(this);
     }
 }

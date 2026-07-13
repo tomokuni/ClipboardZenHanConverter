@@ -1,51 +1,66 @@
 using Xunit;
-using Moq;
-using ClipboardZenHanConverter.ViewModels;
+using ClipboardZenHanConverter.App.ViewModels;
+using ClipboardZenHanConverter.Core.Interfaces;
 using ClipboardZenHanConverter.Core.Models;
 using ClipboardZenHanConverter.Core.Logic;
-using ClipboardZenHanConverter.Core.Interfaces;
-using System;
 using ClipboardZenHanConverter.Core.Enums;
 
 namespace ClipboardZenHanConverter.Tests;
+
+/// <summary>テスト用のクリップボードサービススタブ。</summary>
+file sealed partial class StubClipboardService : IClipboardService
+{
+    public string? Text { get; set; }
+    public string? SetTextArg { get; private set; }
+    public bool FlushCalled { get; private set; }
+
+    public event EventHandler<object>? ContentChanged;
+
+    public Task<string?> GetTextAsync() => Task.FromResult(Text);
+    public void SetText(string text) => SetTextArg = text;
+    public void Flush() => FlushCalled = true;
+    public void Dispose() { }
+    public void SimulateContentChange() => ContentChanged?.Invoke(this, EventArgs.Empty);
+}
+
+/// <summary>テスト用のナビゲーションサービススタブ。</summary>
+file sealed class StubNavigationService : INavigationService
+{
+    public object? LastNavigateTo { get; private set; }
+    public void NavigateTo(object? page) => LastNavigateTo = page;
+    public void Initialize() { }
+}
 
 public class HomeViewModelTests
 {
     [Fact]
     public async Task Clipboard_ContentChanged_ConvertsAndSetsText()
     {
-        var config = new ConvertConfig { IsEnabledZenHan = true, ConvertModeAlphabet = ZenHanMode.ToHan };
-        var converter = new CharConverter(config);
-        var mockClipboard = new Mock<IClipboardService>();
-        var mockNavigation = new Mock<INavigationService>();
+        var clipboard = new StubClipboardService { Text = "ＡＢＣ" };
+        var navigation = new StubNavigationService();
+        ConvertConfig config = new() { IsEnabledZenHan = true, ConvertModeAlphabet = ZenHanMode.ToHan };
 
-        mockClipboard.Setup(c => c.GetTextAsync()).ReturnsAsync("ＡＢＣ");
+        CharConverter converter = new(config);
+        var vm = new HomeViewModel(config, converter, clipboard, navigation);
+        vm.TestMode = true;
+        clipboard.SimulateContentChange();
 
-        var viewModel = new HomeViewModel(config, converter, mockClipboard.Object, mockNavigation.Object);
-        viewModel.TestMode = true;
-
-        mockClipboard.Raise(c => c.ContentChanged += null, EventArgs.Empty);
-
-        mockClipboard.Verify(c => c.SetText("ABC"), Times.Once);
-        mockClipboard.Verify(c => c.Flush(), Times.Once);
+        Assert.Equal("ABC", clipboard.SetTextArg);
+        Assert.True(clipboard.FlushCalled);
     }
 
     [Fact]
     public void Clipboard_ContentChanged_DoesNotSetText_IfNoChange()
     {
-        var config = new ConvertConfig { IsEnabledZenHan = true, ConvertModeAlphabet = ZenHanMode.ToHan };
-        var converter = new CharConverter(config);
-        var mockClipboard = new Mock<IClipboardService>();
-        var mockNavigation = new Mock<INavigationService>();
+        var clipboard = new StubClipboardService { Text = "ABC" };
+        var navigation = new StubNavigationService();
+        ConvertConfig config = new() { IsEnabledZenHan = true, ConvertModeAlphabet = ZenHanMode.ToHan };
 
-        mockClipboard.Setup(c => c.GetTextAsync()).ReturnsAsync("ABC");
+        var vm = new HomeViewModel(config, new CharConverter(config), clipboard, navigation);
+        vm.TestMode = true;
+        clipboard.SimulateContentChange();
 
-        var viewModel = new HomeViewModel(config, converter, mockClipboard.Object, mockNavigation.Object);
-        viewModel.TestMode = true;
-
-        mockClipboard.Raise(c => c.ContentChanged += null, EventArgs.Empty);
-
-        mockClipboard.Verify(c => c.SetText(It.IsAny<string>()), Times.Never);
+        Assert.Null(clipboard.SetTextArg);
     }
 }
 

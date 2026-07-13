@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
-x:Class="ClipboardZenHanConverter.Views.SettingsPage"
+x:Class="ClipboardZenHanConverter.App.Views.SettingsPage"
 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
 xmlns:esc="using:EsUtil.WinUI3.Controls"
-xmlns:h="using:ClipboardZenHanConverter.Helpers"
-xmlns:m="using:ClipboardZenHanConverter.Core.Models"
-xmlns:vm="using:ClipboardZenHanConverter.ViewModels"
-xmlns:v="using:ClipboardZenHanConverter.Views"
-xmlns:local="using:ClipboardZenHanConverter.Views.Controls"
-xmlns:converters="using:ClipboardZenHanConverter.Converters"
+xmlns:h="using:ClipboardZenHanConverter.App.Helpers"
+xmlns:m="using:ClipboardZenHanConverter.App.Models"
+xmlns:vm="using:ClipboardZenHanConverter.App.ViewModels"
+xmlns:v="using:ClipboardZenHanConverter.App.Views"
+xmlns:local="using:ClipboardZenHanConverter.App.Views.Controls"
+xmlns:converters="using:ClipboardZenHanConverter.App.Converters"
 xmlns:dg="using:CommunityToolkit.WinUI.UI.Controls"
 mc:Ignorable="d">
 

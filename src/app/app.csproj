@@ -6,15 +6,10 @@
     <TargetPlatformMinVersion>10.0.26100.0</TargetPlatformMinVersion>
     <SupportedOSPlatformVersion>10.0.26100.0</SupportedOSPlatformVersion>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Platforms>x64</Platforms>
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
     <UseWinUI>true</UseWinUI>
     <WindowsPackageType>None</WindowsPackageType>
-    <LangVersion>preview</LangVersion>
-    <Nullable>enable</Nullable>
-    <SelfContained>true</SelfContained>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <IncludeReferencedProjectsInXamlTypeResolution>false</IncludeReferencedProjectsInXamlTypeResolution>
   </PropertyGroup>
 
@@ -22,8 +17,8 @@
     <Product>ClipboardZenHanConverter</Product>
     <Version>0.0.1</Version>
     <Description>A utility application that automatically converts text in the clipboard, such as converting full-width to half-width characters.</Description>
-    <RootNamespace>ClipboardZenHanConverter</RootNamespace>
-    <AssemblyName>ClipboardZenHanConverter</AssemblyName>
+    <RootNamespace>ClipboardZenHanConverter.App</RootNamespace>
+    <AssemblyName>ClipboardZenHanConverter.App</AssemblyName>
     <PackageTags>clipboard; zen; han; convert</PackageTags>
   </PropertyGroup>
 
@@ -37,7 +32,6 @@
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.2.251219" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.251219" />
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
-    <PackageReference Include="EsUtil.Helper.ZenHanConverter" Version="0.0.3" />
     <PackageReference Include="EsUtil.WinUI3.Controls.MultiColumnPanel" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.9" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2270" />

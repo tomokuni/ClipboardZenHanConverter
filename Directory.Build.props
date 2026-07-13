@@ -1,0 +1,11 @@
+<Project>
+
+  <PropertyGroup>
+    <LangVersion>preview</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Platforms>x64</Platforms>
+    <SelfContained>true</SelfContained>
+  </PropertyGroup>
+
+</Project>

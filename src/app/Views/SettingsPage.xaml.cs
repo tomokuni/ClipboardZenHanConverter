@@ -1,37 +1,27 @@
-using System;
-using System.IO;
-using System.Linq;
-using ClipboardZenHanConverter.Core.Interfaces;
-using ClipboardZenHanConverter.ViewModels;
+using ClipboardZenHanConverter.App.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 
-namespace ClipboardZenHanConverter.Views;
+namespace ClipboardZenHanConverter.App.Views;
 
 /// <summary>設定画面を表示するページクラスです。</summary>
-public sealed partial class SettingsPage : Page, INavigationAware
+/// <remarks>8つの変換カテゴリの選択、ユーザー定義置換ルールの編集、プリセット管理、<br/>
+/// 設定のエクスポート/インポートを提供します。<br/>
+/// 各操作は ContentDialog や FilePicker 等の WinUI 標準コントロールを使用します。</remarks>
+public sealed partial class SettingsPage : Page
 {
-    /// <summary>設定ページ用のViewModelです。</summary>
+    /// <summary>設定ページ用の ViewModel を取得します。</summary>
     public SettingsViewModel ViewModel { get; }
 
+    /// <summary>SettingsPage の新しいインスタンスを初期化します。</summary>
+    /// <param name="viewModel">設定ページ用の ViewModel</param>
     public SettingsPage(SettingsViewModel viewModel)
     {
         ViewModel = viewModel;
         this.InitializeComponent();
-    }
-
-    /// <summary>このページに遷移してきたときに呼び出されます。</summary>
-    /// <param name="parameter">ナビゲーションパラメータ</param>
-    public void OnNavigatedTo(object? parameter)
-    {
-    }
-
-    /// <summary>このページから別のページに遷移するときに呼び出されます。</summary>
-    public void OnNavigatingFrom()
-    {
     }
 
     /// <summary>置換行を編集します。</summary>
@@ -172,25 +162,9 @@ public sealed partial class SettingsPage : Page, INavigationAware
         }
     }
 
-    /// <summary>例外をログファイルに記録します。</summary>
-    private static void LogException(Exception ex, string source)
-    {
-        try
-        {
-            var logPath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "ClipboardZenHanConverter",
-                "crash.log");
-            var msg = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {source}\n{ex}\n\n";
-            File.AppendAllText(logPath, msg);
-        }
-        catch
-        {
-            // ログ記録の失敗は無視
-        }
-    }
-
-    private nint GetWindowHandle()
+    /// <summary>メインウィンドウのウィンドウハンドルを取得します。FilePicker の表示に必要です。</summary>
+    /// <returns>Win32 ウィンドウハンドル（HWND）</returns>
+    private static nint GetWindowHandle()
     {
         var mainWindow = App.GetService<MainWindow>();
         return WindowNative.GetWindowHandle(mainWindow);

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <UserControl
-    x:Class="ClipboardZenHanConverter.Views.Controls.HeaderDescription"
+    x:Class="ClipboardZenHanConverter.App.Views.Controls.HeaderDescription"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:ClipboardZenHanConverter.Views.Controls">
+    xmlns:local="using:ClipboardZenHanConverter.App.Views.Controls">
 
     <UserControl.Resources>
 

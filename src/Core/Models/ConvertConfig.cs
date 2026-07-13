@@ -1,6 +1,4 @@
-using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+using System.Collections.Frozen;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -8,12 +6,38 @@ using ClipboardZenHanConverter.Core.Enums;
 
 namespace ClipboardZenHanConverter.Core.Models;
 
-[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)]
+/// <summary>モードプロパティの単一定義。</summary>
+/// <remarks>Function デリゲートのペアで Get/Set を型安全にカプセル化します。<br/>
+/// ToZenValue に値が設定されている場合、そのプロパティは「全力会計」プリセットで全角設定の対象となります。</remarks>
+sealed record ModePropDef(
+    Func<ConvertConfig, object> Get,
+    Action<ConvertConfig, object> Set,
+    object? ToZenValue);           // null → 全角設定対象外
+
+/// <summary>全角/半角変換の設定を管理します。</summary>
+/// <remarks>
+/// 提供機能: <br/>
+/// - 数字・英字・記号・かな・約物など45以上の個別変換モードプロパティ<br/>
+/// - ユーザー定義の置換ルール（正規表現対応）<br/>
+/// - プリセット保存/読み込み/削除（Built-in + ユーザー定義）<br/>
+/// - インポート/エクスポート（JSONファイル）<br/>
+/// - 自動永続化（SettingsPersistenceBase によるデバウンス保存）<br/><br/>
+/// 特徴: <br/>
+/// - _modeProps 配列によるメタデータ駆動で、コピー・比較・全角設定のコード重複を排除（DRY）<br/>
+/// - FrozenDictionary による組み込みプリセットの高速ルックアップ<br/>
+/// - CommunityToolkit.Mvvm の ObservableProperty 生成による変更通知<br/>
+/// - System.Text.Json ソースジェネレーター対応（AppJsonContext）<br/><br/>
+/// 最適化手法: <br/>
+/// - _modeProps から動生成された _copyActions/_compareActions/_toZenSymbolSetters 配列<br/>
+/// - ループによる一括適用で個別プロパティの列挙コストを削減<br/>
+/// - プリセット比較は PropertiesEqual で全プロパティ一致を検証</remarks>
 public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
 {
+    /// <summary>シリアライズに使用する JsonSerializerContext と型を取得します。</summary>
     protected override (JsonSerializerContext Context, Type Type) SerializeInfo
         => (AppJsonContext.Default, typeof(ConvertConfig));
 
+    /// <summary>ConvertConfig の新しいインスタンスを初期化します。自動保存先を %LOCALAPPDATA% 配下に設定します。</summary>
     public ConvertConfig()
     {
         AutoSaveFileName = Path.Combine(
@@ -22,147 +46,306 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
             "Settings.json");
     }
 
+    // ─── 全モードプロパティの単一定義（これ1つでコピー・比較・全角設定を生成） ───
+
+    /// <summary>全モードプロパティのメタデータ定義配列。Get デリゲート、Set デリゲート、全角設定値を一元管理します。</summary>
+    static readonly ModePropDef[] _modeProps =
+    [
+        new(c => c.IsEnabledZenHan,                (c, v) => c.IsEnabledZenHan = (bool)v, null),
+        new(c => c.ConvertModeNumber,              (c, v) => c.ConvertModeNumber = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeAlphabet,            (c, v) => c.ConvertModeAlphabet = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolParenthesis,    (c, v) => c.ConvertModeSymbolParenthesis = (ZenHanMode)v, null),
+        new(c => c.ConvertModeSymbolSquareBracket,  (c, v) => c.ConvertModeSymbolSquareBracket = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolCurlyBracket,   (c, v) => c.ConvertModeSymbolCurlyBracket = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolDoubleQuote,    (c, v) => c.ConvertModeSymbolDoubleQuote = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolSingleQuote,    (c, v) => c.ConvertModeSymbolSingleQuote = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolComma,          (c, v) => c.ConvertModeSymbolComma = (ZenHanMode)v, null),
+        new(c => c.ConvertModeSymbolPeriod,         (c, v) => c.ConvertModeSymbolPeriod = (ZenHanMode)v, null),
+        new(c => c.ConvertModeSymbolColon,          (c, v) => c.ConvertModeSymbolColon = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolSemicolon,      (c, v) => c.ConvertModeSymbolSemicolon = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolLessThan,       (c, v) => c.ConvertModeSymbolLessThan = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolEqual,          (c, v) => c.ConvertModeSymbolEqual = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolGreaterThan,    (c, v) => c.ConvertModeSymbolGreaterThan = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolPlus,           (c, v) => c.ConvertModeSymbolPlus = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolHyphenMinus,    (c, v) => c.ConvertModeSymbolHyphenMinus = (ZenHanMode)v, null),
+        new(c => c.ConvertModeSymbolExclamation,    (c, v) => c.ConvertModeSymbolExclamation = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolSharp,          (c, v) => c.ConvertModeSymbolSharp = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolDollar,         (c, v) => c.ConvertModeSymbolDollar = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolPercent,        (c, v) => c.ConvertModeSymbolPercent = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolAmpersand,      (c, v) => c.ConvertModeSymbolAmpersand = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolAsterisk,       (c, v) => c.ConvertModeSymbolAsterisk = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolSlash,          (c, v) => c.ConvertModeSymbolSlash = (ZenHanMode)v, null),
+        new(c => c.ConvertModeSymbolQuestion,       (c, v) => c.ConvertModeSymbolQuestion = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolAt,             (c, v) => c.ConvertModeSymbolAt = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolCaret,          (c, v) => c.ConvertModeSymbolCaret = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolUnderBar,       (c, v) => c.ConvertModeSymbolUnderBar = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolBackquote,      (c, v) => c.ConvertModeSymbolBackquote = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolVerticalBar,    (c, v) => c.ConvertModeSymbolVerticalBar = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolTilde,          (c, v) => c.ConvertModeSymbolTilde = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeSymbolSpace,          (c, v) => c.ConvertModeSymbolSpace = (ZenHanMode)v, null),
+        new(c => c.ConvertModeKanaHan,              (c, v) => c.ConvertModeKanaHan = (ZenHanKanaMode)v, null),
+        new(c => c.ConvertModeKanaZenKata,          (c, v) => c.ConvertModeKanaZenKata = (ZenHanKanaMode)v, null),
+        new(c => c.ConvertModeKanaZenHira,          (c, v) => c.ConvertModeKanaZenHira = (ZenHanKanaMode)v, null),
+        new(c => c.ConvertModeEtcKanaVoice,         (c, v) => c.ConvertModeEtcKanaVoice = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeEtcKanaSemiVoice,     (c, v) => c.ConvertModeEtcKanaSemiVoice = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeEtcKanaMiddleDot,     (c, v) => c.ConvertModeEtcKanaMiddleDot = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeEtcKanaLeftCornerBracket, (c, v) => c.ConvertModeEtcKanaLeftCornerBracket = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeEtcKanaRightCornerBracket,(c, v) => c.ConvertModeEtcKanaRightCornerBracket = (ZenHanMode)v, ZenHanMode.ToZen),
+        new(c => c.ConvertModeEtcKanaProlong,       (c, v) => c.ConvertModeEtcKanaProlong = (ZenHanEtcZenHanAsciiMode)v, null),
+        new(c => c.ConvertModeEtcKanaPeriod,        (c, v) => c.ConvertModeEtcKanaPeriod = (ZenHanEtcZenHanAsciiMode)v, null),
+        new(c => c.ConvertModeEtcKanaComma,         (c, v) => c.ConvertModeEtcKanaComma = (ZenHanEtcZenHanAsciiMode)v, null),
+        new(c => c.ConvertModeEtcBSlashHan,         (c, v) => c.ConvertModeEtcBSlashHan = (ZenHanEtcYenMode)v, null),
+        new(c => c.ConvertModeEtcBSlashZen,         (c, v) => c.ConvertModeEtcBSlashZen = (ZenHanEtcYenMode)v, null),
+        new(c => c.ConvertModeEtcYenHan,            (c, v) => c.ConvertModeEtcYenHan = (ZenHanEtcYenMode)v, null),
+        new(c => c.ConvertModeEtcYenZen,            (c, v) => c.ConvertModeEtcYenZen = (ZenHanEtcYenMode)v, null),
+        new(c => c.ConvertModeEtcTabSpace,          (c, v) => c.ConvertModeEtcTabSpace = (ZenHanEtcSpecial)v, null),
+        new(c => c.ConvertModeEtcNewline,           (c, v) => c.ConvertModeEtcNewline = (ZenHanEtcSpecial)v, null),
+        new(c => c.ConvertModeEtcMultiSpace,        (c, v) => c.ConvertModeEtcMultiSpace = (ZenHanEtcSpecial)v, null),
+    ];
+
+    /// <summary>_modeProps から生成されたコピーアクション。各要素は (src, dst) => dst.Prop = src.Prop を実行します。</summary>
+    private static readonly Action<ConvertConfig, ConvertConfig>[] _copyActions =
+        [.. _modeProps.Select(m => (Action<ConvertConfig, ConvertConfig>)((s, t) => m.Set(t, m.Get(s))))];
+
+    /// <summary>_modeProps から生成された比較アクション。各要素は (a, b) => a.Prop == b.Prop を実行します。</summary>
+    private static readonly Func<ConvertConfig, ConvertConfig, bool>[] _compareActions =
+        [.. _modeProps.Select(m => (Func<ConvertConfig, ConvertConfig, bool>)((a, b) => Equals(m.Get(a), m.Get(b))))];
+
+    /// <summary>_modeProps から生成された全角設定セッター。各要素は c => c.Prop = ToZenValue を実行します。</summary>
+    private static readonly Action<ConvertConfig>[] _toZenSymbolSetters =
+        [.. _modeProps.Where(m => m.ToZenValue is not null)
+            .Select(m => (Action<ConvertConfig>)(c => m.Set(c, m.ToZenValue!)))];
+
+    /// <summary>他の ConvertConfig インスタンスから全設定をコピーします。</summary>
+    /// <param name="other">コピー元の設定インスタンス。</param>
+    /// <remarks>_copyActions 配列を使用して全モードプロパティを一括コピーし、置換ルールも複製します。</remarks>
     protected override void ApplyFrom(ConvertConfig other)
     {
-        [UnconditionalSuppressMessage("Trimming", "IL2075", Justification = "Class is annotated with DynamicallyAccessedMembers")]
-        static void CopyProperties(ConvertConfig source, ConvertConfig target)
-        {
-            var type = typeof(ConvertConfig);
-            foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
-            {
-                if (prop.CanWrite && prop.CanRead && prop.GetCustomAttribute<JsonIgnoreAttribute>() == null)
-                {
-                    var value = prop.GetValue(source);
-                    prop.SetValue(target, value);
-                }
-            }
-        }
-        CopyProperties(other, this);
+        foreach (var action in _copyActions) action(other, this);
+        ReplacePairs = [.. other.ReplacePairs];
     }
 
+    /// <summary>全角/半角変換の有効/無効を取得または設定します。</summary>
     [ObservableProperty]
     public partial bool IsEnabledZenHan { get; set; }
 
+    /// <summary>数字（0-9）の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeNumber { get; set; } = ZenHanMode.None;
 
+    /// <summary>英字（A-Z, a-z）の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeAlphabet { get; set; } = ZenHanMode.None;
 
+    /// <summary>丸括弧（）の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolParenthesis { get; set; } = ZenHanMode.None;
+
+    /// <summary>角括弧［］の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolSquareBracket { get; set; } = ZenHanMode.None;
+
+    /// <summary>波括弧｛｝の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolCurlyBracket { get; set; } = ZenHanMode.None;
+
+    /// <summary>ダブルクォート"の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolDoubleQuote { get; set; } = ZenHanMode.None;
+
+    /// <summary>シングルクォート'の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolSingleQuote { get; set; } = ZenHanMode.None;
+
+    /// <summary>カンマ，の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolComma { get; set; } = ZenHanMode.None;
+
+    /// <summary>ピリオド．の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolPeriod { get; set; } = ZenHanMode.None;
+
+    /// <summary>コロン：の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolColon { get; set; } = ZenHanMode.None;
+
+    /// <summary>セミコロン；の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolSemicolon { get; set; } = ZenHanMode.None;
+
+    /// <summary>不等号＜の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolLessThan { get; set; } = ZenHanMode.None;
+
+    /// <summary>イコール＝の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolEqual { get; set; } = ZenHanMode.None;
+
+    /// <summary>不等号＞の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolGreaterThan { get; set; } = ZenHanMode.None;
+
+    /// <summary>プラス＋の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolPlus { get; set; } = ZenHanMode.None;
+
+    /// <summary>マイナス－の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolHyphenMinus { get; set; } = ZenHanMode.None;
+
+    /// <summary>感嘆符！の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolExclamation { get; set; } = ZenHanMode.None;
+
+    /// <summary>シャープ＃の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolSharp { get; set; } = ZenHanMode.None;
+
+    /// <summary>ダラー＄の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolDollar { get; set; } = ZenHanMode.None;
+
+    /// <summary>パーセント％の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolPercent { get; set; } = ZenHanMode.None;
+
+    /// <summary>アンパサンド＆の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolAmpersand { get; set; } = ZenHanMode.None;
+
+    /// <summary>アスタリスク＊の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolAsterisk { get; set; } = ZenHanMode.None;
+
+    /// <summary>スラッシュ／の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolSlash { get; set; } = ZenHanMode.None;
+
+    /// <summary>疑問符？の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolQuestion { get; set; } = ZenHanMode.None;
+
+    /// <summary>アットマーク＠の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolAt { get; set; } = ZenHanMode.None;
+
+    /// <summary>キャレット＾の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolCaret { get; set; } = ZenHanMode.None;
+
+    /// <summary>アンダースコア＿の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolUnderBar { get; set; } = ZenHanMode.None;
+
+    /// <summary>バッククォート`の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolBackquote { get; set; } = ZenHanMode.None;
+
+    /// <summary>縦棒｜の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolVerticalBar { get; set; } = ZenHanMode.None;
+
+    /// <summary>チルダ～の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolTilde { get; set; } = ZenHanMode.None;
+
+    /// <summary>スペース␣の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeSymbolSpace { get; set; } = ZenHanMode.None;
 
+    /// <summary>半角カナの変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanKanaMode ConvertModeKanaHan { get; set; } = ZenHanKanaMode.None;
+
+    /// <summary>全角カタカナの変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanKanaMode ConvertModeKanaZenKata { get; set; } = ZenHanKanaMode.None;
+
+    /// <summary>全角ひらがなの変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanKanaMode ConvertModeKanaZenHira { get; set; } = ZenHanKanaMode.None;
 
+    /// <summary>かな 濁点゛の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeEtcKanaVoice { get; set; } = ZenHanMode.None;
+
+    /// <summary>かな 半濁点゜の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeEtcKanaSemiVoice { get; set; } = ZenHanMode.None;
+
+    /// <summary>かな 中点・の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeEtcKanaMiddleDot { get; set; } = ZenHanMode.None;
+
+    /// <summary>かな 左上括弧「の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeEtcKanaLeftCornerBracket { get; set; } = ZenHanMode.None;
+
+    /// <summary>かな 右下括弧」の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanMode ConvertModeEtcKanaRightCornerBracket { get; set; } = ZenHanMode.None;
 
+    /// <summary>かな 長音記号ーの変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanEtcZenHanAsciiMode ConvertModeEtcKanaProlong { get; set; } = ZenHanEtcZenHanAsciiMode.None;
+
+    /// <summary>かな 読点。の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanEtcZenHanAsciiMode ConvertModeEtcKanaPeriod { get; set; } = ZenHanEtcZenHanAsciiMode.None;
+
+    /// <summary>かな 句点、の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanEtcZenHanAsciiMode ConvertModeEtcKanaComma { get; set; } = ZenHanEtcZenHanAsciiMode.None;
 
+    /// <summary>バックスラッシュ半角\の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanEtcYenMode ConvertModeEtcBSlashHan { get; set; } = ZenHanEtcYenMode.None;
+
+    /// <summary>バックスラッシュ全角＼の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanEtcYenMode ConvertModeEtcBSlashZen { get; set; } = ZenHanEtcYenMode.None;
+
+    /// <summary>円記号半角¥の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanEtcYenMode ConvertModeEtcYenHan { get; set; } = ZenHanEtcYenMode.None;
+
+    /// <summary>円記号全角￥の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanEtcYenMode ConvertModeEtcYenZen { get; set; } = ZenHanEtcYenMode.None;
 
+    /// <summary>タブ文字の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanEtcSpecial ConvertModeEtcTabSpace { get; set; } = ZenHanEtcSpecial.None;
+
+    /// <summary>改行文字の変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanEtcSpecial ConvertModeEtcNewline { get; set; } = ZenHanEtcSpecial.None;
+
+    /// <summary>連続スペースの変換モードを取得または設定します。</summary>
     [ObservableProperty]
     public partial ZenHanEtcSpecial ConvertModeEtcMultiSpace { get; set; } = ZenHanEtcSpecial.None;
 
-    public List<ReplacePair> ReplacePairs
-    {
-        get => _replacePairs;
-        set { if (!ReferenceEquals(_replacePairs, value)) { _replacePairs = value; OnPropertyChanged(); } }
-    }
+    /// <summary>ユーザー定義の置換ルール一覧。</summary>
+    /// <remarks>CommunityToolkit.Mvvm のソースジェネレーターにより、ReplacePairs プロパティとして公開されます。<br/>
+    /// 設定画面の DataGrid で編集され、CharConverter.ApplyUserReplacements で変換時に適用されます。</remarks>
+#pragma warning disable MVVMTK0042 // フィールドベース ObservableProperty は互換性のために維持
+    [ObservableProperty]
     private List<ReplacePair> _replacePairs = [];
+#pragma warning restore MVVMTK0042
 
+    /// <summary>組み込みプリセット「全力会計」の定数名。</summary>
     public const string BuiltInPresetAccountingPower = "全力会計（Built-in）";
 
-    private static readonly Dictionary<string, Action<ConvertConfig>> BuiltInPresets = new()
+    /// <summary>組み込みプリセット定義。FrozenDictionary による高速・不変なルックアップ。</summary>
+    private static readonly FrozenDictionary<string, Action<ConvertConfig>> BuiltInPresets =
+        new Dictionary<string, Action<ConvertConfig>>
     {
         [BuiltInPresetAccountingPower] = ApplyAccountingPowerPreset,
-    };
+    }.ToFrozenDictionary();
 
+    /// <summary>組み込みプリセット「全力会計」を適用します。</summary>
+    /// <param name="c">設定を適用する ConvertConfig インスタンス。</param>
+    /// <remarks>数字/英字/一部記号を半角、その他記号/かなを全角にする会計帳票向け設定です。</remarks>
     private static void ApplyAccountingPowerPreset(ConvertConfig c)
     {
         c.IsEnabledZenHan = true;
@@ -174,15 +357,8 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
         c.ConvertModeSymbolComma = ZenHanMode.ToHan;
         c.ConvertModeSymbolPeriod = ZenHanMode.ToHan;
         c.ConvertModeSymbolSpace = ZenHanMode.ToHan;
-        // その他の記号 → 全角
-        foreach (var prop in typeof(ConvertConfig).GetProperties(BindingFlags.Public | BindingFlags.Instance)
-            .Where(p => p.Name.StartsWith("ConvertModeSymbol") && p.PropertyType == typeof(ZenHanMode)
-                && p.Name is not ("ConvertModeSymbolParenthesis" or "ConvertModeSymbolHyphenMinus"
-                    or "ConvertModeSymbolSlash" or "ConvertModeSymbolComma"
-                    or "ConvertModeSymbolPeriod" or "ConvertModeSymbolSpace")))
-        {
-            prop.SetValue(c, ZenHanMode.ToZen);
-        }
+        // その他の記号 → 全角（型安全な Action 配列）
+        foreach (var setter in _toZenSymbolSetters) setter(c);
         c.ConvertModeKanaHan = ZenHanKanaMode.ToZenKata;
         c.ConvertModeKanaZenKata = ZenHanKanaMode.None;
         c.ConvertModeKanaZenHira = ZenHanKanaMode.None;
@@ -203,8 +379,14 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
         c.ConvertModeEtcMultiSpace = ZenHanEtcSpecial.ToHanSpace;
     }
 
+    /// <summary>現在の設定を JSON ファイルにエクスポートします。</summary>
+    /// <param name="filePath">エクスポート先のファイルパス</param>
     public void ExportToFile(string filePath) => SaveToJsonFile(filePath);
 
+    /// <summary>JSON ファイルから設定をインポートします。</summary>
+    /// <param name="filePath">インポート元のファイルパス</param>
+    /// <returns>インポートに成功した場合は true。ファイルが存在しない、または JSON が不正な場合は false。</returns>
+    /// <remarks>インポート中は自動保存を一時的に無効化し、インポート完了後に自動保存ファイルも更新します。</remarks>
     public bool ImportFromFile(string filePath)
     {
         if (!File.Exists(filePath)) return false;
@@ -220,22 +402,33 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
             SaveToJsonFile(AutoSaveFileName);
             return true;
         }
-        catch { return false; }
+        catch
+        {
+            // 不正なJSONファイルやアクセス権限不足による読み取り失敗。
+            // 呼び出し元が false を「失敗」として扱いUIに表示するため、false を返す。
+            return false;
+        }
     }
 
+    /// <summary>ユーザープリセットの保存ディレクトリパス。</summary>
     private static string PresetDirectory => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         "ClipboardZenHanConverter", "Presets");
 
+    /// <summary>利用可能なプリセット名の一覧を取得します。</summary>
+    /// <returns>プリセット名の配列。組み込みプリセット + ユーザー定義プリセット（.json）</returns>
     public static string[] GetPresetNames()
     {
-        var names = new List<string>(BuiltInPresets.Keys);
+        var names = new List<string>([.. BuiltInPresets.Keys]);
         var dir = PresetDirectory;
         if (Directory.Exists(dir))
-            names.AddRange(Directory.GetFiles(dir, "*.json").Select(Path.GetFileNameWithoutExtension).Where(n => !string.IsNullOrEmpty(n))!);
+            names.AddRange(Directory.GetFiles(dir, "*.json").Select(Path.GetFileNameWithoutExtension).OfType<string>());
         return [.. names];
     }
 
+    /// <summary>現在の設定をプリセットとして保存します。</summary>
+    /// <param name="name">プリセット名。空または空白の場合は何もしない。</param>
+    /// <remarks>保存先: %LOCALAPPDATA%\ClipboardZenHanConverter\Presets\{name}.json</remarks>
     public void SavePreset(string name)
     {
         if (string.IsNullOrWhiteSpace(name)) return;
@@ -243,6 +436,11 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
         SaveToJsonFile(Path.Combine(PresetDirectory, $"{name}.json"));
     }
 
+    /// <summary>指定されたプリセットを読み込みます。</summary>
+    /// <param name="name">プリセット名。組み込みプリセット名の場合は BuiltInPresets から適用。</param>
+    /// <returns>読み込みに成功した場合は true</returns>
+    /// <remarks>組み込みプリセットは BuiltInPresets Dictionary から即時適用されます。<br/>
+    /// ユーザープリセットは Presets ディレクトリの JSON ファイルからインポートされます。</remarks>
     public bool LoadPreset(string name)
     {
         if (string.IsNullOrWhiteSpace(name)) return false;
@@ -250,6 +448,10 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
         return ImportFromFile(Path.Combine(PresetDirectory, $"{name}.json"));
     }
 
+    /// <summary>指定されたユーザープリセットを削除します。</summary>
+    /// <param name="name">削除するプリセット名。組み込みプリセットは削除されません。</param>
+    /// <remarks>組み込みプリセット（BuiltInPresets）の削除はできません。<br/>
+    /// ファイルが存在しない場合は何もしません。</remarks>
     public static void DeletePreset(string name)
     {
         if (string.IsNullOrWhiteSpace(name) || BuiltInPresets.ContainsKey(name)) return;
@@ -257,47 +459,32 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
         if (File.Exists(fp)) File.Delete(fp);
     }
 
-    private static readonly PropertyInfo[] _comparableProperties = typeof(ConvertConfig)
-        .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-        .Where(p => p.CanWrite && p.CanRead && p.GetCustomAttribute<JsonIgnoreAttribute>() == null && p.Name != nameof(ReplacePairs))
-        .ToArray();
-
-    private static Dictionary<string, Dictionary<string, object?>>? _builtInSnapshotCache;
-
-    private static bool ReplacePairsEqual(List<ReplacePair> a, List<ReplacePair> b)
-        => a.Count == b.Count && a.Zip(b).All(p => p.First == p.Second);
-
+    /// <summary>2つの ConvertConfig の全プロパティが等しいかを検証します。</summary>
+    /// <param name="a">比較対象A</param>
+    /// <param name="b">比較対象B</param>
+    /// <returns>全プロパティが一致する場合は true</returns>
+    /// <remarks>_compareActions 配列を使用して全モードプロパティを比較します。置換ルールも件数と内容を比較します。</remarks>
     private static bool PropertiesEqual(ConvertConfig a, ConvertConfig b)
     {
-        foreach (var prop in _comparableProperties)
-        {
-            if (!Equals(prop.GetValue(a), prop.GetValue(b))) return false;
-        }
-        return ReplacePairsEqual(a.ReplacePairs, b.ReplacePairs);
+        foreach (var cmp in _compareActions)
+            if (!cmp(a, b)) return false;
+        return a.ReplacePairs.Count == b.ReplacePairs.Count && a.ReplacePairs.Zip(b.ReplacePairs).All(p => p.First == p.Second);
     }
 
-    private static Dictionary<string, Dictionary<string, object?>> GetBuiltInSnapshots()
+    /// <summary>現在の設定と一致するプリセットを検索します。</summary>
+    /// <returns>一致するプリセット名。見つからない場合は null。</returns>
+    /// <remarks>最初に組み込みプリセット、次にユーザープリセットを検索します。<br/>
+    /// 比較は _compareActions 配列を使用した全モードプロパティの一致検証で行われます。</remarks>
+    public string? FindMatchingPreset()
     {
-        if (_builtInSnapshotCache is not null) return _builtInSnapshotCache;
-        _builtInSnapshotCache = [];
+        // Built-in プリセットとの比較
         foreach (var (name, apply) in BuiltInPresets)
         {
             var temp = new ConvertConfig();
             apply(temp);
-            var snapshot = new Dictionary<string, object?>(_comparableProperties.Length);
-            foreach (var prop in _comparableProperties) snapshot[prop.Name] = prop.GetValue(temp);
-            _builtInSnapshotCache[name] = snapshot;
+            if (PropertiesEqual(this, temp)) return name;
         }
-        return _builtInSnapshotCache;
-    }
-
-    public string? FindMatchingPreset()
-    {
-        foreach (var (name, snapshot) in GetBuiltInSnapshots())
-        {
-            if (_comparableProperties.All(prop => Equals(prop.GetValue(this), snapshot.GetValueOrDefault(prop.Name))))
-                return name;
-        }
+        // ユーザープリセットとの比較
         var dir = PresetDirectory;
         if (!Directory.Exists(dir)) return null;
         var (ctx, type) = SerializeInfo;
@@ -309,8 +496,12 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
                 if (JsonSerializer.Deserialize(stream, type, ctx) is ConvertConfig loaded && PropertiesEqual(this, loaded))
                     return Path.GetFileNameWithoutExtension(fp);
             }
-            catch { }
+            catch
+            {
+                // 一部のプリセットファイルが破損していても残りの検索を続行する。
+            }
         }
         return null;
     }
-}
+
+    }
