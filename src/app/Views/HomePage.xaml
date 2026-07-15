@@ -16,6 +16,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Horizontal" Grid.Column="0">
                         <ToggleSwitch OnContent="全角/半角の変換" OffContent="全角/半角の変換"
@@ -28,7 +29,18 @@
                             VerticalAlignment="Bottom"/>
                     </StackPanel>
 
-                    <Button Grid.Column="1"
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,8,0">
+                        <ComboBox x:Name="HomePresetComboBox"
+                                  PlaceholderText="プリセット未選択"
+                                  ItemsSource="{x:Bind ViewModel.PresetNames}"
+                                  SelectedItem="{x:Bind ViewModel.SelectedPresetName, Mode=OneWay}"
+                                  SelectionChanged="OnHomePresetComboBoxSelectionChanged"
+                                  IsEnabled="{x:Bind ViewModel.IsPresetSelected, Mode=OneWay}"
+                                  ToolTipService.ToolTip="保存済みのプリセットを選択して設定を読み込みます"
+                                  MinWidth="180"/>
+                    </StackPanel>
+
+                    <Button Grid.Column="2"
                         VerticalAlignment="Center"
                         ToolTipService.ToolTip="設定画面へ移動します"
                         Command="{x:Bind ViewModel.NavigateToSettingsCommand}"

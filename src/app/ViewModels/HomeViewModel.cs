@@ -3,6 +3,8 @@ using ClipboardZenHanConverter.Core.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Dispatching;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace ClipboardZenHanConverter.App.ViewModels;
@@ -42,6 +44,10 @@ public partial class HomeViewModel : ObservableObject, IDisposable
     /// <summary>Dispose 済みフラグ。</summary>
     private bool _disposed;
 
+    /// <summary>設定画面の ViewModel（同期用）。</summary>
+    private readonly SettingsViewModel? _settingsViewModel;
+    /// <summary>プリセット選択の更新中フラグ。</summary>
+    private bool _isUpdatingSelection;
     /// <summary>テスト用: true に設定すると同期実行します。</summary>
     public bool TestMode { get; set; }
 
@@ -56,6 +62,16 @@ public partial class HomeViewModel : ObservableObject, IDisposable
     /// <summary>変換設定を取得します。</summary>
     public ConvertConfig Config { get; }
 
+    /// <summary>プリセット名の一覧。</summary>
+    public ObservableCollection<string> PresetNames { get; } = [];
+
+    /// <summary>現在選択されているプリセット名を取得または設定します。</summary>
+    [ObservableProperty]
+    public partial string? SelectedPresetName { get; set; }
+
+    /// <summary>プリセットが選択されているかどうかを取得します。</summary>
+    public bool IsPresetSelected => SelectedPresetName is not null;
+
     /// <summary>設定画面へ遷移します。</summary>
     [RelayCommand]
     private void NavigateToSettings() => _navigation.NavigateTo("Settings");
@@ -65,20 +81,31 @@ public partial class HomeViewModel : ObservableObject, IDisposable
     /// <param name="converter">テキスト変換器</param>
     /// <param name="clipboardService">クリップボードサービス</param>
     /// <param name="navigation">ナビゲーションサービス</param>
+    /// <param name="settingsViewModel">設定画面の ViewModel（省略可能）</param>
     public HomeViewModel(ConvertConfig config, ITextConverter converter,
-        IClipboardService clipboardService, INavigationService navigation)
+        IClipboardService clipboardService, INavigationService navigation,
+        SettingsViewModel? settingsViewModel = null)
     {
         Config = config;
         _converter = converter;
         _clipboardService = clipboardService;
         _navigation = navigation;
         _clipboardService.ContentChanged += Clipboard_ContentChanged;
+
+        if (settingsViewModel is not null)
+        {
+            _settingsViewModel = settingsViewModel;
+            SyncFromSettings();
+            settingsViewModel.PropertyChanged += OnSettingsPropertyChanged;
+            settingsViewModel.PresetNames.CollectionChanged += (_, _) => SyncFromSettings();
+        }
     }
 
-    /// <summary>リソースを解放します。クリップボード変更イベントの購読を解除し、セマフォを破棄します。</summary>
+    /// <summary>設定画面の ViewModel との同期を解除します。</summary>
     public void Dispose()
     {
         if (_disposed) return;
+        _settingsViewModel?.PropertyChanged -= OnSettingsPropertyChanged;
         _clipboardService.ContentChanged -= Clipboard_ContentChanged;
         _clipboardSemaphore.Dispose();
         _disposed = true;
@@ -165,5 +192,48 @@ public partial class HomeViewModel : ObservableObject, IDisposable
         {
             _clipboardSemaphore.Release();
         }
+    }
+    /// <summary>SelectedPresetName 変更時に呼び出され、設定画面の ViewModel と同期します。</summary>
+    partial void OnSelectedPresetNameChanged(string? value)
+    {
+        if (_isUpdatingSelection || _settingsViewModel is null) return;
+        _isUpdatingSelection = true;
+        try
+        {
+            OnPropertyChanged(nameof(IsPresetSelected));
+            _settingsViewModel.LoadPreset(value);
+            SyncFromSettings();
+        }
+        finally
+        {
+            _isUpdatingSelection = false;
+        }
+    }
+
+    /// <summary>設定画面の ViewModel からプリセット状態を同期します。</summary>
+    private void SyncFromSettings()
+    {
+        if (_settingsViewModel is null) return;
+        PresetNames.Clear();
+        foreach (var name in _settingsViewModel.PresetNames)
+            PresetNames.Add(name);
+        _isUpdatingSelection = true;
+        try
+        {
+            SelectedPresetName = _settingsViewModel.SelectedPresetName;
+            OnPropertyChanged(nameof(IsPresetSelected));
+        }
+        finally
+        {
+            _isUpdatingSelection = false;
+        }
+    }
+
+    /// <summary>設定画面の PropertyChanged イベントハンドラ。</summary>
+    private void OnSettingsPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (_isUpdatingSelection) return;
+        if (e.PropertyName is nameof(SettingsViewModel.SelectedPresetName) or nameof(SettingsViewModel.PresetNames))
+            SyncFromSettings();
     }
 }

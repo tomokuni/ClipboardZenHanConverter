@@ -16,4 +16,13 @@ public sealed partial class HomePage : Page
         ViewModel = viewModel;
         this.InitializeComponent();
     }
+
+    /// <summary>ホーム画面のプリセット選択が変更された時に呼び出されます。</summary>
+    private void OnHomePresetComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.AddedItems.FirstOrDefault() is string name)
+        {
+            ViewModel.SelectedPresetName = name;
+        }
+    }
 }

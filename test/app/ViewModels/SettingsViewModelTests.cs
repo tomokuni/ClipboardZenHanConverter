@@ -4,20 +4,17 @@ using ClipboardZenHanConverter.Core.Enums;
 using ClipboardZenHanConverter.Core.Models;
 using Xunit;
 
-namespace ClipboardZenHanConverter.Tests;
+namespace ClipboardZenHanConverter.Tests.App.ViewModels;
 
 public class SettingsViewModelTests
 {
     [Fact]
     public void Constructor_InitializesItems()
     {
-        // Arrange
         var config = new ConvertConfig();
 
-        // Act
         var vm = new SettingsViewModel(config);
 
-        // Assert
         Assert.NotEmpty(vm.NumberItems);
         Assert.NotEmpty(vm.AlphabetItems);
         Assert.Equal(SegmentDefinitions.NumberDefs.Length, vm.NumberItems.Count);
@@ -27,33 +24,26 @@ public class SettingsViewModelTests
     [Fact]
     public void Item_SelectionChange_UpdatesConfig()
     {
-        // Arrange
         var config = new ConvertConfig { ConvertModeNumber = ZenHanMode.None };
         var vm = new SettingsViewModel(config);
 
-        var numberItem = vm.NumberItems.First(); // Def: "数字 の変換"
-        // Ensure we pick a segment that is different from current val (None)
+        var numberItem = vm.NumberItems.First();
         var toHanSegment = numberItem.Segments.First(s => s.Content == "半角");
 
-        // Act
         numberItem.SelectedLabel = toHanSegment.Content;
 
-        // Assert
         Assert.Equal(ZenHanMode.ToHan, config.ConvertModeNumber);
     }
 
     [Fact]
     public void Item_SelectedLabel_ReflectsConfigChange()
     {
-        // Arrange
         var config = new ConvertConfig { ConvertModeNumber = ZenHanMode.None };
         var vm = new SettingsViewModel(config);
         var numberItem = vm.NumberItems.First();
 
-        // Act
         config.ConvertModeNumber = ZenHanMode.ToZen;
 
-        // Assert
         Assert.Equal("全角", numberItem.SelectedLabel);
     }
 }

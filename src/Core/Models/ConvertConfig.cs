@@ -341,14 +341,88 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
     /// <summary>組み込みプリセット「全力会計」の定数名。</summary>
     public const string BuiltInPresetAccountingPower = "全力会計（Built-in）";
 
+    /// <summary>組み込みプリセット「英数記号半角、かな全角」の定数名。</summary>
+    public const string BuiltInPresetAlphanumericHanKanaZen = "英数記号半角、かな全角（Built-in）";
+
+    /// <summary>指定されたプリセット名が組み込みプリセットかどうかを判定します。</summary>
+    /// <param name="name">プリセット名</param>
+    /// <returns>組み込みプリセットの場合は true</returns>
+    public static bool IsBuiltInPreset(string name) => BuiltInPresets.ContainsKey(name);
+
     /// <summary>組み込みプリセット定義。FrozenDictionary による高速・不変なルックアップ。</summary>
     private static readonly FrozenDictionary<string, Action<ConvertConfig>> BuiltInPresets =
         new Dictionary<string, Action<ConvertConfig>>
         {
             [BuiltInPresetAccountingPower] = ApplyAccountingPowerPreset,
+            [BuiltInPresetAlphanumericHanKanaZen] = ApplyAlphanumericHanKanaZenPreset,
         }.ToFrozenDictionary();
 
-    /// <summary>組み込みプリセット「全力会計」を適用します。</summary>
+    /// <summary>組み込みプリセット「英数記号半角、かな全角」を適用します。</summary>
+    /// <param name="c">設定を適用する ConvertConfig インスタンス。</param>
+    /// <remarks>英字/数字/記号を半角、半角カナを全角カタカナ、バックスラッシュ/円記号を半角円記号に統一します。<br/>
+    /// 改行は変換しません。</remarks>
+    private static void ApplyAlphanumericHanKanaZenPreset(ConvertConfig c)
+    {
+        c.IsEnabledZenHan = true;
+        c.ConvertModeNumber = ZenHanMode.ToHan;
+        c.ConvertModeAlphabet = ZenHanMode.ToHan;
+        // 英数記号 → 全て半角
+        c.ConvertModeSymbolParenthesis = ZenHanMode.ToHan;
+        c.ConvertModeSymbolSquareBracket = ZenHanMode.ToHan;
+        c.ConvertModeSymbolCurlyBracket = ZenHanMode.ToHan;
+        c.ConvertModeSymbolDoubleQuote = ZenHanMode.ToHan;
+        c.ConvertModeSymbolSingleQuote = ZenHanMode.ToHan;
+        c.ConvertModeSymbolComma = ZenHanMode.ToHan;
+        c.ConvertModeSymbolPeriod = ZenHanMode.ToHan;
+        c.ConvertModeSymbolColon = ZenHanMode.ToHan;
+        c.ConvertModeSymbolSemicolon = ZenHanMode.ToHan;
+        c.ConvertModeSymbolLessThan = ZenHanMode.ToHan;
+        c.ConvertModeSymbolEqual = ZenHanMode.ToHan;
+        c.ConvertModeSymbolGreaterThan = ZenHanMode.ToHan;
+        c.ConvertModeSymbolPlus = ZenHanMode.ToHan;
+        c.ConvertModeSymbolHyphenMinus = ZenHanMode.ToHan;
+        c.ConvertModeSymbolExclamation = ZenHanMode.ToHan;
+        c.ConvertModeSymbolSharp = ZenHanMode.ToHan;
+        c.ConvertModeSymbolDollar = ZenHanMode.ToHan;
+        c.ConvertModeSymbolPercent = ZenHanMode.ToHan;
+        c.ConvertModeSymbolAmpersand = ZenHanMode.ToHan;
+        c.ConvertModeSymbolAsterisk = ZenHanMode.ToHan;
+        c.ConvertModeSymbolSlash = ZenHanMode.ToHan;
+        c.ConvertModeSymbolQuestion = ZenHanMode.ToHan;
+        c.ConvertModeSymbolAt = ZenHanMode.ToHan;
+        c.ConvertModeSymbolCaret = ZenHanMode.ToHan;
+        c.ConvertModeSymbolUnderBar = ZenHanMode.ToHan;
+        c.ConvertModeSymbolBackquote = ZenHanMode.ToHan;
+        c.ConvertModeSymbolVerticalBar = ZenHanMode.ToHan;
+        c.ConvertModeSymbolTilde = ZenHanMode.ToHan;
+        c.ConvertModeSymbolSpace = ZenHanMode.ToHan;
+        // かな → 半角カナ→全角カタカナ、全角カタカナ/ひらがなは変換なし
+        c.ConvertModeKanaHan = ZenHanKanaMode.ToZenKata;
+        c.ConvertModeKanaZenKata = ZenHanKanaMode.None;
+        c.ConvertModeKanaZenHira = ZenHanKanaMode.None;
+        // かな記号 → 半角
+        c.ConvertModeEtcKanaVoice = ZenHanMode.ToHan;
+        c.ConvertModeEtcKanaSemiVoice = ZenHanMode.ToHan;
+        c.ConvertModeEtcKanaMiddleDot = ZenHanMode.ToHan;
+        c.ConvertModeEtcKanaLeftCornerBracket = ZenHanMode.ToHan;
+        c.ConvertModeEtcKanaRightCornerBracket = ZenHanMode.ToHan;
+        // かな約物 → 全角
+        c.ConvertModeEtcKanaProlong = ZenHanEtcZenHanAsciiMode.ToZen;
+        c.ConvertModeEtcKanaPeriod = ZenHanEtcZenHanAsciiMode.ToZen;
+        c.ConvertModeEtcKanaComma = ZenHanEtcZenHanAsciiMode.ToZen;
+        // バックスラッシュ/円記号 → 半角円記号
+        c.ConvertModeEtcBSlashHan = ZenHanEtcYenMode.ToHanYen;
+        c.ConvertModeEtcBSlashZen = ZenHanEtcYenMode.ToHanYen;
+        c.ConvertModeEtcYenHan = ZenHanEtcYenMode.None;
+        c.ConvertModeEtcYenZen = ZenHanEtcYenMode.ToHanYen;
+        // 特殊文字: タブを半角スペース、改行は変換なし、連続スペースを統合
+        c.ConvertModeEtcTabSpace = ZenHanEtcSpecial.ToHanSpace;
+        c.ConvertModeEtcNewline = ZenHanEtcSpecial.None;
+        c.ConvertModeEtcMultiSpace = ZenHanEtcSpecial.ToHanSpace;
+        c.ReplacePairs = [];
+    }
+
+    /// <summary>組み込みプリセット「全力会計」を適用します。
     /// <param name="c">設定を適用する ConvertConfig インスタンス。</param>
     /// <remarks>数字/英字/一部記号を半角、その他記号/かなを全角にする会計帳票向け設定です。</remarks>
     private static void ApplyAccountingPowerPreset(ConvertConfig c)
@@ -382,6 +456,7 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
         c.ConvertModeEtcTabSpace = ZenHanEtcSpecial.ToHanSpace;
         c.ConvertModeEtcNewline = ZenHanEtcSpecial.ToHanSpace;
         c.ConvertModeEtcMultiSpace = ZenHanEtcSpecial.ToHanSpace;
+        c.ReplacePairs = [];
     }
 
     /// <summary>現在の設定を JSON ファイルにエクスポートします。</summary>
@@ -431,12 +506,18 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
 
     /// <summary>利用可能なプリセット名の一覧を取得します。</summary>
     /// <returns>プリセット名の配列。組み込みプリセット + ユーザー定義プリセット（.json）</returns>
+    /// <remarks>並び順は「組込み→保存」の優先順で、各グループ内では名前の昇順です。</remarks>
     public static string[] GetPresetNames()
     {
-        var names = new List<string>([.. BuiltInPresets.Keys]);
+        var names = new List<string>();
+        names.AddRange(BuiltInPresets.Keys.OrderBy(n => n, StringComparer.Ordinal));
         var dir = PresetDirectory;
         if (Directory.Exists(dir))
-            names.AddRange(Directory.GetFiles(dir, "*.json").Select(Path.GetFileNameWithoutExtension).OfType<string>());
+            names.AddRange(
+                Directory.GetFiles(dir, "*.json")
+                    .Select(Path.GetFileNameWithoutExtension)
+                    .OfType<string>()
+                    .OrderBy(n => n, StringComparer.Ordinal));
         return [.. names];
     }
 
@@ -487,40 +568,31 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
 
     /// <summary>現在の設定と一致するプリセットを検索します。</summary>
     /// <returns>一致するプリセット名。見つからない場合は null。</returns>
-    /// <remarks>最初に組み込みプリセット、次にユーザープリセットを検索します。<br/>
+    /// <remarks>GetPresetNames() と同じ並び順（組込み→保存、各グループ内で名前昇順）で先頭から順に一致確認します。<br/>
     /// 比較は _compareActions 配列を使用した全モードプロパティの一致検証で行われます。</remarks>
     public string? FindMatchingPreset()
     {
-        // Built-in プリセットとの比較
-        foreach (var (name, apply) in BuiltInPresets)
+        // GetPresetNames() と同じ並び順で一致確認
+        foreach (var name in GetPresetNames())
         {
-            var temp = new ConvertConfig();
-            apply(temp);
-            if (PropertiesEqual(this, temp)) return name;
-        }
-        // ユーザープリセットとの比較
-        var dir = PresetDirectory;
-        if (!Directory.Exists(dir)) return null;
-        var info = SerializeInfo;
-        foreach (var fp in Directory.GetFiles(dir, "*.json"))
-        {
-            try
+            if (BuiltInPresets.TryGetValue(name, out var apply))
             {
-                using var stream = File.OpenRead(fp);
-                if (JsonSerializer.Deserialize(stream, info.Type, info.Context) is ConvertConfig loaded && PropertiesEqual(this, loaded))
-                    return Path.GetFileNameWithoutExtension(fp);
+                var temp = new ConvertConfig();
+                apply(temp);
+                if (PropertiesEqual(this, temp)) return name;
             }
-            catch (JsonException)
+            else
             {
-                // 一部のプリセットファイルが破損していても残りの検索を続行する。
-            }
-            catch (IOException)
-            {
-                // ファイル読み取りエラーでも残りのプリセット検索を続行する。
-            }
-            catch (UnauthorizedAccessException)
-            {
-                // アクセス権限不足のファイルはスキップして続行する。
+                var fp = Path.Combine(PresetDirectory, $"{name}.json");
+                try
+                {
+                    using var stream = File.OpenRead(fp);
+                    if (JsonSerializer.Deserialize(stream, SerializeInfo.Type, SerializeInfo.Context) is ConvertConfig loaded && PropertiesEqual(this, loaded))
+                        return name;
+                }
+                catch (JsonException) { }
+                catch (IOException) { }
+                catch (UnauthorizedAccessException) { }
             }
         }
         return null;

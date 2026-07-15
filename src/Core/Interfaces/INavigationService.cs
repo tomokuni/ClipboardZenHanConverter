@@ -11,4 +11,8 @@ public interface INavigationService
 
     /// <summary>ナビゲーションサービスを初期化します。</summary>
     void Initialize();
+
+    /// <summary>SettingsPage をバックグラウンドで事前生成します。</summary>
+    /// <remarks>UIスレッドがアイドルになったタイミングで設定画面のXAML解析と生成を実行します。</remarks>
+    void PreloadSettingsAsync();
 }

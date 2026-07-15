@@ -3,6 +3,7 @@ using ClipboardZenHanConverter.Core.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace ClipboardZenHanConverter.App.ViewModels;
 
@@ -47,12 +48,18 @@ public partial class SettingsViewModel : ObservableObject
     /// <summary>プリセット名の一覧。</summary>
     public ObservableCollection<string> PresetNames { get; } = [];
 
-    /// <summary>新規プリセット名の入力値を取得または設定します。</summary>
-    [ObservableProperty]
-    public partial string NewPresetName { get; set; } = string.Empty;
-
     /// <summary>ユーザー定義の置換ルール一覧。</summary>
     public ObservableCollection<ReplacePairItem> ReplaceItems { get; } = [];
+
+    /// <summary>現在選択されているプリセット名を取得または設定します。</summary>
+    /// <remarks>UIのドロップダウンで選択されたプリセット名を保持します。<br/>
+    /// 値が変更されるとドロップダウンからの選択としてプリセットを読み込みます。<br/>
+    /// 設定変更時は FindMatchingPreset で一致するプリセット名を自動設定します。</remarks>
+    [ObservableProperty]
+    public partial string? SelectedPresetName { get; set; }
+
+    /// <summary>プリセット選択の更新中フラグ。再帰的なプリセット読み込みを防止します。</summary>
+    private bool _isUpdatingSelection;
 
     /// <summary>SettingsViewModel の新しいインスタンスを初期化します。</summary>
     /// <param name="convertConfig">変換設定。この設定のセグメント定義に基づいて各変換項目を生成します。</param>
@@ -72,6 +79,8 @@ public partial class SettingsViewModel : ObservableObject
             ReplaceItems.Add(new ReplacePairItem(pair));
 
         RefreshPresets();
+        convertConfig.PropertyChanged += OnConfigPropertyChanged;
+        RefreshSelectedPreset();
     }
 
     /// <summary>SegmentDefine 配列から ZenHanConvertItem のリストを生成します。</summary>
@@ -137,14 +146,14 @@ public partial class SettingsViewModel : ObservableObject
         if (result)
         {
             ReloadReplaceItemsFromConfig();
+            RefreshSelectedPreset();
             return null;
         }
         return "設定のインポートに失敗しました。ファイルが正しいJSON形式であることを確認してください。";
     }
 
     /// <summary>プリセット一覧を更新します。</summary>
-    [RelayCommand]
-    private void RefreshPresets()
+    public void RefreshPresets()
     {
         PresetNames.Clear();
         foreach (var name in ConvertConfig.GetPresetNames())
@@ -153,34 +162,86 @@ public partial class SettingsViewModel : ObservableObject
         }
     }
 
-    /// <summary>現在の設定をプリセットとして保存します。</summary>
-    [RelayCommand]
-    private void SavePreset()
+    /// <summary>SelectedPresetName 変更時に呼び出され、ユーザーによるドロップダウン選択からのプリセット読み込みを実行します。</summary>
+    /// <param name="value">新しく選択されたプリセット名</param>
+    /// <remarks>_isUpdatingSelection が true の場合はプログラムによる更新のため読み込みをスキップします。</remarks>
+    partial void OnSelectedPresetNameChanged(string? value)
     {
-        var name = NewPresetName?.Trim();
-        if (string.IsNullOrEmpty(name)) return;
+        if (_isUpdatingSelection || string.IsNullOrEmpty(value)) return;
 
+        _isUpdatingSelection = true;
+        try
+        {
+            LoadPreset(value);
+        }
+        finally
+        {
+            _isUpdatingSelection = false;
+        }
+    }
+
+    /// <summary>ConvertConfig のプロパティ変更時に呼び出されます。設定変更を検出してプリセット選択状態を更新します。</summary>
+    /// <param name="sender">イベントソース</param>
+    /// <param name="e">イベントデータ</param>
+    private void OnConfigPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (_isUpdatingSelection) return;
+        RefreshSelectedPreset();
+    }
+
+    /// <summary>現在の設定と一致するプリセットを検索し、SelectedPresetName を更新します。</summary>
+    /// <remarks>FindMatchingPreset で一致するプリセットが見つかった場合はその名前を、見つからなかった場合は null を設定します。<br/>
+    /// _isUpdatingSelection フラグで OnSelectedPresetNameChanged での再読み込みを防止します。</remarks>
+    private void RefreshSelectedPreset()
+    {
+        _isUpdatingSelection = true;
+        try
+        {
+            SelectedPresetName = ConvertConfig.FindMatchingPreset();
+        }
+        finally
+        {
+            _isUpdatingSelection = false;
+        }
+    }
+
+    /// <summary>現在の設定を指定されたプリセット名で保存します。</summary>
+    /// <param name="name">プリセット名</param>
+    public void SavePreset(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return;
         ConvertConfig.SavePreset(name);
-        NewPresetName = string.Empty;
         RefreshPresets();
+        RefreshSelectedPreset();
     }
 
     /// <summary>プリセットを読み込みます。</summary>
-    [RelayCommand]
-    private void LoadPreset(string? name)
+    /// <param name="name">プリセット名</param>
+    public void LoadPreset(string? name)
     {
         if (string.IsNullOrEmpty(name)) return;
-        ConvertConfig.LoadPreset(name);
-        ReloadReplaceItemsFromConfig();
+        _isUpdatingSelection = true;
+        try
+        {
+            ConvertConfig.LoadPreset(name);
+            ReloadReplaceItemsFromConfig();
+            SelectedPresetName = name;
+        }
+        finally
+        {
+            _isUpdatingSelection = false;
+        }
     }
 
     /// <summary>プリセットを削除します。</summary>
-    [RelayCommand]
-    private void DeletePreset(string? name)
+    /// <param name="name">プリセット名</param>
+    public void DeletePreset(string? name)
     {
         if (string.IsNullOrEmpty(name)) return;
         ConvertConfig.DeletePreset(name);
         RefreshPresets();
+        if (SelectedPresetName == name)
+            SelectedPresetName = null;
     }
 }
 

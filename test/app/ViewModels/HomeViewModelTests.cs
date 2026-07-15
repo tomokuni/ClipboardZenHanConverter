@@ -5,7 +5,7 @@ using ClipboardZenHanConverter.Core.Logic;
 using ClipboardZenHanConverter.Core.Models;
 using Xunit;
 
-namespace ClipboardZenHanConverter.Tests;
+namespace ClipboardZenHanConverter.Tests.App.ViewModels;
 
 /// <summary>テスト用のクリップボードサービススタブ。</summary>
 file sealed partial class StubClipboardService : IClipboardService
@@ -29,6 +29,7 @@ file sealed class StubNavigationService : INavigationService
     public object? LastNavigateTo { get; private set; }
     public void NavigateTo(object? page) => LastNavigateTo = page;
     public void Initialize() { }
+    public void PreloadSettingsAsync() { }
 }
 
 public class HomeViewModelTests
@@ -63,4 +64,3 @@ public class HomeViewModelTests
         Assert.Null(clipboard.SetTextArg);
     }
 }
-

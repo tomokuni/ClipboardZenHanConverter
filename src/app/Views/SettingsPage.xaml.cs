@@ -1,6 +1,9 @@
 using ClipboardZenHanConverter.App.ViewModels;
+using ClipboardZenHanConverter.Core.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using System.Text;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 
@@ -143,21 +146,208 @@ public sealed partial class SettingsPage : Page
         }
     }
 
-    /// <summary>選択されたプリセットを読み込みます。</summary>
-    private void OnLoadPresetClick(object sender, RoutedEventArgs e)
+    /// <summary>プリセット編集ダイアログを表示します。</summary>
+    /// <remarks>編集可能なコンボボックスでプリセット名を選択/入力し、保存・削除・閉じるの操作を行います。<br/>
+    /// バリデーションは選択変更時、フォーカス喪失時、およびコンボボックス内のテキスト内容が変化した時に行われます。<br/>
+    /// 組込みプリセット名が入力された場合は「組込みプリセットです。」と表示し保存/削除が無効化されます。<br/>
+    /// ファイル名に使用できない文字が含まれる場合は「使用できない文字が含まれます。」と表示し保存が無効化されます。<br/>
+    /// 半角小文字に変換した際に built-in/builtin が含まれる場合は「built-in または builtin は使用できません。」と表示し保存が無効化されます。<br/>
+    /// 既存のユーザープリセット名が入力された場合は「既に存在します。」と表示しますが保存/削除は可能です。</remarks>
+    private async void OnEditPresetClick(object sender, RoutedEventArgs e)
     {
-        if (PresetComboBox.SelectedItem is string name)
+        var comboBox = new ComboBox
         {
-            ViewModel.LoadPresetCommand.Execute(name);
+            IsEditable = true,
+            PlaceholderText = "プリセット名を選択または入力",
+            MinWidth = 300,
+            Margin = new Thickness(0, 0, 0, 8),
+        };
+
+        // 組込みプリセットを除いたユーザープリセットのみをリスト
+        var userPresets = ViewModel.PresetNames
+            .Where(n => !ConvertConfig.IsBuiltInPreset(n))
+            .ToList();
+        foreach (var name in userPresets)
+            comboBox.Items.Add(name);
+
+        // バリデーションメッセージ
+        var validationText = new TextBlock
+        {
+            Text = string.Empty,
+            Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Red),
+            Margin = new Thickness(0, 0, 0, 8),
+            Visibility = Visibility.Collapsed,
+        };
+
+        var saveButton = new Button { Content = "保存", Margin = new Thickness(0, 0, 8, 0) };
+        var deleteButton = new Button { Content = "削除", Margin = new Thickness(0, 0, 8, 0) };
+        var closeButton = new Button { Content = "閉じる" };
+
+        var buttonPanel = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            HorizontalAlignment = HorizontalAlignment.Right,
+        };
+        buttonPanel.Children.Add(saveButton);
+        buttonPanel.Children.Add(deleteButton);
+        buttonPanel.Children.Add(closeButton);
+
+        var panel = new StackPanel();
+        panel.Children.Add(comboBox);
+        panel.Children.Add(validationText);
+        panel.Children.Add(buttonPanel);
+
+        // バリデーションを実行する共通処理
+        void Validate() => ValidatePresetName(comboBox, validationText, saveButton, deleteButton, userPresets);
+
+        // 選択変更時のバリデーション
+        comboBox.SelectionChanged += (_, _) => Validate();
+
+        // フォーカス喪失時のバリデーション
+        comboBox.LostFocus += (_, _) => Validate();
+
+        // 内容が変化したときのリアルタイムバリデーション
+        comboBox.Loaded += (_, _) =>
+        {
+            if (FindInnerTextBox(comboBox) is { } innerTextBox)
+                innerTextBox.TextChanged += (_, _) => Validate();
+        };
+
+        // 初期状態：何も選択されていないので保存/削除は無効
+        saveButton.IsEnabled = false;
+        deleteButton.IsEnabled = false;
+
+        var dialog = new ContentDialog
+        {
+            Title = "プリセット編集",
+            Content = panel,
+            XamlRoot = this.XamlRoot,
+        };
+
+        // 閉じるボタン
+        closeButton.Click += (_, _) => dialog.Hide();
+
+        // 保存ボタン
+        saveButton.Click += (_, _) =>
+        {
+            var name = comboBox.Text?.Trim();
+            if (string.IsNullOrEmpty(name)) return;
+
+            dialog.Hide();
+            ViewModel.SavePreset(name);
+        };
+
+        // 削除ボタン
+        deleteButton.Click += (_, _) =>
+        {
+            var name = comboBox.Text?.Trim();
+            if (string.IsNullOrEmpty(name)) return;
+
+            dialog.Hide();
+            ViewModel.DeletePreset(name);
+        };
+
+        await dialog.ShowAsync();
+
+        // ダイアログ表示中に変更があった場合に備えてプリセット一覧を更新
+        ViewModel.RefreshPresets();
+    }
+
+    /// <summary>プリセット名のバリデーションを行い、UI の表示とボタン状態を更新します。</summary>
+    /// <param name="comboBox">編集可能な ComboBox</param>
+    /// <param name="validationText">バリデーションメッセージ表示用 TextBlock</param>
+    /// <param name="saveButton">保存ボタン</param>
+    /// <param name="deleteButton">削除ボタン</param>
+    /// <param name="userPresets">ユーザープリセット名の一覧</param>
+    private static void ValidatePresetName(ComboBox comboBox, TextBlock validationText,
+        Button saveButton, Button deleteButton, List<string> userPresets)
+    {
+        var text = comboBox.Text?.Trim();
+        if (string.IsNullOrEmpty(text))
+        {
+            validationText.Text = string.Empty;
+            validationText.Visibility = Visibility.Collapsed;
+            saveButton.IsEnabled = false;
+            deleteButton.IsEnabled = false;
+        }
+        else if (ConvertConfig.IsBuiltInPreset(text))
+        {
+            validationText.Text = "組込みプリセットです。";
+            validationText.Visibility = Visibility.Visible;
+            saveButton.IsEnabled = false;
+            deleteButton.IsEnabled = false;
+        }
+        else if (ContainsInvalidFileNameChars(text))
+        {
+            validationText.Text = "使用できない文字が含まれます。";
+            validationText.Visibility = Visibility.Visible;
+            saveButton.IsEnabled = false;
+            deleteButton.IsEnabled = userPresets.Contains(text, StringComparer.Ordinal);
+        }
+        else if (ContainsBuiltInKeyword(text))
+        {
+            validationText.Text = "built-in または builtin は使用できません。";
+            validationText.Visibility = Visibility.Visible;
+            saveButton.IsEnabled = false;
+            deleteButton.IsEnabled = userPresets.Contains(text, StringComparer.Ordinal);
+        }
+        else if (userPresets.Contains(text, StringComparer.Ordinal))
+        {
+            validationText.Text = "既に存在します。";
+            validationText.Visibility = Visibility.Visible;
+            saveButton.IsEnabled = true;
+            deleteButton.IsEnabled = true;
+        }
+        else
+        {
+            validationText.Text = string.Empty;
+            validationText.Visibility = Visibility.Collapsed;
+            saveButton.IsEnabled = true;
+            deleteButton.IsEnabled = false;
         }
     }
 
-    /// <summary>選択されたプリセットを削除します。</summary>
-    private void OnDeletePresetClick(object sender, RoutedEventArgs e)
+    /// <summary>ファイル名に使用できない文字が含まれているかを判定します。</summary>
+    /// <param name="name">チェックする文字列</param>
+    /// <returns>使用できない文字が含まれる場合は true</returns>
+    /// <remarks>Windows のファイル名に使用できない文字（\/:*?"&lt;&gt;|）をチェックします。</remarks>
+    internal static bool ContainsInvalidFileNameChars(string name)
+        => name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0;
+
+    /// <summary>文字列を半角小文字に変換した際に "built-in" または "builtin" が含まれるかを判定します。</summary>
+    /// <param name="name">チェックする文字列</param>
+    /// <returns>含まれる場合は true</returns>
+    /// <remarks>NFKC 正規化で全角英数字を半角に変換し、ToLowerInvariant で小文字化した上で判定します。</remarks>
+    internal static bool ContainsBuiltInKeyword(string name)
     {
-        if (PresetComboBox.SelectedItem is string name)
+        var normalized = name.Normalize(NormalizationForm.FormKC).ToLowerInvariant();
+        return normalized.Contains("built-in") || normalized.Contains("builtin");
+    }
+
+    /// <summary>ComboBox のコントロールテンプレート内部にある TextBox を検索します。</summary>
+    /// <param name="comboBox">編集可能な ComboBox</param>
+    /// <returns>内部の TextBox。見つからない場合は null。</returns>
+    /// <remarks>VisualTreeHelper を使用してビジュアルツリーを走査し、ComboBox のテンプレート内の TextBox を取得します。<br/>
+    /// Loaded イベント以降でないとテンプレートが適用されていないため、Loaded 後に呼び出す必要があります。</remarks>
+    private static TextBox? FindInnerTextBox(DependencyObject comboBox)
+    {
+        for (var i = 0; i < VisualTreeHelper.GetChildrenCount(comboBox); i++)
         {
-            ViewModel.DeletePresetCommand.Execute(name);
+            var child = VisualTreeHelper.GetChild(comboBox, i);
+            if (child is TextBox tb) return tb;
+            var found = FindInnerTextBox(child);
+            if (found is not null) return found;
+        }
+        return null;
+    }
+
+    /// <summary>プリセット選択ドロップダウンの選択が変更された時に呼び出されます。</summary>
+    /// <remarks>OneWay バインディングのため、ユーザー操作による選択変更を ViewModel に通知します。</remarks>
+    private void OnPresetComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.AddedItems.FirstOrDefault() is string name)
+        {
+            ViewModel.LoadPreset(name);
         }
     }
 

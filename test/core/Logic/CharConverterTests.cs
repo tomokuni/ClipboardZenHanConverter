@@ -3,7 +3,7 @@ using ClipboardZenHanConverter.Core.Logic;
 using ClipboardZenHanConverter.Core.Models;
 using Xunit;
 
-namespace ClipboardZenHanConverter.Tests;
+namespace ClipboardZenHanConverter.Tests.Core.Logic;
 
 public sealed partial class CharConverterTests : IDisposable
 {
@@ -251,6 +251,4 @@ public sealed partial class CharConverterTests : IDisposable
 
         Assert.Equal("漢字とひらがな123", result);
     }
-
 }
-
