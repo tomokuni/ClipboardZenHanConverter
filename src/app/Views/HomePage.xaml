@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:ClipboardZenHanConverter.App.Views"
+    xmlns:controls="using:ClipboardZenHanConverter.App.Views.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:m="using:ClipboardZenHanConverter.Core.Models"
@@ -53,25 +54,21 @@
             <StackPanel Margin="40,10,40,10">
                 <TextBlock Text="変更前：" FontWeight="Bold"/>
                 <Border BorderThickness="1" Background="#F0F0F0">
-                    <TextBox
+                    <controls:LineNumberTextBox
                         Text="{x:Bind ViewModel.BeforeText, Mode=TwoWay}"
-                        PlaceholderText="クリップボードの変換前の内容を表示します。"
                         IsReadOnly="True"
-                        TextWrapping="Wrap"
-                        Foreground="Black"
-                        Height="auto" MinHeight="50" MaxHeight="200"/>
+                        MinHeight="50"
+                        MaxHeight="200"/>
                 </Border>
             </StackPanel>
             <StackPanel Margin="40,10,40,10">
                 <TextBlock Text="変更後：" FontWeight="Bold"/>
                 <Border BorderThickness="1" Background="#F0F0F0">
-                    <TextBox
+                    <controls:LineNumberTextBox
                         Text="{x:Bind ViewModel.ConvertedText, Mode=TwoWay}"
-                        PlaceholderText="クリップボードのテキストを変換した結果を表示します。"
                         IsReadOnly="True"
-                        TextWrapping="Wrap"
-                        Foreground="Black"
-                        Height="auto" MinHeight="50" MaxHeight="200"/>
+                        MinHeight="50"
+                        MaxHeight="200"/>
                 </Border>
             </StackPanel>
         </StackPanel>

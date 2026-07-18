@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="ClipboardZenHanConverter.App.Views.Controls.LineNumberTextBox"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ClipboardZenHanConverter.App.Views.Controls">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- 行番号ガター -->
+        <Border Grid.Column="0"
+                x:Name="GutterBorder"
+                Background="#E8E8E8"
+                MinWidth="40"
+                Padding="4,6,6,6"
+                VerticalAlignment="Stretch">
+            <ScrollViewer x:Name="GutterScrollViewer"
+                          VerticalScrollBarVisibility="Hidden"
+                          HorizontalScrollBarVisibility="Hidden"
+                          VerticalScrollMode="Enabled"
+                          HorizontalScrollMode="Disabled"
+                          VerticalAnchorRatio="0">
+                <TextBlock x:Name="GutterText"
+                           FontFamily="Consolas"
+                           FontSize="13"
+                           Foreground="#888888"
+                           TextAlignment="Right"
+                           VerticalAlignment="Top"
+                           LineHeight="18"/>
+            </ScrollViewer>
+        </Border>
+
+        <!-- テキスト表示領域 -->
+        <Border Grid.Column="1"
+                BorderThickness="0"
+                Background="White"
+                Padding="8,6,8,6">
+            <TextBox x:Name="ContentTextBox"
+                     Text="{x:Bind Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     IsReadOnly="{x:Bind IsReadOnly, Mode=OneWay}"
+                     TextWrapping="Wrap"
+                     AcceptsReturn="True"
+                     VerticalAlignment="Top"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     FontFamily="Consolas"
+                     FontSize="13"
+                     BorderThickness="0"
+                     Background="Transparent"
+                     TextChanged="OnContentTextChanged"/>
+        </Border>
+    </Grid>
+</UserControl>
