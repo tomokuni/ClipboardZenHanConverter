@@ -6,7 +6,6 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 xmlns:ctk="using:CommunityToolkit.WinUI.Controls"
-xmlns:esc="using:EsUtil.WinUI3.Controls"
 xmlns:h="using:EsUtil.ClipboardZenHanConverter.App.WinUI.Helpers"
 xmlns:m="using:EsUtil.ClipboardZenHanConverter.Core.Models"
 xmlns:vm="using:EsUtil.ClipboardZenHanConverter.Presentation.ViewModels"
@@ -81,7 +80,7 @@ mc:Ignorable="d">
             <Setter Property="Margin" Value="0,16,0,0"/>
         </Style>
 
-        <Style TargetType="esc:MultiColumnPanel">
+        <Style TargetType="local:MultiColumnPanel">
             <Setter Property="ItemTemplate" Value="{StaticResource ZenHanConvertItemTemplate}"/>
             <Setter Property="RowSpace" Value="4"/>
             <Setter Property="ColumnSpace" Value="32"/>
@@ -159,7 +158,7 @@ mc:Ignorable="d">
                     <local:HeaderDescription
 						Header="[ ０ ] 数字の変換"
 						Description="[ 0123456789 ]  の数字の変換を指定します。"/>
-                    <esc:MultiColumnPanel
+                    <local:MultiColumnPanel
 						ItemsSource="{x:Bind ViewModel.NumberItems}"/>
                 </StackPanel>
             </ctk:SettingsCard>
@@ -169,7 +168,7 @@ mc:Ignorable="d">
                     <local:HeaderDescription
 						Header="[ Ａ ] 英字の変換"
 						Description="[ A-Z a-z ]  の英字の変換を指定します。"/>
-                    <esc:MultiColumnPanel
+                    <local:MultiColumnPanel
 						ItemsSource="{x:Bind ViewModel.AlphabetItems}"/>
                 </StackPanel>
             </ctk:SettingsCard>
@@ -179,7 +178,7 @@ mc:Ignorable="d">
                     <local:HeaderDescription
 						Header="[ ア ] カナの変換"
 						Description="[ ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾉﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾋﾛﾜｦﾝｧｨｩｪｫｬｭｮｯｰﾞﾟ ]  のカナ文字の変換を指定します。"/>
-                    <esc:MultiColumnPanel
+                    <local:MultiColumnPanel
 						ItemsSource="{x:Bind ViewModel.KanaItems}"/>
                 </StackPanel>
             </ctk:SettingsCard>
@@ -189,7 +188,7 @@ mc:Ignorable="d">
 					<local:HeaderDescription
 						Header="[ ＠ ] 記号の変換"
 						Description="[ ( ) [ ] { } &quot; ' , . : ; &lt; = &gt; + - ! # $ % &amp; * / ? @ ^ _ ` | ~ ー 。 、 ] の記号の変換を指定します。"/>
-					<esc:MultiColumnPanel
+					<local:MultiColumnPanel
 						ItemsSource="{x:Bind ViewModel.SymbolItems}"
 						ColumnLimit="10"/>
 				</StackPanel>
@@ -201,22 +200,22 @@ mc:Ignorable="d">
 						<local:HeaderDescription
 							Header="[ その他 ] 特殊な文字の変換"
 							Description="[ 長音記号 読点 句点 円記号 スペース 改行 ] などの変換を指定します。"/>
-						<esc:MultiColumnPanel
+						<local:MultiColumnPanel
 							ItemsSource="{x:Bind ViewModel.EtcZenHanAsciiItems}"/>
 					</StackPanel>
 					<StackPanel Style="{StaticResource SettingsCardStackPanelTopSpaceStyle}">
-						<esc:MultiColumnPanel
+						<local:MultiColumnPanel
 							ItemsSource="{x:Bind ViewModel.EtcBslashYenItems}"/>
 						<TextBlock
 							Text="※ 半角バックスラッシュは、フォントによっては 円記号￥の表現になります。"
 							Style="{StaticResource SettingsCardRemarkStyle}"/>
 					</StackPanel>
 					<StackPanel Style="{StaticResource SettingsCardStackPanelTopSpaceStyle}">
-						<esc:MultiColumnPanel
+						<local:MultiColumnPanel
 							ItemsSource="{x:Bind ViewModel.EtcSpecialItems}"/>
 					</StackPanel>
 					<StackPanel Style="{StaticResource SettingsCardStackPanelTopSpaceStyle}">
-						<esc:MultiColumnPanel
+						<local:MultiColumnPanel
 										ItemsSource="{x:Bind ViewModel.EtcMultiSpaceItems}"/>
 					</StackPanel>
 				</StackPanel>
