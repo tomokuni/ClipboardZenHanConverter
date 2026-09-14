@@ -86,6 +86,25 @@ public class ConvertConfigTests
     }
 
     [Fact]
+    public void LoadPreset_全力会計は数値と英字を半角に保つ()
+    {
+        // 後段の _toZenSymbolSetters ループ（その他の記号 → 全角）が数値・英字を
+        // 巻き込まないことを検証します。会計帳票では数値・英字の半角が必須です。
+        var config = new ConvertConfig();
+
+        config.LoadPreset(ConvertConfig.BuiltInPresetAccountingPower);
+
+        Assert.Equal(ZenHanMode.ToHan, config.ConvertModeNumber);
+        Assert.Equal(ZenHanMode.ToHan, config.ConvertModeAlphabet);
+        // 一部記号は半角、その他の記号は全角
+        Assert.Equal(ZenHanMode.ToHan, config.ConvertModeSymbolParenthesis);
+        Assert.Equal(ZenHanMode.ToHan, config.ConvertModeSymbolComma);
+        Assert.Equal(ZenHanMode.ToHan, config.ConvertModeSymbolPeriod);
+        Assert.Equal(ZenHanMode.ToZen, config.ConvertModeSymbolExclamation);
+        Assert.Equal(ZenHanMode.ToZen, config.ConvertModeSymbolTilde);
+    }
+
+    [Fact]
     public void プロパティ変更が正しく反映される()
     {
         var config = new ConvertConfig();

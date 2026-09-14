@@ -24,9 +24,9 @@ public class SegmentItemTests
     [Fact]
     public void SegmentDefine_デフォルト値()
     {
-        var def = new SegmentDefine("ラベル", "PropName");
+        var def = new SegmentDefine("ラベル", ConvertConfig.Mode.Number);
         Assert.Equal("ラベル", def.Label);
-        Assert.Equal("PropName", def.Prop);
+        Assert.Same(ConvertConfig.Mode.Number, def.Mode);
         Assert.True(double.IsNaN(def.Height));
         Assert.Null(def.Segments);
         Assert.Null(def.ForceEnableState);
@@ -36,7 +36,7 @@ public class SegmentItemTests
     public void SegmentDefine_全パラメーター指定()
     {
         var segments = new[] { new SegmentItem("A", 1) };
-        var def = new SegmentDefine("ラベル", "PropName", Height: 50, Segments: segments, ForceEnableState: true);
+        var def = new SegmentDefine("ラベル", ConvertConfig.Mode.Number, Height: 50, Segments: segments, ForceEnableState: true);
         Assert.Equal(50, def.Height);
         Assert.Same(segments, def.Segments);
         Assert.True(def.ForceEnableState);

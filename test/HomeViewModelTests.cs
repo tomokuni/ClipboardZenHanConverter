@@ -29,6 +29,7 @@ file sealed class StubNavigationService : INavigationService
     public object? LastNavigateTo { get; private set; }
     public void NavigateTo(object? page) => LastNavigateTo = page;
     public void Initialize() { }
+    public void PreloadSettingsAsync() { }
 }
 
 public class HomeViewModelTests
