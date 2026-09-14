@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="ClipboardZenHanConverter.App.WinUI.Views.HomePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ClipboardZenHanConverter.App.WinUI.Views"
+    xmlns:controls="using:ClipboardZenHanConverter.App.WinUI.Views.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:m="using:ClipboardZenHanConverter.Core.Models"
+    mc:Ignorable="d">
+
+    <!--
+        上下 2 分割。行の重みを比率で保持するため、ウィンドウの高さが変わっても上下の比率が維持されます。
+        分割バーは 1px の区切り線を中央に描き、残りの領域をドラッグの当たり判定に使用します。
+    -->
+    <Grid x:Name="SplitGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="TopRow" Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition x:Name="BottomRow" Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="40,10,40,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="変更前：" FontWeight="Bold"/>
+            <Border Grid.Row="1" BorderThickness="1" Background="#F0F0F0">
+                <!-- 変更前テキストは編集可能。変更されると ViewModel 経由で自動変換される（MewUI 版と同一）。
+                     LineNumberTextBox.IsReadOnly の既定値は true のため、明示的に false を指定する -->
+                <controls:LineNumberTextBox
+                    Text="{x:Bind ViewModel.BeforeText, Mode=TwoWay}"
+                    IsReadOnly="False"/>
+            </Border>
+        </Grid>
+
+        <controls:SplitterRegion x:Name="SplitterRegion"
+                                 Grid.Row="1"
+                                 Height="6"
+                                 Background="Transparent">
+            <Border Height="1" Background="#DDDDDD" VerticalAlignment="Center"/>
+        </controls:SplitterRegion>
+
+        <Grid Grid.Row="2" Margin="40,10,40,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="変更後：" FontWeight="Bold"/>
+            <Border Grid.Row="1" BorderThickness="1" Background="#F0F0F0">
+                <controls:LineNumberTextBox
+                    Text="{x:Bind ViewModel.ConvertedText, Mode=TwoWay}"
+                    IsReadOnly="True"/>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>

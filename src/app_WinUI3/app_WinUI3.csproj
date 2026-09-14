@@ -1,0 +1,67 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.26100.0</TargetPlatformMinVersion>
+    <SupportedOSPlatformVersion>10.0.26100.0</SupportedOSPlatformVersion>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <UseWinUI>true</UseWinUI>
+    <WindowsPackageType>None</WindowsPackageType>
+    <IncludeReferencedProjectsInXamlTypeResolution>false</IncludeReferencedProjectsInXamlTypeResolution>
+    <!-- Windows App SDK のビルド要件（リポジトリ共通の Directory.Build.props には置かない） -->
+    <Platforms>x64</Platforms>
+    <SelfContained>true</SelfContained>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Product>ClipboardZenHanConverter</Product>
+    <Version>0.0.1</Version>
+    <Description>A utility application that automatically converts text in the clipboard, such as converting full-width to half-width characters.</Description>
+    <RootNamespace>ClipboardZenHanConverter.App.WinUI</RootNamespace>
+    <!-- exe （アセンブリ）名はプロジェクト名に合せる。名前空間は既存の App.WinUI のまま（変更すると全ソース・XAML へ波及するため） -->
+    <AssemblyName>ClipboardZenHanConverter.App.WinUI3</AssemblyName>
+    <PackageTags>clipboard; zen; han; convert</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\core\core.csproj" />
+    <ProjectReference Include="..\core_presentation\core_presentation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="ClipboardZenHanConverter.Tests.App.WinUI" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.*" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.*" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.*" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.*" />
+    <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.*" />
+    <PackageReference Include="EsUtil.WinUI3.Controls.MultiColumnPanel" Version="1.*" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.*" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.*" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.*" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.*" />
+  </ItemGroup>
+
+  <!--
+    Windows App SDK の自己完結ペイロードから、本アプリが使わない AI / ML / Search / Widgets / WebView2 を除外する。
+    これらは Microsoft.WindowsAppSDK.Runtime の MSIX に含まれるため、パッケージ参照では削れない。
+    （onnxruntime.dll 20.7MB / DirectML.dll 17.8MB など、単一 exe で 約 55MB の削減）
+    動作確認済み: 除外後も起動・描画・クリップボード変換がすべて正常に動作する。
+  -->
+  <Target Name="RemoveUnusedWindowsAppSdkPayload"
+          AfterTargets="ComputeResolvedFilesToPublishList"
+          BeforeTargets="PrepareForBundle;CopyFilesToPublishDirectory">
+    <ItemGroup>
+      <_UnusedWindowsAppSdkPayload Include="@(ResolvedFileToPublish)"
+          Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(Filename)%(Extension)', '^(onnxruntime|DirectML|PerceptiveStreaming|NPUDetect|msquic|Microsoft\.Windows\.(AI|ML|Search|Widgets|Workloads)|Microsoft\.ML\.OnnxRuntime|Microsoft\.Web\.WebView2).*'))" />
+      <ResolvedFileToPublish Remove="@(_UnusedWindowsAppSdkPayload)" />
+    </ItemGroup>
+    <Message Importance="high" Text="WindowsAppSDK の未使用ペイロードを除外: @(_UnusedWindowsAppSdkPayload->Count()) ファイル" />
+  </Target>
+
+  </Project>

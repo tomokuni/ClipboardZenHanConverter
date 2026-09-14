@@ -1,0 +1,58 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ClipboardZenHanConverter.App.AvaloniaUI.ViewModels"
+             x:Class="ClipboardZenHanConverter.App.AvaloniaUI.Views.HomeView"
+             x:DataType="vm:HomeViewModel">
+
+    <!--
+        上下 2 分割。行の重みを比率で保持するため、ウィンドウの高さが変わっても上下の比率が維持されます。
+        分割バーは 1px の区切り線を中央に描き、残りの領域をドラッグの当たり判定に使用します。
+    -->
+    <Grid x:Name="SplitGrid"
+          Margin="40,20,40,40"
+          RowDefinitions="*,Auto,*">
+
+        <DockPanel Grid.Row="0">
+            <TextBlock DockPanel.Dock="Top"
+                       Text="変更前："
+                       FontWeight="Bold"
+                       Margin="0,0,0,4" />
+            <!-- 変換前テキスト（編集可能。変更されると ViewModel 経由で自動変換される） -->
+            <TextBox Text="{Binding BeforeText, Mode=TwoWay}"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     VerticalContentAlignment="Top"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto" />
+        </DockPanel>
+
+        <Thumb x:Name="Splitter"
+               Grid.Row="1"
+               Height="6"
+               Cursor="SizeNorthSouth"
+               DragDelta="OnSplitterDragDelta">
+            <Thumb.Template>
+                <ControlTemplate>
+                    <Border Background="Transparent">
+                        <Border Height="1"
+                                Background="#DDDDDD"
+                                VerticalAlignment="Center" />
+                    </Border>
+                </ControlTemplate>
+            </Thumb.Template>
+        </Thumb>
+
+        <DockPanel Grid.Row="2">
+            <TextBlock DockPanel.Dock="Top"
+                       Text="変更後："
+                       FontWeight="Bold"
+                       Margin="0,4,0,4" />
+            <!-- 変換後テキスト（読み取り専用。変換結果、または「変換不要」の文言） -->
+            <TextBox Text="{Binding ConvertedText, Mode=OneWay}"
+                     IsReadOnly="True"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     VerticalContentAlignment="Top"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto" />
+        </DockPanel>
+    </Grid>
+</UserControl>

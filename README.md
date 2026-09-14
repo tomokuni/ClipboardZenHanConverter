@@ -1,177 +1,154 @@
 # ClipboardZenHanConverter
 
 クリップボードのテキストを監視し、全角/半角の自動変換を行う Windows 向けデスクトップアプリケーションです。
+`src/core`（モデル・変換ロジック）と `src/core_presentation`（UI 非依存の ViewModel）を共有し、**4 つの UI 実装**から利用します。
 
-## 概要
+| UI | プロジェクト | フレームワーク |
+| --- | --- | --- |
+| MewUI 版 | `src/app_MewUI` | MewUI（コードファースト・NativeAOT 対応） |
+| WinUI 3 版 | `src/app_WinUI3` | WinUI 3（Windows App SDK） |
+| Avalonia UI 版 | `src/app_AvaloniaUI` | Avalonia UI（クロスプラットフォーム・XAML） |
+| WinForms 版 | `src/app_WinForms` | Windows Forms（コードで画面を構築） |
 
-ClipboardZenHanConverter は、クリップボードにコピーされたテキストを自動検出し、ユーザーが設定した変換ルールに基づいて全角/半角変換を実行します。変換結果は自動的にクリップボードに書き戻されるため、ペースト操作だけで変換済みのテキストを利用できます。
+4 つは同一のコアロジック・変換仕様・設定画面の設定仕様を共有し、**同じ設定ファイル**（`%LOCALAPPDATA%\ClipboardZenHanConverter`）を使います。
 
-主な用途:
-- 業務システムへの入力時の全角/半角自動変換
-- 会計帳票作成時の数字・英字の半角統一
-- 文章作成時の記号・かな文字の統一
-- マルチバイト環境での文字コード正規化
+## リポジトリ構成
 
-## 機能
+```text
+ClipboardZenHanConverter_MewUI/
+├── Directory.Build.props
+├── NuGet.config
+├── ClipboardZenHanConverter_MewUI.slnx
+├── MewUI_publish_singleaot.bat / MewUI_run_publish.bat    # MewUI 版の単一 exe ビルド/実行（Native AOT）
+├── WinUI3_publish_single.bat / WinUI3_run_publish.bat     # WinUI 3 版の単一 exe ビルド/実行（自己完結）
+├── AvaloniaUI_publish_aot.bat / AvaloniaUI_run_publish.bat     # Avalonia UI 版の AOT ビルド/実行（Native AOT + ネイティブ DLL）
+├── WinForms_publish_single.bat / WinForms_run_publish.bat     # WinForms 版の単一 exe ビルド/実行（自己完結）
+├── MewUI_run_release.bat / WinUI3_run_release.bat / AvaloniaUI_run_release.bat / WinForms_run_release.bat
+│                                                     # 各版の Release ビルドと実行（publish を行わない軽量な確認用）
+├── src/
+│   ├── app_MewUI/           # MewUI アプリ本体（MewUI 依存）
+│   │   ├── README.md / SPEC_ExtFunc.md / SPEC_System.md
+│   ├── app_WinUI3/          # WinUI 3 アプリ本体（WinUI 3 依存）
+│   │   ├── README.md / SPEC_ExtFunc.md / SPEC_System.md
+│   ├── app_AvaloniaUI/      # Avalonia UI アプリ本体（Avalonia UI 依存）
+│   │   ├── README.md / SPEC_ExtFunc.md / SPEC_System.md
+│   ├── app_WinForms/        # WinForms アプリ本体（Windows Forms 依存）
+│   │   ├── README.md / SPEC_ExtFunc.md / SPEC_System.md
+│   ├── core/                # 共有コア（モデル・変換ロジック・カテゴリ定義・Win32 API・アイコン。UI 非依存）
+│   │   ├── README.md / SPEC_ExtFunc.md / SPEC_System.md
+│   └── core_presentation/   # 共有プレゼンテーション層（設定画面の ViewModel。UI 非依存）
+│       ├── README.md / SPEC_ExtFunc.md / SPEC_System.md
+└── test/                    # 単体テスト（xUnit v3）
+    ├── app_MewUI/           # app_MewUI のテスト
+    ├── app_WinUI3/          # app_WinUI3 のテスト
+    ├── app_AvaloniaUI/      # app_AvaloniaUI のテスト
+    ├── app_WinForms/        # app_WinForms のテスト
+    ├── core/                # core のテスト(UI フレ-ムワ-ク非依存)
+    ├── core_presentation/   # core_presentation のテスト(UI フレームワーク非依存)
+    └── parity/              # アプリ固有 ViewModel の挙動一致を検証（README.md に差異一覧）
+```
 
-### 文字変換
+## プロジェクト
 
-| カテゴリ | 変換対象 | 変換方向 |
-|---|---|---|
-| **数字** | 0123456789 / ０１２３４５６７８９ | 全角⇔半角 |
-| **英字** | ABC...Z / ＡＢＣ...Ｚ / abc...z / ａｂｃ...ｚ | 全角⇔半角 |
-| **記号** | ()[]{}"'等 30種類以上の記号 | 全角⇔半角 |
-| **半角カナ** | ｱｲｳｴｵ... | 半角カナ→全角カタカナ／全角ひらがな |
-| **全角カタカナ** | アイウエオ... | 全角カタカナ→半角カナ／全角ひらがな |
-| **全角ひらがな** | あいうえお... | 全角ひらがな→半角カナ／全角カタカナ |
-| **濁点/半濁点** | ゛゜ | 全角⇔半角 |
-| **かな約物** | 長音記号（ー）、読点（。）、句点（、） | 全角⇔半角⇔ASCII |
-| **バックスラッシュ/円記号** | \＼¥￥ | 4系統間の相互変換 |
-| **タブ** | \t | 除去／半角スペース／全角スペース |
-| **改行** | \r\n | 除去／半角スペース／全角スペース |
-| **連続スペース** | 2つ以上の連続スペース | 1つに統合／除去 |
+| プロジェクト | 説明 |
+| --- | --- |
+| `src/core` | 変換ロジック・モデル・変換カテゴリ定義・Win32 API・アイコンデータ（`CharConverter`, `ConvertConfig`, `SegmentDefinitions`, `Win32Clipboard`, `FluentIconData` など）。UI フレームワークに依存しない。 |
+| `src/core_presentation` | 4 つの UI が共有する設定画面の ViewModel（`SettingsViewModel`, `ZenHanConvertItem`, `SegmentOption`, `ReplacePairItem`, `PresetEditDialogViewModel`）。UI フレームワークに依存しない。 |
+| `src/app_MewUI` | MewUI アプリ本体。クリップボード監視・ホーム/設定画面。 |
+| `src/app_WinUI3` | WinUI 3 アプリ本体。同上。 |
+| `src/app_AvaloniaUI` | Avalonia UI アプリ本体。同上。 |
+| `src/app_WinForms` | Windows Forms アプリ本体。同上。 |
+| `test/core` | `src/core` の単体テスト。ソースファイル 1 つにつき `{対象ソースファイル名}Tests.cs` を作成する。 |
+| `test/app_MewUI` | `src/app_MewUI` の単体テスト。同上。 |
+| `test/app_WinUI3` | `src/app_WinUI3` の単体テスト。同上。 |
+| `test/app_AvaloniaUI` | `src/app_AvaloniaUI` の単体テスト。同上。 |
+| `test/app_WinForms` | `src/app_WinForms` の単体テスト。同上。 |
+| `test/core_presentation` | `src/core_presentation` の単体テスト。 |
+| `test/parity` | アプリ固有の ViewModel（`HomeViewModel`）を同じ入力で比較し、挙動の一致を検証する。意図的な差異は `test/parity/README.md` を参照。 |
 
-### ユーザー定義置換
+## ビルド
 
-- 任意の文字列置換ルールを追加可能
-- 正規表現によるパターン置換に対応
-- 複数の置換ルールを順次適用
+```powershell
+dotnet build ClipboardZenHanConverter_MewUI.slnx
+```
 
-### プリセット
+### 依存パッケージ
 
-- 組み込みプリセットを標準搭載
-  - **全力会計（Built-in）**: 数字・英字・一部記号を半角、その他記号・かなを全角に統一（会計帳票向け）
-  - **英数記号半角、かな全角（Built-in）**: 英字/数字/記号を全て半角、かなを全角カタカナに統一
-- ユーザー定義のプリセットを保存/読み込み/削除可能
-- 現在の設定と一致するプリセットを自動検出
+`PackageReference` には**メジャーバージョンのみ**を指定します（例: `Version="8.*"`）。
+同一メジャー内の最新版が復元時に選ばれるため、常に最新の状態でビルドできます。
 
-## 画面構成
+- メジャーが上がる変更（破壊的変更を含む）は自動では取り込まれません。手動で更新します。
+- `Directory.Build.props` にバージョンを集約せず、各 `.csproj` で指定します。
+- 復元結果は `project.assets.json`（`obj/` 配下）に記録されます。固定したい場合は `obj/` を削除するか `dotnet restore --force-evaluate` を実行します。
 
-### ホーム画面
+## テスト
 
-- クリップボードの監視状態を表示
-- 変換前/変換後のテキストを表示
-- 設定画面へのショートカット（歯車アイコン）
-- プリセット選択ドロップダウン（歯車アイコンの左側）
-  - 設定画面でプリセット選択時は有効になり、選択／読み込みが可能
-  - 設定画面で未選択時は無効表示
-  - 設定画面と選択状態が自動同期
+```powershell
+dotnet test test\core\tests_core.csproj
+dotnet test test\core_presentation\tests_core_presentation.csproj
+dotnet test test\app_MewUI\tests_app_MewUI.csproj
+dotnet test test\app_WinUI3\tests_app_WinUI3.csproj
+dotnet test test\app_AvaloniaUI\tests_app_AvaloniaUI.csproj
+dotnet test test\app_WinForms\tests_app_WinForms.csproj
+dotnet test test\parity\tests_parity.csproj
+```
 
-### 設定画面
+テストは UI を起動せずに実行できます。  
+`test/core` は `src/core` のみを参照し、UI フレームワークに依存しないことを保証します。  
+`test/core_presentation` は `src/core_presentation` のみを参照し、同じく UI フレームワークに依存しないことを保証します。  
+設定ファイルを書き込むテストは、実ユーザーの `%LOCALAPPDATA%` 配下を汚さないよう
+自動保存先を一時ディレクトリへ差し替えます。
 
-- **数字/英字/かな/記号 の変換設定**: 各文字カテゴリの変換方向を個別に指定
-- **その他 特殊文字の変換設定**: タブ/改行/連続スペース/円記号の処理方法を指定
-- **文字列の置換**: ユーザー定義の置換ルールの追加/編集/削除
-- **設定の管理**（ヘッダー直下に固定、スクロールしない）
-  - 左寄せ: プリセット選択ドロップダウン ＋ プリセット編集ボタン
-  - 右寄せ: エクスポート (JSON) ＋ インポート (JSON)
+## 実行
 
-## 使い方
+```powershell
+# MewUI 版
+dotnet run --project src/app_MewUI/app_MewUI.csproj
 
-### 基本操作
+# WinUI 3 版
+dotnet run --project src/app_WinUI3/app_WinUI3.csproj
 
-1. アプリケーションを起動すると、タスクトレイに常駐します
-2. 任意のアプリケーションでテキストをコピー（Ctrl+C）します
-3. ClipboardZenHanConverter が自動的に変換を実行します
-4. 変換後のテキストを任意の場所にペースト（Ctrl+V）します
+# Avalonia UI 版
+dotnet run --project src/app_AvaloniaUI/app_AvaloniaUI.csproj
 
-### 設定方法
+# WinForms 版
+dotnet run --project src/app_WinForms/app_WinForms.csproj
+```
 
-1. ホーム画面右上の歯車アイコンをクリックして設定画面を開きます
-2. 各カテゴリで「なし / 半角 / 全角」から変換方向を選択します
-3. かな文字は「半角カナ / 全角カタカナ / 全角ひらがな」から選択します
-4. 特殊文字は「変換なし / 除去 / 半角スペース / 全角スペース」から選択します
-5. 必要に応じてユーザー定義の文字列置換ルールを追加します
+### 配布用ビルド
 
-### プリセット管理
+| スクリプト | 対象 | 方式 | 出力先 | 出力物 |
+| --- | --- | --- | --- | --- |
+| `MewUI_publish_singleaot.bat` / `MewUI_run_publish.bat` | MewUI 版 | Native AOT | `publish\mewui-<RID>-singleaot\` | exe 1 個（約 12.6 MB） |
+| `WinUI3_publish_single.bat` / `WinUI3_run_publish.bat` | WinUI 3 版 | 自己完結（.NET + Windows App SDK） | `publish\winui3-<RID>-single\` | exe 1 個（約 179 MB） |
+| `AvaloniaUI_publish_aot.bat` / `AvaloniaUI_run_publish.bat` | Avalonia UI 版 | Native AOT | `publish\avaloniaui-<RID>-aot\` | exe 1 個 + ネイティブ DLL 3 個（約 43.8 MB） |
+| `WinForms_publish_single.bat` / `WinForms_run_publish.bat` | WinForms 版 | 自己完結（.NET + WinForms） | `publish\winforms-<RID>-single\` | exe 1 個（約 119 MB） |
 
-1. 設定画面の「設定の管理」セクションのドロップダウンからプリセットを選択すると設定が即座に適用されます
-2. ホーム画面のプリセット選択ドロップダウンからも同様にプリセットを選択できます
-3. 「プリセット編集」ボタンでプリセットの保存・削除が行えます
+- 第 1 引数に RID を渡すと対象を変更できます（既定: `win-x64`）。
+- MewUI 版は Native AOT のため完全な単一バイナリです。
+- WinUI 3 版は発行時に Windows App SDK の未使用ペイロード（AI / ML / Search / Widgets / WebView2）を自動除外します（約 55 MB 削減。詳細は `src/app_WinUI3/SPEC_System.md`）。
+- WinUI 3 版は単一ファイル化できますが、初回起動時に依存ファイルを `%TEMP%\.net\<AppName>\` へ展開します。また WinUI 3 は Native AOT に対応しないため、AOT は使用しません（詳細は `src/app_WinUI3/SPEC_System.md`）。
+- Avalonia UI 版は Native AOT ですが、描画に使う SkiaSharp のネイティブ DLL を exe へ同梱できないため、**exe 単体ではなくフォルダー単位で配布**します（`libSkiaSharp.dll` / `av_libglesv2.dll` / `libHarfBuzzSharp.dll` を同じフォルダーに置きます。詳細は `src/app_AvaloniaUI/SPEC_System.md`）。
+- WinForms 版は Native AOT に対応せず、トリミングもサポートされないため（`NETSDK1175`）、単一ファイル化のみを行います（詳細は `src/app_WinForms/SPEC_System.md`）。
+- WinUI 3 版の exe 名は `ClipboardZenHanConverter.App.WinUI3.exe`、WinForms 版は `ClipboardZenHanConverter.App.WinForms.exe` です（WinUI 3 版はアセンブリ名をプロジェクト名に合わせ、名前空間は `ClipboardZenHanConverter.App.WinUI` のままです）。
 
-### 設定のエクスポート/インポート
+### Release ビルドと実行
 
-- **エクスポート**: 現在の設定を JSON ファイルとして保存
-- **インポート**: JSON ファイルから設定を復元
+発行（publish）を行わず、Release 構成のビルドと実行だけを行うスクリプトです。AOT・単一ファイル化を伴わないため短時間で確認できます。
 
-## 変換例
+| スクリプト | 対象 | 出力先 |
+| --- | --- | --- |
+| `MewUI_run_release.bat` | MewUI 版 | `src\app_MewUI\bin\Release\net10.0\` |
+| `WinUI3_run_release.bat` | WinUI 3 版 | `src\app_WinUI3\bin\Release\net10.0-windows10.0.26100.0\win-x64\` |
+| `AvaloniaUI_run_release.bat` | Avalonia UI 版 | `src\app_AvaloniaUI\bin\Release\net10.0\` |
+| `WinForms_run_release.bat` | WinForms 版 | `src\app_WinForms\bin\Release\net10.0-windows\` |
 
-### 数字・英字を半角に統一
+- 生成物はフレームワーク依存のため、実行には .NET 10 ランタイム（WinUI 3 版は Windows App SDK を含む）が必要です。
+- 配布用の exe が必要な場合は上記の `*_publish_*.bat` を使用してください。
 
-設定: 数字 = 半角、英字 = 半角
+起動するとホーム画面が表示され、クリップボードにコピーしたテキストを自動変換します。
 
-| コピー元 | 変換後 |
-|---|---|
-| `２０２４年ＡＢＣ株式会社` | `2024年ABC株式会社` |
-| `ＴＥＬ：０３−１２３４−５６７８` | `TEL：03-1234-5678` |
-| `１２３×４５６＝５６０８８` | `123×456＝56088` |
+## 元リポジトリ
 
-### 記号を全角に統一
-
-設定: 全角記号 = 全角
-
-| コピー元 | 変換後 |
-|---|---|
-| `"Hello" <World>` | `"Hello" <World>` |
-
-### かな文字を全角ひらがなに統一
-
-設定: 半角カナ = 全角ひらがな
-
-| コピー元 | 変換後 |
-|---|---|
-| `ｺﾝﾆﾁﾊｾｶｲ` | `こんにちはせかい` |
-| `ﾀﾞｲｽｷﾅﾗｰﾒﾝ` | `だいすきな らーめん` |
-
-### タブ/改行をスペースに変換
-
-設定: タブ = 半角スペース、改行 = 半角スペース
-
-| コピー元 | 変換後 |
-|---|---|
-| `A\tB\tC` | `A B C` |
-| `Line1\r\nLine2` | `Line1 Line2` |
-
-### 連続スペースを統合
-
-設定: 連続スペース = 半角スペース
-
-| コピー元 | 変換後 |
-|---|---|
-| `A   B     C` | `A B C` |
-| `A　　B　C` | `A B C` |
-
-### 全力会計プリセット（組み込み）
-
-会計帳票向けの設定。数字・英字・一部記号を半角に、その他記号・かなを全角に統一します。
-
-| コピー元 | 変換後 |
-|---|---|
-| `２０２４年１２月３１日（金）` | `2024年12月31日(金)` |
-| `（株）ＡＢＣ商事 １，２３４，５６７円` | `(株)ABC商事 1,234,567円` |
-| `〒１００−０００１ 東京ﾄｳｷｮｳ` | `〒100-0001 東京` |
-
-### 英数記号半角、かな全角プリセット（組み込み）
-
-英字/数字/記号を全て半角に、半角カナを全角カタカナに、バックスラッシュ/円記号を半角円記号に統一します。改行は変換しません。
-
-| コピー元 | 変換後 |
-|---|---|
-| `（株）ＡＢＣ商事「設定」２０２４年` | `(株)ABC商事[設定]2024年` |
-| `ＴＥＬ：０３−１２３４−５６７８（代表）` | `TEL:03-1234-5678(代表)` |
-| `当社の製品「Ｗｉｄｇｅｔ」は￥１，２００です。` | `当社の製品[Widget]は¥1,200です。` |
-| `お問合せは「ｓｕｐｐｏｒｔ＠ｅｘａｍｐｌｅ．ｃｏｍ」迄` | `お問合せは[support@example.com]迄` |
-| `ﾀﾞｲｽｷﾅﾗｰﾒﾝ! ﾏｲｳｪｲ!` | `ダイスキナラーメン! マイウェイ!` |
-
-## 動作環境
-
-- Windows 10 (version 1809+) / Windows 11
-- .NET 10 ランタイム
-- 64-bit (x64)
-
-## 開発環境
-
-- .NET 10
-- WinUI 3 (Windows App SDK)
-- CommunityToolkit.Mvvm
-- CommunityToolkit.WinUI
+WinUI 3 版の実装は `../ClipboardZenHanConverter` にありました。本リポジトリに統合済みです（`src/app_WinUI3`）。
+統合元のリポジトリは参照用として残しています。

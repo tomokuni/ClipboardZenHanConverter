@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <!-- 参照先の app_WinForms が WinForms を使用するため、テスト側でも同じフレームワーク参照が必要 -->
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>ClipboardZenHanConverter.Tests.App.WinForms</RootNamespace>
+    <AssemblyName>ClipboardZenHanConverter.Tests.App.WinForms</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="10.*">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.*" />
+    <PackageReference Include="xunit.analyzers" Version="1.*">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.*">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.v3" Version="3.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\app_WinForms\app_WinForms.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- テスト共通ヘルパーは test 直下に単一所有し、各テストプロジェクトへリンクして共有する -->
+    <Compile Include="..\TestHelper.cs" Link="TestHelper.cs" />
+  </ItemGroup>
+
+</Project>

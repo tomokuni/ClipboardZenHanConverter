@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <UseWinUI>true</UseWinUI>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <RootNamespace>ClipboardZenHanConverter.Tests.Parity</RootNamespace>
+    <AssemblyName>ClipboardZenHanConverter.Tests.Parity</AssemblyName>
+    <!-- app_WinUI3（自己完結型）を参照するため Windows App SDK のビルド要件を満たす -->
+    <Platforms>x64</Platforms>
+    <SelfContained>true</SelfContained>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="10.*">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.*" />
+    <PackageReference Include="xunit.analyzers" Version="1.*">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.*">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.v3" Version="3.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 両 UI の app 層を同時に参照し、同じ入力に対する挙動を直接比較する -->
+    <ProjectReference Include="..\..\src\core\core.csproj" />
+    <ProjectReference Include="..\..\src\app_WinUI3\app_WinUI3.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      HomeViewModel は各 UI のスレッド委譲方式が異なるため UI ごとの実装のままです（未共通化）。
+      一方で app_MewUI / app_WinForms は非自己完結型 exe、app_WinUI3 は自己完結型 exe のため、
+      1 つのプロジェクトから同時に参照すると NETSDK1150/1151 で失敗します。
+      そこで MewUI 版・WinForms 版はソースをリンクして同一アセンブリへ取り込み、各実装を直接比較します。
+      （リンクのため、app_MewUI / app_WinForms 側の変更は自動的にこのテストへ反映されます）
+
+      設定画面の ViewModel（SettingsViewModel / ZenHanConvertItem / ReplacePairItem 等）は
+      src/core_presentation に共通化済みのため、ここで比較する対象はありません。
+    -->
+    <Compile Include="..\..\src\app_MewUI\ViewModels\HomeViewModel.cs" Link="App.MewUI\ViewModels\HomeViewModel.cs" />
+    <Compile Include="..\..\src\app_WinForms\ViewModels\HomeViewModel.cs" Link="App.WinForms\ViewModels\HomeViewModel.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- テスト共通ヘルパーは test 直下に単一所有し、各テストプロジェクトへリンクして共有する -->
+    <Compile Include="..\TestHelper.cs" Link="TestHelper.cs" />
+  </ItemGroup>
+
+</Project>

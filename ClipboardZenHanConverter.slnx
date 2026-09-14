@@ -1,15 +1,21 @@
 <Solution>
-  <Configurations>
-    <Platform Name="x64" />
-  </Configurations>
-  <Project Path="src/app/app.csproj">
-    <Platform Project="x64" />
-    <Deploy />
-  </Project>
-  <Project Path="src/core/core.csproj">
-    <Platform Project="x64" />
-  </Project>
-  <Project Path="test/tests.csproj">
-    <Platform Project="x64" />
-  </Project>
+  <Folder Name="/src/">
+    <Project Path="src/app_AvaloniaUI/app_AvaloniaUI.csproj" />
+    <Project Path="src/app_MewUI/app_MewUI.csproj" />
+    <Project Path="src/app_WinForms/app_WinForms.csproj" />
+    <Project Path="src/app_WinUI3/app_WinUI3.csproj" />
+    <Project Path="src/core/core.csproj" />
+    <Project Path="src/core_presentation/core_presentation.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/app_AvaloniaUI/tests_app_AvaloniaUI.csproj" />
+    <Project Path="test/app_MewUI/tests_app_MewUI.csproj" />
+    <Project Path="test/app_WinForms/tests_app_WinForms.csproj" />
+    <Project Path="test/app_WinUI3/tests_app_WinUI3.csproj" />
+    <Project Path="test/core/tests_core.csproj" />
+    <Project Path="test/core_presentation/tests_core_presentation.csproj" />
+    <Project Path="test/parity/tests_parity.csproj">
+      <Platform Project="x64" />
+    </Project>
+  </Folder>
 </Solution>

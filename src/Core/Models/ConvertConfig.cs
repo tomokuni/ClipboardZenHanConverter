@@ -17,7 +17,7 @@ public sealed record ModePropDef(
 /// <summary>全角/半角変換の設定を管理します。</summary>
 /// <remarks>
 /// 提供機能: <br/>
-/// - 数字・英字・記号・かな・約物など45以上の個別変換モードプロパティ<br/>
+/// - 全角/半角変換の有効/無効と、数字・英字・記号・かな・約物など45以上の個別変換モードプロパティ<br/>
 /// - ユーザー定義の置換ルール（正規表現対応）<br/>
 /// - プリセット保存/読み込み/削除（Built-in + ユーザー定義）<br/>
 /// - インポート/エクスポート（JSONファイル）<br/>
@@ -157,7 +157,8 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
     }
 
     /// <summary>全角/半角変換の有効/無効を取得または設定します。</summary>
-    /// <remarks>このプロパティが false の場合、ZenHan 変換はスキップされユーザー定義置換のみ適用されます。</remarks>
+    /// <remarks>変換を実行するか否かは呼び出し側（画面側）のポリシーであり、変換エンジンはこの値を参照しません。<br/>
+    /// 画面側がこの値で変換の実行可否を切り替えます。</remarks>
     [ObservableProperty]
     public partial bool IsEnabledZenHan { get; set; }
 
@@ -531,8 +532,10 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
         }
     }
 
-    /// <summary>ユーザープリセットの保存ディレクトリパス。</summary>
-    private static string PresetDirectory => Path.Combine(
+    /// <summary>ユーザープリセットの保存ディレクトリパスを取得または設定します。</summary>
+    /// <value>既定は %LOCALAPPDATA%\ClipboardZenHanConverter\Presets。</value>
+    /// <remarks>テストでは一時ディレクトリへ差し替えて、実ユーザーのプリセットを汚さないようにします。</remarks>
+    public static string PresetDirectory { get; set; } = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         "ClipboardZenHanConverter", "Presets");
 

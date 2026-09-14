@@ -237,13 +237,14 @@ public partial class CharConverter : ITextConverter, IDisposable
     /// <remarks>
     /// 処理フロー: <br/>
     /// 1. null/空文字チェック（そのまま返す）<br/>
-    /// 2. 全角/半角変換（IsEnabledZenHan が true の場合のみ）<br/>
+    /// 2. 全角/半角変換<br/>
     ///    2a. ZenHanConverter.ToNormalize で正規化<br/>
     ///    2b. 変換ペアに基づく置換<br/>
     ///    2c. 連続スペースの整形<br/>
     /// 3. ユーザー定義の置換ルール適用<br/><br/>
     /// 注意点: <br/>
-    /// - ユーザー定義の置換ルールは ZenHan 変換の有無に関わらず常に適用される</remarks>
+    /// - 全角/半角変換は常に有効（呼び出し側でスキップしない）<br/>
+    /// - ユーザー定義の置換ルールは全角/半角変換に続けて常に適用される</remarks>
     /// <param name="text">変換対象のテキスト。null の場合は null を返す。</param>
     /// <returns>変換結果のテキスト</returns>
     public string Convert(string text)
@@ -253,18 +254,15 @@ public partial class CharConverter : ITextConverter, IDisposable
             return text;
 
         // Step 2: 全角/半角変換
-        if (Config.IsEnabledZenHan)
+        text = ZenHanConverter.ToNormalize(text);
+        text = GetConvertPairs().Convert(text);
+        text = Config.ConvertModeEtcMultiSpace switch
         {
-            text = ZenHanConverter.ToNormalize(text);
-            text = GetConvertPairs().Convert(text);
-            text = Config.ConvertModeEtcMultiSpace switch
-            {
-                ZenHanEtcSpecial.ToHanSpace => SingleSpaceRegex().Replace(text, " "),
-                ZenHanEtcSpecial.ToZenSpace => SingleSpaceRegex().Replace(text, "　"),
-                ZenHanEtcSpecial.Remove => SingleSpaceRegex().Replace(text, ""),
-                _ => text
-            };
-        }
+            ZenHanEtcSpecial.ToHanSpace => SingleSpaceRegex().Replace(text, " "),
+            ZenHanEtcSpecial.ToZenSpace => SingleSpaceRegex().Replace(text, "　"),
+            ZenHanEtcSpecial.Remove => SingleSpaceRegex().Replace(text, ""),
+            _ => text
+        };
 
         // Step 3: ユーザー定義の置換ルール適用
         return ApplyUserReplacements(text);

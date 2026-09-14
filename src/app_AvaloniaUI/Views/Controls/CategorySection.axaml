@@ -1,0 +1,59 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="using:ClipboardZenHanConverter.App.AvaloniaUI.Views.Controls"
+             xmlns:vm="using:ClipboardZenHanConverter.Presentation.ViewModels"
+             x:Name="Root"
+             x:Class="ClipboardZenHanConverter.App.AvaloniaUI.Views.Controls.CategorySection"
+             x:DataType="controls:CategorySection">
+
+    <UserControl.Resources>
+        <!-- 変換項目 1 行（ラベル + セグメント選択）。選択肢は行ごとに一意な GroupName で排他選択になる -->
+        <DataTemplate x:Key="ConvertItemTemplate" x:DataType="vm:ZenHanConvertItem">
+            <Grid ColumnDefinitions="Auto,*" Margin="0,2,24,2">
+                <TextBlock Grid.Column="0"
+                           Text="{Binding Label}"
+                           MinWidth="112"
+                           Margin="0,0,12,0"
+                           VerticalAlignment="Center" />
+                <ItemsControl Grid.Column="1"
+                              ItemsSource="{Binding Options}"
+                              VerticalAlignment="Center">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="4" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:SegmentOption">
+                            <RadioButton Theme="{StaticResource SegmentRadioButton}"
+                                         Content="{Binding Content}"
+                                         GroupName="{Binding GroupName}"
+                                         IsEnabled="{Binding IsEnabled}"
+                                         IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <StackPanel Spacing="6">
+        <TextBlock Classes="sectionHeader"
+                   Text="{Binding #Root.Header}"
+                   IsVisible="{Binding #Root.Header, Converter={StaticResource NotEmptyToBool}}" />
+        <TextBlock Classes="sectionDescription"
+                   Text="{Binding #Root.Description}"
+                   IsVisible="{Binding #Root.Description, Converter={StaticResource NotEmptyToBool}}" />
+        <ItemsControl ItemsSource="{Binding #Root.Items}"
+                      ItemTemplate="{StaticResource ConvertItemTemplate}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+        <TextBlock Classes="remark"
+                   Text="{Binding #Root.Remark}"
+                   IsVisible="{Binding #Root.Remark, Converter={StaticResource NotEmptyToBool}}" />
+    </StackPanel>
+</UserControl>

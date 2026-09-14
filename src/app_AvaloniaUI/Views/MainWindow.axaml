@@ -1,0 +1,154 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ClipboardZenHanConverter.App.AvaloniaUI.ViewModels"
+        xmlns:chrome="using:Avalonia.Controls.Chrome"
+        x:Class="ClipboardZenHanConverter.App.AvaloniaUI.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="ClipboardZenHanConverter"
+        MinWidth="720"
+        MinHeight="480"
+        ExtendClientAreaToDecorationsHint="True"
+        WindowDecorations="None">
+
+    <Window.Styles>
+        <!-- ナビゲーションペインを折りたたんだときは、ラベルを隠してアイコンのみを中央に表示する -->
+        <Style Selector="ListBox.compact ListBoxItem">
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="ListBox.compact ListBoxItem TextBlock">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+    </Window.Styles>
+
+    <Grid>
+        <Grid RowDefinitions="36,*">
+
+            <!--
+                カスタムタイトルバー。ElementRole="TitleBar" により、この領域のドラッグでウィンドウ移動、
+                ダブルクリックで最大化/復元が行われます（内部の操作系コントロールは通常どおり入力を受け取ります）。
+            -->
+            <Border Grid.Row="0"
+                    chrome:WindowDecorationProperties.ElementRole="TitleBar"
+                    Background="#F3F3F3">
+                <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto">
+
+                    <!-- ナビゲーションペインの開閉 -->
+                    <Button Grid.Column="0"
+                            chrome:WindowDecorationProperties.ElementRole="User"
+                            Theme="{StaticResource CaptionButton}"
+                            Click="OnPaneToggleClick"
+                            Content="☰"
+                            ToolTip.Tip="ナビゲーションの表示/非表示" />
+
+                    <TextBlock Grid.Column="1"
+                               Text="clipboard text converter"
+                               FontWeight="Bold"
+                               VerticalAlignment="Center"
+                               Margin="6,0,0,0" />
+
+                    <!-- クリップボード変換の有効/無効（AppSetting.IsClipboardConvertEnabled を単一所有） -->
+                    <!-- 操作系コントロールは ElementRole="User" とし、タイトルバー（ドラッグ領域）の入力横取りから除外する -->
+                    <StackPanel Grid.Column="2"
+                                chrome:WindowDecorationProperties.ElementRole="User"
+                                Orientation="Horizontal"
+                                Spacing="0"
+                                VerticalAlignment="Center"
+                                Margin="24,0,0,0">
+                        <ToggleSwitch IsChecked="{Binding AppSetting.IsClipboardConvertEnabled, Mode=TwoWay}"
+                                      MinWidth="0"
+                                      OnContent=""
+                                      OffContent=""
+                                      VerticalAlignment="Center" />
+                        <!--
+                            既定テンプレートはトラックと内容の間に 12 DIP の固定余白列を持つため、
+                            これを打ち消す負の余白でラベルをトラックへ詰めて並べる。
+                        -->
+                        <TextBlock Text="クリップボード変換" VerticalAlignment="Center" Margin="-10,0,0,0" />
+                    </StackPanel>
+
+                    <!-- プリセット選択（SettingsViewModel.SelectedPresetName を単一所有。設定画面と同期） -->
+                    <ComboBox x:Name="PresetCombo"
+                              Grid.Column="3"
+                              chrome:WindowDecorationProperties.ElementRole="User"
+                              ItemsSource="{Binding Settings.PresetNames}"
+                              SelectedItem="{Binding Settings.SelectedPresetName, Mode=TwoWay}"
+                              PlaceholderText="プリセット未選択"
+                              VerticalAlignment="Center"
+                              Margin="24,0,0,0"
+                              ToolTip.Tip="保存済みのプリセットを選択して設定を読み込みます" />
+
+                    <!-- ウィンドウ操作ボタン -->
+                    <StackPanel Grid.Column="5"
+                                chrome:WindowDecorationProperties.ElementRole="User"
+                                Orientation="Horizontal"
+                                VerticalAlignment="Stretch">
+                        <Button Theme="{StaticResource CaptionButton}"
+                                Click="OnMinimizeClick"
+                                Content="—"
+                                ToolTip.Tip="最小化" />
+                        <Button x:Name="MaximizeButton"
+                                Theme="{StaticResource CaptionButton}"
+                                Click="OnMaximizeClick"
+                                Content="□"
+                                ToolTip.Tip="最大化/復元" />
+                        <Button Theme="{StaticResource CaptionCloseButton}"
+                                Click="OnCloseClick"
+                                Content="✕"
+                                ToolTip.Tip="閉じる" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ナビゲーションペイン + コンテンツ -->
+            <Grid Grid.Row="1" ColumnDefinitions="Auto,*">
+
+                <Border x:Name="NavPane"
+                        Grid.Column="0"
+                        Width="104"
+                        Background="#F6F8FA"
+                        BorderBrush="#E1E1E1"
+                        BorderThickness="0,0,1,0">
+                    <ListBox x:Name="NavList"
+                             ItemsSource="{Binding NavItems}"
+                             SelectedItem="{Binding SelectedNavItem, Mode=TwoWay}"
+                             Background="Transparent"
+                             BorderThickness="0">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="vm:NavigationItem">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <!-- アイコン色はテーマの主要テキスト色を継承させ、選択状態やダークテーマに追従させる -->
+                                    <Path Data="{Binding Icon}"
+                                          Width="16"
+                                          Height="16"
+                                          Stretch="Uniform"
+                                          Fill="{DynamicResource TextControlForeground}"
+                                          VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding Label}" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Border>
+
+                <ContentControl Grid.Column="1" Content="{Binding CurrentView}" />
+            </Grid>
+        </Grid>
+
+        <!--
+            ウィンドウのリサイズ用ヒット領域。
+            WindowDecorations="None"（アプリが装飾を描画する構成）では枠が無いため、
+            各辺・角に役割を宣言してリサイズを可能にします。
+        -->
+        <Grid ColumnDefinitions="6,*,6" RowDefinitions="6,*,6">
+            <Border Grid.Row="0" Grid.Column="0" chrome:WindowDecorationProperties.ElementRole="ResizeNW" Background="Transparent" />
+            <Border Grid.Row="0" Grid.Column="1" chrome:WindowDecorationProperties.ElementRole="ResizeN" Background="Transparent" />
+            <Border Grid.Row="0" Grid.Column="2" chrome:WindowDecorationProperties.ElementRole="ResizeNE" Background="Transparent" />
+            <Border Grid.Row="1" Grid.Column="0" chrome:WindowDecorationProperties.ElementRole="ResizeW" Background="Transparent" />
+            <Border Grid.Row="1" Grid.Column="2" chrome:WindowDecorationProperties.ElementRole="ResizeE" Background="Transparent" />
+            <Border Grid.Row="2" Grid.Column="0" chrome:WindowDecorationProperties.ElementRole="ResizeSW" Background="Transparent" />
+            <Border Grid.Row="2" Grid.Column="1" chrome:WindowDecorationProperties.ElementRole="ResizeS" Background="Transparent" />
+            <Border Grid.Row="2" Grid.Column="2" chrome:WindowDecorationProperties.ElementRole="ResizeSE" Background="Transparent" />
+        </Grid>
+    </Grid>
+</Window>

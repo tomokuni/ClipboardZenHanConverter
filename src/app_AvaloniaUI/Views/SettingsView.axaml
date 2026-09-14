@@ -1,0 +1,144 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ClipboardZenHanConverter.Presentation.ViewModels"
+             xmlns:controls="using:ClipboardZenHanConverter.App.AvaloniaUI.Views.Controls"
+             x:Class="ClipboardZenHanConverter.App.AvaloniaUI.Views.SettingsView"
+             x:DataType="vm:SettingsViewModel">
+
+    <Grid RowDefinitions="Auto,Auto,*">
+
+        <!-- ヘッダー：全角/半角の変換設定（固定） -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="16" Margin="30,20,30,8">
+            <TextBlock Text="全角/半角の変換設定"
+                       FontSize="20"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Bottom" />
+            <TextBlock Text="各文字ごとに全角⇔半角の変換 や 正規化 を行います。"
+                       Classes="sectionDescription"
+                       VerticalAlignment="Bottom"
+                       Margin="0,0,0,3" />
+        </StackPanel>
+
+        <!-- 設定の管理（固定） -->
+        <Border Grid.Row="1" BorderBrush="#DDDDDD" BorderThickness="0,1,0,1" Padding="30,8">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+
+                <!-- 左寄せ：プリセット -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                    <ComboBox ItemsSource="{Binding PresetNames}"
+                              SelectedItem="{Binding SelectedPresetName, Mode=TwoWay}"
+                              PlaceholderText="プリセットを選択"
+                              MinWidth="220"
+                              VerticalAlignment="Center"
+                              ToolTip.Tip="保存済みのプリセットを選択して設定を読み込みます" />
+                    <Button Content="プリセット編集"
+                            Click="OnEditPresetClick"
+                            VerticalAlignment="Center"
+                            ToolTip.Tip="プリセットの保存・削除を行います" />
+                </StackPanel>
+
+                <!-- 右寄せ：インポート/エクスポート -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+                    <Button Content="エクスポート (JSON)"
+                            Click="OnExportSettingsClick"
+                            ToolTip.Tip="現在の設定をJSONファイルに保存します" />
+                    <Button Content="インポート (JSON)"
+                            Click="OnImportSettingsClick"
+                            ToolTip.Tip="JSONファイルから設定を読み込みます" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="30,14,30,30" Spacing="18">
+
+                <!-- 数字 -->
+                <controls:CategorySection Header="[ ０ ] 数字の変換"
+                                          Description="[ 0123456789 ] の数字の変換を指定します。"
+                                          Items="{Binding NumberItems}" />
+
+                <!-- 英字 -->
+                <controls:CategorySection Header="[ Ａ ] 英字の変換"
+                                          Description="[ A-Z a-z ] の英字の変換を指定します。"
+                                          Items="{Binding AlphabetItems}" />
+
+                <!-- カナ -->
+                <controls:CategorySection Header="[ ア ] カナの変換"
+                                          Description="[ ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾉﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾋﾛﾜｦﾝｧｨｩｪｫｬｭｮｯｰﾞﾟ ] のカナ文字の変換を指定します。"
+                                          Items="{Binding KanaItems}" />
+
+                <!-- 記号 -->
+                <controls:CategorySection Header="[ ＠ ] 記号の変換"
+                                          Description="[ ( ) [ ] { } &quot; ' , . : ; &lt; = &gt; + - ! # $ % &amp; * / ? @ ^ _ ` | ~ ー 。 、 ] の記号の変換を指定します。"
+                                          Items="{Binding SymbolItems}" />
+
+                <!-- その他（約物） -->
+                <controls:CategorySection Header="[ その他 ] 特殊な文字の変換"
+                                          Description="[ 長音記号 読点 句点 円記号 スペース 改行 ] などの変換を指定します。"
+                                          Items="{Binding EtcZenHanAsciiItems}" />
+
+                <!-- その他（バックスラッシュ / 円記号） -->
+                <controls:CategorySection Items="{Binding EtcBslashYenItems}"
+                                          Remark="※ 半角バックスラッシュは、フォントによっては 円記号￥の表現になります。" />
+
+                <!-- その他（タブ / 改行） -->
+                <controls:CategorySection Items="{Binding EtcSpecialItems}" />
+
+                <!-- その他（連続スペース） -->
+                <controls:CategorySection Items="{Binding EtcMultiSpaceItems}" />
+
+                <!-- 文字列の置換 -->
+                <StackPanel Spacing="6">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Grid.Column="0" Classes="sectionHeader" Text="文字列の置換" VerticalAlignment="Center" />
+                        <Button Grid.Column="1"
+                                Content="＋新規"
+                                Command="{Binding AddReplaceRowCommand}"
+                                ToolTip.Tip="新しい置換行を追加します" />
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,*,Auto,44" Margin="0,4,0,0">
+                        <TextBlock Grid.Column="0" Text="検索文字列" FontWeight="Bold" FontSize="12" Margin="4,0,0,0" />
+                        <TextBlock Grid.Column="1" Text="置換文字列" FontWeight="Bold" FontSize="12" Margin="4,0,0,0" />
+                        <TextBlock Grid.Column="2" Text="正規表現" FontWeight="Bold" FontSize="12" Margin="4,0,0,0" />
+                        <TextBlock Grid.Column="3" Text="操作" FontWeight="Bold" FontSize="12" Margin="4,0,0,0" />
+                    </Grid>
+
+                    <ItemsControl ItemsSource="{Binding ReplaceItems}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:ReplacePairItem">
+                                <StackPanel Spacing="2" Margin="0,0,0,6">
+                                    <Grid ColumnDefinitions="*,*,Auto,44">
+                                        <TextBox Grid.Column="0"
+                                                 Text="{Binding Search, Mode=TwoWay}"
+                                                 PlaceholderText="検索文字列"
+                                                 Margin="0,0,4,0" />
+                                        <TextBox Grid.Column="1"
+                                                 Text="{Binding Replace, Mode=TwoWay}"
+                                                 PlaceholderText="置換文字列"
+                                                 Margin="0,0,4,0" />
+                                        <CheckBox Grid.Column="2"
+                                                  IsChecked="{Binding IsRegex, Mode=TwoWay}"
+                                                  Content="正規表現"
+                                                  VerticalAlignment="Center"
+                                                  Margin="4,0,8,0" />
+                                        <Button Grid.Column="3"
+                                                Content="🗑"
+                                                VerticalAlignment="Center"
+                                                ToolTip.Tip="この行を削除します"
+                                                Command="{Binding $parent[ItemsControl].((vm:SettingsViewModel)DataContext).DeleteReplaceRowCommand}"
+                                                CommandParameter="{Binding}" />
+                                    </Grid>
+                                    <TextBlock Classes="error"
+                                               Text="{Binding ErrorMessage}"
+                                               IsVisible="{Binding ErrorMessage, Converter={StaticResource NotEmptyToBool}}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

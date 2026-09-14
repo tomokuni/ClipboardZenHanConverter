@@ -63,6 +63,15 @@ public abstract partial class SettingsPersistenceBase<T> : ObservableObject, IDi
         _debounceCts = null;
     }
 
+    /// <summary>保留中の自動保存を取り消し、現在の内容を自動保存先へ同期で保存します。</summary>
+    /// <remarks>アプリの終了時など、デバウンス（300ms）の完了を待てない場面で使用します。<br/>
+    /// 終了直前はプロセスが停止するため、非同期保存では書き込みが完了しません。</remarks>
+    public void SaveNow()
+    {
+        CancelPendingSave();
+        SaveToJsonFile(AutoSaveFileName);
+    }
+
     /// <summary>プロパティ変更時に呼び出され、300ms のデバウンスで自動保存をスケジュールします。</summary>
     /// <remarks>デバウンス中にさらにプロパティが変更された場合、前回の保存予定はキャンセルされ、再度300msからカウントが始まります。</remarks>
     private void OnAnyPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)

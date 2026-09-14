@@ -1,0 +1,121 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Styles.Resources>
+        <!--
+            セグメント選択用の RadioButton。
+            既定の RadioButton は丸いラジオマークを描くため、排他選択をインラインのボタン列として表示する
+            セグメント用途では見た目が合いません。テンプレートを差し替え、:checked 疑似クラスで選択状態を表現します。
+            グループ化は GroupName を指定しない既定動作（同一の親要素内で排他）に任せるため、
+            行ごとに独立した ItemsControl の中へ配置すれば行間で干渉しません。
+        -->
+        <ControlTheme x:Key="SegmentRadioButton" TargetType="RadioButton">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="#22000000" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Padding" Value="10,3" />
+            <Setter Property="MinWidth" Value="56" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource TextControlForeground}" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Name="PART_Root"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter Name="PART_ContentPresenter"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+
+            <Style Selector="^:pointerover">
+                <Setter Property="Background" Value="#14000000" />
+            </Style>
+            <Style Selector="^:checked">
+                <Setter Property="Background" Value="#0F6CBD" />
+                <Setter Property="BorderBrush" Value="#0F6CBD" />
+                <Setter Property="Foreground" Value="White" />
+            </Style>
+            <Style Selector="^:checked:pointerover">
+                <Setter Property="Background" Value="#115EA3" />
+            </Style>
+            <Style Selector="^:disabled">
+                <Setter Property="Opacity" Value="0.4" />
+            </Style>
+        </ControlTheme>
+
+        <!--
+            ウィンドウ操作ボタン（最小化/最大化・復元/閉じる）。
+            タイトルバーの高さに合わせて詰め、閉じるボタンのみホバー時に赤系の配色にします。
+        -->
+        <ControlTheme x:Key="CaptionButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Width" Value="46" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Name="PART_Root"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="0">
+                        <ContentPresenter Name="PART_ContentPresenter"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+
+            <Style Selector="^:pointerover">
+                <Setter Property="Background" Value="#20000000" />
+            </Style>
+            <Style Selector="^:pressed">
+                <Setter Property="Background" Value="#30000000" />
+            </Style>
+        </ControlTheme>
+
+        <!-- 閉じるボタン（ホバー時に赤系） -->
+        <ControlTheme x:Key="CaptionCloseButton" TargetType="Button" BasedOn="{StaticResource CaptionButton}">
+            <Style Selector="^:pointerover">
+                <Setter Property="Background" Value="#C42B1C" />
+                <Setter Property="Foreground" Value="White" />
+            </Style>
+            <Style Selector="^:pressed">
+                <Setter Property="Background" Value="#A32A1D" />
+                <Setter Property="Foreground" Value="White" />
+            </Style>
+        </ControlTheme>
+    </Styles.Resources>
+
+    <!-- アプリ全体の微調整 -->
+    <Style Selector="TextBlock.sectionHeader">
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="TextBlock.sectionDescription">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style Selector="TextBlock.remark">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style Selector="TextBlock.error">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Foreground" Value="#C42B1C" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+</Styles>

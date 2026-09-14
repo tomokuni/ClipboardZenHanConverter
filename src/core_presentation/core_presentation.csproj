@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>ClipboardZenHanConverter.Presentation</RootNamespace>
+    <AssemblyName>ClipboardZenHanConverter.Presentation</AssemblyName>
+    <Description>UI framework agnostic presentation layer (ViewModels) for ClipboardZenHanConverter</Description>
+    <Version>0.0.1</Version>
+    <Copyright>Copyright (c) 2025</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 依存方向: App（4 つの UI） → Presentation（本プロジェクト） → Core -->
+    <ProjectReference Include="..\core\core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 検証ロジック（internal static）をテストから参照するため -->
+    <InternalsVisibleTo Include="ClipboardZenHanConverter.Tests.Presentation" />
+  </ItemGroup>
+
+</Project>

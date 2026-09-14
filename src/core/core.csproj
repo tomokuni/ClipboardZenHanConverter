@@ -4,14 +4,21 @@
     <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>ClipboardZenHanConverter.Core</RootNamespace>
     <AssemblyName>ClipboardZenHanConverter.Core</AssemblyName>
-    <Description>Core logic and models for ClipboardZenHanConverter</Description>
+    <Description>Core logic, models and platform APIs for ClipboardZenHanConverter (UI framework agnostic)</Description>
     <Version>0.0.1</Version>
     <Copyright>Copyright (c) 2025</Copyright>
+    <!-- Win32 P/Invoke（LibraryImport ソース生成）が unsafe コードを生成するため許可する -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-    <PackageReference Include="EsUtil.Helper.ZenHanConverter" Version="0.0.3" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.*" />
+    <PackageReference Include="EsUtil.Helper.ZenHanConverter" Version="0.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- アイコン形状は SVG ファイルを唯一の定義元とし、UI フレームワーク非依存のパスデータとして提供する -->
+    <EmbeddedResource Include="Icons\**\*.svg" />
   </ItemGroup>
 
 </Project>

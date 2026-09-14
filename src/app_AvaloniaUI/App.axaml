@@ -1,0 +1,19 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="using:ClipboardZenHanConverter.App.AvaloniaUI.Converters"
+             x:Class="ClipboardZenHanConverter.App.AvaloniaUI.App"
+             RequestedThemeVariant="Default">
+    <!-- "Default" は OS のテーマに追従します（"Dark" / "Light" も指定可能）。 -->
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <!-- 任意項目の表示可否（空文字を非表示）として各画面で共有する -->
+            <conv:StringNotEmptyToBoolConverter x:Key="NotEmptyToBool" />
+        </ResourceDictionary>
+    </Application.Resources>
+
+    <Application.Styles>
+        <FluentTheme />
+        <StyleInclude Source="avares://ClipboardZenHanConverter.App.AvaloniaUI/Styles/AppStyles.axaml" />
+    </Application.Styles>
+</Application>

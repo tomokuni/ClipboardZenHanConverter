@@ -1,44 +1,17 @@
-# Build results
+## .NET build outputs
 bin/
 obj/
-*.DotSettings.user
-
-# Visual Studio cache/options
-.vs/
+publish/
 *.user
-*.suo
-*.cache
-*.ldf
-*.sdf
 
-# NuGet
-packages/
-*.nupkg
-*.snupkg
-.nuget/
+## Visual Studio
+.vs/
 
-# Local NuGet source
-local-nuget/
-
-# BenchmarkDotNet
-BenchmarkDotNet.Artifacts/
-
-# Test Results
+## Test results
 TestResults/
-.trx
+*.coverage
+*.coveragexml
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
+## OS
 Thumbs.db
-
-# Project-specific
-*.log
-appsettings.local.json
-PublishProfiles/
+Desktop.ini

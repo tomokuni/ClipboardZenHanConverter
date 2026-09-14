@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>ClipboardZenHanConverter.App.MewUI</RootNamespace>
+    <AssemblyName>ClipboardZenHanConverter.App.MewUI</AssemblyName>
+    <Product>ClipboardZenHanConverter</Product>
+    <Version>0.0.1</Version>
+    <Description>ClipboardZenHanConverter (MewUI) - clipboard text converter</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\core\core.csproj" />
+    <ProjectReference Include="..\core_presentation\core_presentation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aprillz.MewUI.Windows" Version="0.*" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.*" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.*" />
+    <!-- マルチカラム配置の計算は UI 非依存のアルゴリズムへ委譲する（WinUI3 版 MultiColumnPanel と同じ土台） -->
+    <PackageReference Include="EsUtil.Algorithm.MultiColumnLayoutEngine" Version="1.*" />
+  </ItemGroup>
+
+</Project>

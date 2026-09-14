@@ -1,0 +1,30 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ClipboardZenHanConverter.Presentation.ViewModels"
+        x:Class="ClipboardZenHanConverter.App.AvaloniaUI.Views.PresetEditDialog"
+        x:DataType="vm:PresetEditDialogViewModel"
+        Title="プリセット編集"
+        Width="420"
+        SizeToContent="Height"
+        CanResize="False"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner">
+
+    <StackPanel Margin="20" Spacing="12">
+        <TextBlock Text="プリセット名" FontWeight="Bold" />
+        <TextBox x:Name="PresetNameBox"
+                 Text="{Binding PresetName, Mode=TwoWay}"
+                 PlaceholderText="保存するプリセット名を入力します" />
+        <TextBlock Classes="error"
+                   Text="{Binding ErrorMessage}"
+                   IsVisible="{Binding ErrorMessage, Converter={StaticResource NotEmptyToBool}}" />
+        <TextBlock Classes="remark"
+                   Text="既存のユーザープリセット名を入力すると上書き保存できます。" />
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,4,0,0">
+            <Button Content="保存" Command="{Binding SaveCommand}" IsEnabled="{Binding CanSave}" />
+            <Button Content="削除" Command="{Binding DeleteCommand}" IsEnabled="{Binding CanDelete}" />
+            <Button Content="閉じる" Command="{Binding CloseCommand}" />
+        </StackPanel>
+    </StackPanel>
+</Window>

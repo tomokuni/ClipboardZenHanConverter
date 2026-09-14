@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!--
+      他 UI と同じ DPI の扱いにする。ApplicationConfiguration.Initialize() が
+      この MSBuild プロパティを読み取って Application.SetHighDpiMode 等を生成する。
+    -->
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <ApplicationVisualStyles>true</ApplicationVisualStyles>
+    <ApplicationUseCompatibleTextRendering>false</ApplicationUseCompatibleTextRendering>
+    <!-- Win32 P/Invoke（LibraryImport ソース生成）が unsafe コードを生成するため許可する -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RootNamespace>ClipboardZenHanConverter.App.WinForms</RootNamespace>
+    <AssemblyName>ClipboardZenHanConverter.App.WinForms</AssemblyName>
+    <Product>ClipboardZenHanConverter</Product>
+    <Version>0.0.1</Version>
+    <Description>ClipboardZenHanConverter (WinForms) - clipboard text converter</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\core\core.csproj" />
+    <ProjectReference Include="..\core_presentation\core_presentation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 検証ロジック（internal static）をテストから参照するため -->
+    <InternalsVisibleTo Include="ClipboardZenHanConverter.Tests.App.WinForms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.*" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.*" />
+  </ItemGroup>
+
+</Project>
