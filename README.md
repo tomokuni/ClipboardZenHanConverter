@@ -157,4 +157,3 @@ dotnet run --project src/app_WinForms/app_WinForms.csproj
 ## 元リポジトリ
 
 WinUI 3 版の実装は `../ClipboardZenHanConverter` にありました。本リポジトリに統合済みです（`src/app_WinUI3`）。
-統合元のリポジトリは参照用として残しています。
