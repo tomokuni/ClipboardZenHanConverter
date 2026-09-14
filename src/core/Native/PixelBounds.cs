@@ -1,4 +1,4 @@
-namespace ClipboardZenHanConverter.Core.Native;
+namespace EsUtil.ClipboardZenHanConverter.Core.Native;
 
 /// <summary>物理ピクセル座標系の矩形を表します。</summary>
 /// <remarks>仮想画面（全モニタを包含する外接矩形）など、UI フレームワークに依存しない座標を扱います。<br/>

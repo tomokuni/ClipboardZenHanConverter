@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <RootNamespace>ClipboardZenHanConverter.Presentation</RootNamespace>
+    <RootNamespace>EsUtil.ClipboardZenHanConverter.Presentation</RootNamespace>
     <AssemblyName>ClipboardZenHanConverter.Presentation</AssemblyName>
     <Description>UI framework agnostic presentation layer (ViewModels) for ClipboardZenHanConverter</Description>
     <Version>0.0.1</Version>

@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <RootNamespace>ClipboardZenHanConverter.App.AvaloniaUI</RootNamespace>
+    <RootNamespace>EsUtil.ClipboardZenHanConverter.App.AvaloniaUI</RootNamespace>
     <AssemblyName>ClipboardZenHanConverter.App.AvaloniaUI</AssemblyName>
     <Product>ClipboardZenHanConverter</Product>
     <Version>0.0.1</Version>

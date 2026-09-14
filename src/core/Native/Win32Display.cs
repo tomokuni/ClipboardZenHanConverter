@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace ClipboardZenHanConverter.Core.Native;
+namespace EsUtil.ClipboardZenHanConverter.Core.Native;
 
 /// <summary>仮想画面（全モニタを包含する外接矩形）を取得する Win32 API ラッパー。</summary>
 /// <remarks>NativeAOT 対応のため <c>LibraryImport</c> によるソース生成 P/Invoke を使用します。<br/>

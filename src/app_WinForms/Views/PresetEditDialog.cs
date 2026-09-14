@@ -1,6 +1,9 @@
-using ClipboardZenHanConverter.App.WinForms.ViewModels;
+using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using System;
+using System.Drawing;
+using System.Windows.Forms;
 
-namespace ClipboardZenHanConverter.App.WinForms.Views;
+namespace EsUtil.ClipboardZenHanConverter.App.WinForms.Views;
 
 /// <summary>プリセットの保存・削除を行うダイアログです。</summary>
 /// <remarks>

@@ -1,4 +1,7 @@
-namespace ClipboardZenHanConverter.App.WinForms.Views;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace EsUtil.ClipboardZenHanConverter.App.WinForms.Views;
 
 /// <summary>メッセージを表示するシンプルなダイアログです。</summary>
 /// <remarks>提供機能: <br/>

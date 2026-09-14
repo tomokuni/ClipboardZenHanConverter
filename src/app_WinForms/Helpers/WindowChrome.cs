@@ -1,6 +1,7 @@
+using System;
 using System.Runtime.InteropServices;
 
-namespace ClipboardZenHanConverter.App.WinForms.Helpers;
+namespace EsUtil.ClipboardZenHanConverter.App.WinForms.Helpers;
 
 /// <summary>枠を持たないウィンドウ（<c>FormBorderStyle.None</c>）の移動とリサイズを補助する静的クラス。</summary>
 /// <remarks>

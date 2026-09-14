@@ -1,6 +1,9 @@
-using ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
-namespace ClipboardZenHanConverter.Tests;
+namespace EsUtil.ClipboardZenHanConverter.Tests;
 
 /// <summary>テスト用の共通ヘルパーメソッドを提供します。</summary>
 public static class TestHelper

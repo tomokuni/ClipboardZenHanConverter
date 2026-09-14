@@ -1,9 +1,9 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
-using ClipboardZenHanConverter.App.AvaloniaUI.ViewModels;
+using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
 
-namespace ClipboardZenHanConverter.App.AvaloniaUI.Views;
+namespace EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Views;
 
 /// <summary>設定画面を表示するビューです。</summary>
 /// <remarks>

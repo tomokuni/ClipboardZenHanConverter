@@ -1,4 +1,6 @@
-namespace ClipboardZenHanConverter.Core.Helpers;
+using System;
+
+namespace EsUtil.ClipboardZenHanConverter.Core.Helpers;
 
 /// <summary>上下 2 分割レイアウトの分割比率を扱う純粋ロジックを提供する静的クラス。</summary>
 /// <remarks>提供機能: <br/>

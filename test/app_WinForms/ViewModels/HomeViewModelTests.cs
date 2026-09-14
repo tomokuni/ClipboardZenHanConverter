@@ -1,11 +1,14 @@
-using ClipboardZenHanConverter.App.WinForms.ViewModels;
-using ClipboardZenHanConverter.Core.Enums;
-using ClipboardZenHanConverter.Core.Interfaces;
-using ClipboardZenHanConverter.Core.Logic;
-using ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.App.WinForms.ViewModels;
+using EsUtil.ClipboardZenHanConverter.Core.Enums;
+using EsUtil.ClipboardZenHanConverter.Core.Interfaces;
+using EsUtil.ClipboardZenHanConverter.Core.Logic;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
-namespace ClipboardZenHanConverter.Tests.App.WinForms.ViewModels;
+namespace EsUtil.ClipboardZenHanConverter.Tests.App.WinForms.ViewModels;
 /// <summary>テスト用のクリップボードサービススタブ。</summary>
 file sealed class StubClipboardService : IClipboardService
 {

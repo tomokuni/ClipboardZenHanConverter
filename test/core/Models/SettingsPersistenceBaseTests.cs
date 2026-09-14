@@ -1,7 +1,9 @@
-using ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
+using System;
+using System.IO;
 using Xunit;
 
-namespace ClipboardZenHanConverter.Tests.Core.Models;
+namespace EsUtil.ClipboardZenHanConverter.Tests.Core.Models;
 
 /// <summary><see cref="SettingsPersistenceBase{TSettings}"/> の JSON 入出力とリソース解放を検証します。</summary>
 /// <remarks>抽象クラスのため、具象型である <see cref="AppSetting"/> を通じて検証します。</remarks>

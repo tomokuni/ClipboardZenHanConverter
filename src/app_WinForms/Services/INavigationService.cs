@@ -1,4 +1,6 @@
-namespace ClipboardZenHanConverter.App.WinForms.Services;
+using System.Windows.Forms;
+
+namespace EsUtil.ClipboardZenHanConverter.App.WinForms.Services;
 
 /// <summary>アプリケーション内の画面遷移を管理する抽象（DIP）。</summary>
 /// <remarks><see cref="Control"/> を扱うため、共有コアではなくアプリ層に配置しています。</remarks>

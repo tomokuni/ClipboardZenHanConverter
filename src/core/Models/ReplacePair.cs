@@ -1,6 +1,7 @@
+using System;
 using System.Text.RegularExpressions;
 
-namespace ClipboardZenHanConverter.Core.Models;
+namespace EsUtil.ClipboardZenHanConverter.Core.Models;
 
 /// <summary>ユーザー定義の文字列置換ペアを表します。</summary>
 /// <param name="Search">置換元の文字列（正規表現可）</param>

@@ -1,6 +1,9 @@
-using ClipboardZenHanConverter.App.WinForms.ViewModels;
+using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using System;
+using System.Linq;
+using System.Windows.Forms;
 
-namespace ClipboardZenHanConverter.App.WinForms.Views;
+namespace EsUtil.ClipboardZenHanConverter.App.WinForms.Views;
 
 /// <summary>プリセット選択のドロップダウンを提供します。</summary>
 /// <remarks>

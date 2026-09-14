@@ -2,9 +2,10 @@ using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using System;
 using Windows.Foundation;
 
-namespace ClipboardZenHanConverter.App.WinUI.Views.Controls;
+namespace EsUtil.ClipboardZenHanConverter.App.WinUI.Views.Controls;
 
 /// <summary>上下 2 分割の分割バー領域です。</summary>
 /// <remarks>

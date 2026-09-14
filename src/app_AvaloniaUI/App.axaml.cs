@@ -1,16 +1,15 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using ClipboardZenHanConverter.App.AvaloniaUI.Services;
-using ClipboardZenHanConverter.App.AvaloniaUI.Views;
-using ClipboardZenHanConverter.Core.Models;
-using Microsoft.Extensions.DependencyInjection;
+using EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Services;
+using EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Views;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
 using Microsoft.Extensions.Hosting;
+using System;
 using System.Diagnostics;
 
-namespace ClipboardZenHanConverter.App.AvaloniaUI;
+namespace EsUtil.ClipboardZenHanConverter.App.AvaloniaUI;
 
 /// <summary>アプリケーションのエントリポイントとなるクラスです。</summary>
 /// <remarks>

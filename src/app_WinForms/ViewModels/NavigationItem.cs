@@ -1,4 +1,4 @@
-namespace ClipboardZenHanConverter.App.WinForms.ViewModels;
+namespace EsUtil.ClipboardZenHanConverter.App.WinForms.ViewModels;
 
 /// <summary>アプリで使用する Fluent Icons のアイコン種別を表します。</summary>
 /// <remarks>パスデータ（Core の FluentIconData）への対応は View 側の FluentIcons が担います。<br/>

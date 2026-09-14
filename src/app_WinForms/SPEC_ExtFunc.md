@@ -56,7 +56,7 @@
 クリップボード変換スイッチとプリセット選択はタイトルバー（`MainForm`）が単一所有し、この ViewModel は関与しません。  
 UI スレッド以外から `IClipboardService.ContentChanged` が発行された場合、生成時に捕捉した `SynchronizationContext` へ処理を委譲します。
 
-### Services（`ClipboardZenHanConverter.App.WinForms.Services`）
+### Services（`EsUtil.ClipboardZenHanConverter.App.WinForms.Services`）
 
 #### `INavigationService`
 
@@ -73,7 +73,7 @@ UI スレッド以外から `IClipboardService.ContentChanged` が発行され�
 
 - `IServiceCollection AddClipboardZenHanConverterServices(this IServiceCollection services)` — 全サービスの登録
 
-### Helpers（`ClipboardZenHanConverter.App.WinForms.Helpers`）
+### Helpers（`EsUtil.ClipboardZenHanConverter.App.WinForms.Helpers`）
 
 #### `FluentIcons`
 
@@ -92,7 +92,7 @@ M / L / H / V / C / S / Q / T / Z と各相対コマンドに対応し、円弧�
 | `FormatException` | 数値またはコマンドの並びが不正 |
 | `NotSupportedException` | 円弧（A / a）コマンドが含まれる |
 
-### Views（`ClipboardZenHanConverter.App.WinForms.Views`）
+### Views（`EsUtil.ClipboardZenHanConverter.App.WinForms.Views`）
 
 `System.Windows.Forms.Form` / `UserControl` を継承する画面クラスです。UI を組み立てるのみで、ロジックは持ちません。
 

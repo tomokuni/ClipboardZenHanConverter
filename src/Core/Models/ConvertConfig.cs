@@ -1,9 +1,13 @@
-using ClipboardZenHanConverter.Core.Enums;
+using EsUtil.ClipboardZenHanConverter.Core.Enums;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Frozen;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text.Json;
 
-namespace ClipboardZenHanConverter.Core.Models;
+namespace EsUtil.ClipboardZenHanConverter.Core.Models;
 
 /// <summary>モードプロパティの単一定義。</summary>
 /// <remarks>Get/Set デリゲートのペアで、ConvertConfig のモードプロパティを型安全にアクセスします。<br/>

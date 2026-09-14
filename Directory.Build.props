@@ -3,7 +3,8 @@
   <PropertyGroup>
     <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- 各ソースファイルが使用する名前空間を using のみで把握できるよう、暗黙の global using を無効化する -->
+    <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
 
 </Project>

@@ -1,7 +1,7 @@
-using ClipboardZenHanConverter.App.WinUI.Services;
+using EsUtil.ClipboardZenHanConverter.App.WinUI.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace ClipboardZenHanConverter.App.WinUI.ViewModels;
+namespace EsUtil.ClipboardZenHanConverter.App.WinUI.ViewModels;
 
 /// <summary>メインウィンドウのデータを管理し、ページ間遷移を制御します。</summary>
 /// <remarks>SelectedPage プロパティの変更時に自動的に INavigationService.NavigateTo を呼び出します。</remarks>

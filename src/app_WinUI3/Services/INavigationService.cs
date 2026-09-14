@@ -1,4 +1,4 @@
-namespace ClipboardZenHanConverter.App.WinUI.Services;
+namespace EsUtil.ClipboardZenHanConverter.App.WinUI.Services;
 
 /// <summary>アプリケーション内のページ遷移を管理するインターフェース。</summary>
 /// <remarks>DIP に従い、ViewModels はこのインターフェースを通じてナビゲーションを行います。<br/>

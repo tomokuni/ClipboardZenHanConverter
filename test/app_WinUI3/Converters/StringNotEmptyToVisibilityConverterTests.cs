@@ -1,8 +1,9 @@
-using ClipboardZenHanConverter.App.WinUI.Converters;
+using EsUtil.ClipboardZenHanConverter.App.WinUI.Converters;
 using Microsoft.UI.Xaml;
+using System;
 using Xunit;
 
-namespace ClipboardZenHanConverter.Tests.App.WinUI.Converters;
+namespace EsUtil.ClipboardZenHanConverter.Tests.App.WinUI.Converters;
 
 public class StringNotEmptyToVisibilityConverterTests
 {

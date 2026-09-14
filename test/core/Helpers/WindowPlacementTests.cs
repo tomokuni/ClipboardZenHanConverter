@@ -1,8 +1,8 @@
-using ClipboardZenHanConverter.Core.Geometry;
-using ClipboardZenHanConverter.Core.Helpers;
+using EsUtil.ClipboardZenHanConverter.Core.Geometry;
+using EsUtil.ClipboardZenHanConverter.Core.Helpers;
 using Xunit;
 
-namespace ClipboardZenHanConverter.Tests.Core.Helpers;
+namespace EsUtil.ClipboardZenHanConverter.Tests.Core.Helpers;
 
 /// <summary><see cref="WindowPlacement"/> の表示領域内への補正ロジックを検証します。</summary>
 public sealed class WindowPlacementTests

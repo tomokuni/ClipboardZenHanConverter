@@ -1,9 +1,10 @@
-using ClipboardZenHanConverter.App.WinForms.Helpers;
-using ClipboardZenHanConverter.Core.Icons;
+using EsUtil.ClipboardZenHanConverter.App.WinForms.Helpers;
+using EsUtil.ClipboardZenHanConverter.Core.Icons;
+using System;
 using System.Drawing.Drawing2D;
 using Xunit;
 
-namespace ClipboardZenHanConverter.Tests.App.WinForms.Helpers;
+namespace EsUtil.ClipboardZenHanConverter.Tests.App.WinForms.Helpers;
 
 /// <summary><see cref="SvgPathParser"/> の SVG パス解釈と GDI+ 図形パスへの変換を検証します。</summary>
 /// <remarks>Fluent Icons のアイコンが実際に解釈できることを保証するため、Core が所有するパスデータも対象にします。</remarks>

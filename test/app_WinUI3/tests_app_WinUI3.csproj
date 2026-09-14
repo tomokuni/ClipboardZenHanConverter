@@ -6,7 +6,7 @@
     <IsPackable>false</IsPackable>
     <UseWinUI>true</UseWinUI>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-    <RootNamespace>ClipboardZenHanConverter.Tests.App.WinUI</RootNamespace>
+    <RootNamespace>EsUtil.ClipboardZenHanConverter.Tests.App.WinUI</RootNamespace>
     <AssemblyName>ClipboardZenHanConverter.Tests.App.WinUI</AssemblyName>
     <!-- Windows App SDK のビルド要件（リポジトリ共通の Directory.Build.props には置かない） -->
     <Platforms>x64</Platforms>

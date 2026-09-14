@@ -1,7 +1,10 @@
-using ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using System;
+using System.IO;
 using Xunit;
 
-namespace ClipboardZenHanConverter.Tests.Presentation.ViewModels;
+namespace EsUtil.ClipboardZenHanConverter.Tests.Presentation.ViewModels;
 
 /// <summary><see cref="PresetEditDialogViewModel"/> の検証と保存/削除の可否を検証します。</summary>
 /// <remarks>実ユーザーの設定ファイルを汚さないよう、自動保存先を一時ディレクトリへ差し替えます。</remarks>

@@ -1,16 +1,16 @@
-using ClipboardZenHanConverter.App.WinUI.Helpers;
-using ClipboardZenHanConverter.App.WinUI.ViewModels;
-using ClipboardZenHanConverter.Core.Geometry;
-using ClipboardZenHanConverter.Core.Helpers;
-using ClipboardZenHanConverter.Core.Models;
-using ClipboardZenHanConverter.Core.Native;
+using EsUtil.ClipboardZenHanConverter.App.WinUI.Helpers;
+using EsUtil.ClipboardZenHanConverter.App.WinUI.ViewModels;
+using EsUtil.ClipboardZenHanConverter.Core.Geometry;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Core.Native;
+using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Windows.Graphics;
 
-namespace ClipboardZenHanConverter.App.WinUI.Views;
+namespace EsUtil.ClipboardZenHanConverter.App.WinUI.Views;
 
 /// <summary>アプリケーションのメインウィンドウを表します。</summary>
 /// <remarks>NavigationView と TitleBar を備え、ページ遷移のコンテナとして機能します。<br/>

@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace ClipboardZenHanConverter.App.AvaloniaUI.Services;
+namespace EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Services;
 
 /// <summary>アプリケーション内の画面遷移を管理する抽象（DIP）。</summary>
 /// <remarks><see cref="Control"/> を扱うため、共有コアではなくアプリ層に配置しています。</remarks>

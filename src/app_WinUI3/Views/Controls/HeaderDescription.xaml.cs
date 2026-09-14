@@ -1,7 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
-namespace ClipboardZenHanConverter.App.WinUI.Views.Controls;
+namespace EsUtil.ClipboardZenHanConverter.App.WinUI.Views.Controls;
 
 /// <summary>ヘッダーと説明文を表示するユーザーコントロール。</summary>
 /// <remarks>ヘッダーテキストと説明文をまとめて表示し、各々にスタイルを適用できます。<br/>

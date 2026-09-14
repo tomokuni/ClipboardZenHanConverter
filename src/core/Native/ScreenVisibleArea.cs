@@ -1,7 +1,8 @@
-using ClipboardZenHanConverter.Core.Geometry;
-using ClipboardZenHanConverter.Core.Helpers;
+using EsUtil.ClipboardZenHanConverter.Core.Geometry;
+using EsUtil.ClipboardZenHanConverter.Core.Helpers;
+using System;
 
-namespace ClipboardZenHanConverter.Core.Native;
+namespace EsUtil.ClipboardZenHanConverter.Core.Native;
 
 /// <summary>仮想画面（全モニタの外接矩形）に基づくウィンドウ位置の補正を提供する静的クラス。</summary>
 /// <remarks>

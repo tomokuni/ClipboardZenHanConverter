@@ -1,8 +1,12 @@
-using ClipboardZenHanConverter.Core.Enums;
-using ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Core.Enums;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
-namespace ClipboardZenHanConverter.Tests.Presentation.ViewModels;
+namespace EsUtil.ClipboardZenHanConverter.Tests.Presentation.ViewModels;
 
 /// <summary><see cref="ZenHanConvertItem"/> の設定との連動と表示状態を検証します。</summary>
 public sealed class ZenHanConvertItemTests : IDisposable

@@ -1,9 +1,11 @@
-using ClipboardZenHanConverter.Core.Interfaces;
-using ClipboardZenHanConverter.Core.Logic;
-using ClipboardZenHanConverter.Core.Native;
+using EsUtil.ClipboardZenHanConverter.Core.Interfaces;
+using EsUtil.ClipboardZenHanConverter.Core.Logic;
+using EsUtil.ClipboardZenHanConverter.Core.Native;
+using System;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
-namespace ClipboardZenHanConverter.App.WinForms.Services;
+namespace EsUtil.ClipboardZenHanConverter.App.WinForms.Services;
 
 /// <summary>システムクリップボードの読み書きと内容変更監視を提供します。</summary>
 /// <remarks>

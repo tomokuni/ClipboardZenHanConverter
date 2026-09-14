@@ -1,8 +1,9 @@
-using ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System;
 
-namespace ClipboardZenHanConverter.App.WinUI.Helpers;
+namespace EsUtil.ClipboardZenHanConverter.App.WinUI.Helpers;
 
 /// <summary>SegmentItem の IsEnabled 状態に応じてスタイルを切り替える StyleSelector。</summary>
 /// <remarks>XAML の Segmented コントロール内で、有効/無効の各 SegmentItem に異なるスタイルを適用します。<br/>

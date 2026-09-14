@@ -1,6 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using System;
+using System.IO;
 
-namespace ClipboardZenHanConverter.Core.Models;
+namespace EsUtil.ClipboardZenHanConverter.Core.Models;
 
 /// <summary>アプリケーションのウィンドウ設定を管理します。</summary>
 /// <remarks>ウィンドウの位置・サイズ情報とクリップボード連携の有効/無効を JSON ファイルに自動保存・復元します。<br/>

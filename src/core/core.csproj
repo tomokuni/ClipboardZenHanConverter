@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <RootNamespace>ClipboardZenHanConverter.Core</RootNamespace>
+    <RootNamespace>EsUtil.ClipboardZenHanConverter.Core</RootNamespace>
     <AssemblyName>ClipboardZenHanConverter.Core</AssemblyName>
     <Description>Core logic, models and platform APIs for ClipboardZenHanConverter (UI framework agnostic)</Description>
     <Version>0.0.1</Version>

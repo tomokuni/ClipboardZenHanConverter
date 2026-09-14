@@ -1,7 +1,7 @@
-using ClipboardZenHanConverter.Core.Geometry;
+using EsUtil.ClipboardZenHanConverter.Core.Geometry;
 using Xunit;
 
-namespace ClipboardZenHanConverter.Tests.Core.Geometry;
+namespace EsUtil.ClipboardZenHanConverter.Tests.Core.Geometry;
 
 /// <summary><see cref="RectD"/> の値の保持と端座標の算出を検証します。</summary>
 public sealed class RectDTests

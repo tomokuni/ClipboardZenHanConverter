@@ -1,4 +1,9 @@
-namespace ClipboardZenHanConverter.App.WinForms.Views;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace EsUtil.ClipboardZenHanConverter.App.WinForms.Views;
 
 /// <summary>セクションを縦に並べ、内容に応じて縦スクロールを提供するパネルです。</summary>
 /// <remarks>

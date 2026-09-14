@@ -72,6 +72,12 @@ ClipboardZenHanConverter_MewUI/
 dotnet build ClipboardZenHanConverter_MewUI.slnx
 ```
 
+### 名前空間と using
+
+- 名前空間のルートは `EsUtil.ClipboardZenHanConverter` です（例: `EsUtil.ClipboardZenHanConverter.Core.Models`）。
+- アセンブリ名・exe 名・設定ファイルの保存先（`%LOCALAPPDATA%\ClipboardZenHanConverter`）は `ClipboardZenHanConverter` のままです。
+- 暗黙の global using（`ImplicitUsings`）は無効です。各ソースファイルが使用する名前空間を `using` で明示し、プロジェクト共通の `GlobalUsings.cs` は置きません。
+
 ### 依存パッケージ
 
 `PackageReference` には**メジャーバージョンのみ**を指定します（例: `Version="8.*"`）。
@@ -130,7 +136,7 @@ dotnet run --project src/app_WinForms/app_WinForms.csproj
 - WinUI 3 版は単一ファイル化できますが、初回起動時に依存ファイルを `%TEMP%\.net\<AppName>\` へ展開します。また WinUI 3 は Native AOT に対応しないため、AOT は使用しません（詳細は `src/app_WinUI3/SPEC_System.md`）。
 - Avalonia UI 版は Native AOT ですが、描画に使う SkiaSharp のネイティブ DLL を exe へ同梱できないため、**exe 単体ではなくフォルダー単位で配布**します（`libSkiaSharp.dll` / `av_libglesv2.dll` / `libHarfBuzzSharp.dll` を同じフォルダーに置きます。詳細は `src/app_AvaloniaUI/SPEC_System.md`）。
 - WinForms 版は Native AOT に対応せず、トリミングもサポートされないため（`NETSDK1175`）、単一ファイル化のみを行います（詳細は `src/app_WinForms/SPEC_System.md`）。
-- WinUI 3 版の exe 名は `ClipboardZenHanConverter.App.WinUI3.exe`、WinForms 版は `ClipboardZenHanConverter.App.WinForms.exe` です（WinUI 3 版はアセンブリ名をプロジェクト名に合わせ、名前空間は `ClipboardZenHanConverter.App.WinUI` のままです）。
+- WinUI 3 版の exe 名は `ClipboardZenHanConverter.App.WinUI3.exe`、WinForms 版は `ClipboardZenHanConverter.App.WinForms.exe` です（WinUI 3 版はアセンブリ名をプロジェクト名に合わせ、名前空間は `EsUtil.ClipboardZenHanConverter.App.WinUI` のままです）。
 
 ### Release ビルドと実行
 

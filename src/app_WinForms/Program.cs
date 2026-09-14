@@ -1,11 +1,13 @@
-using ClipboardZenHanConverter.App.WinForms.Services;
-using ClipboardZenHanConverter.App.WinForms.Views;
-using ClipboardZenHanConverter.Core.Models;
-using Microsoft.Extensions.DependencyInjection;
+using EsUtil.ClipboardZenHanConverter.App.WinForms.Services;
+using EsUtil.ClipboardZenHanConverter.App.WinForms.Views;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
 using Microsoft.Extensions.Hosting;
+using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
-namespace ClipboardZenHanConverter.App.WinForms;
+namespace EsUtil.ClipboardZenHanConverter.App.WinForms;
 
 /// <summary>アプリケーションのエントリポイントを提供します。</summary>
 /// <remarks>

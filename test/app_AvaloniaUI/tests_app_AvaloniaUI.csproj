@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
     <IsPackable>false</IsPackable>
-    <RootNamespace>ClipboardZenHanConverter.Tests.App.AvaloniaUI</RootNamespace>
+    <RootNamespace>EsUtil.ClipboardZenHanConverter.Tests.App.AvaloniaUI</RootNamespace>
     <AssemblyName>ClipboardZenHanConverter.Tests.App.AvaloniaUI</AssemblyName>
   </PropertyGroup>
 

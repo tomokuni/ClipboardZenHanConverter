@@ -1,9 +1,8 @@
 using Aprillz.MewUI;
 using Aprillz.MewUI.Controls;
-using ClipboardZenHanConverter.App.MewUI.ViewModels;
-using ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.App.MewUI.ViewModels;
 
-namespace ClipboardZenHanConverter.App.MewUI.Views;
+namespace EsUtil.ClipboardZenHanConverter.App.MewUI.Views;
 
 /// <summary>ホーム画面を表示するビューです。</summary>
 /// <remarks>

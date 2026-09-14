@@ -1,13 +1,17 @@
-using ClipboardZenHanConverter.App.WinUI.ViewModels;
-using ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 
-namespace ClipboardZenHanConverter.App.WinUI.Views;
+namespace EsUtil.ClipboardZenHanConverter.App.WinUI.Views;
 
 /// <summary>設定画面を表示するページクラスです。</summary>
 /// <remarks>8つの変換カテゴリの選択、ユーザー定義置換ルールの編集、プリセット管理、<br/>

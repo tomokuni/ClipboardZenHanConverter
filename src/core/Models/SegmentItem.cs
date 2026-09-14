@@ -1,4 +1,4 @@
-namespace ClipboardZenHanConverter.Core.Models;
+namespace EsUtil.ClipboardZenHanConverter.Core.Models;
 
 /// <summary>UI セグメントコントロールの個別アイテムを表します。</summary>
 /// <param name="Content">表示テキスト</param>

@@ -5,7 +5,7 @@
 
 ## 公開型一覧
 
-### 列挙型（`ClipboardZenHanConverter.Core.Enums`）
+### 列挙型（`EsUtil.ClipboardZenHanConverter.Core.Enums`）
 
 #### `ZenHanMode`
 
@@ -62,7 +62,7 @@
 | 2 | ToHanSpace | 半角スペース |
 | 3 | ToZenSpace | 全角スペース |
 
-### データモデル（`ClipboardZenHanConverter.Core.Models`）
+### データモデル（`EsUtil.ClipboardZenHanConverter.Core.Models`）
 
 #### `ConvertConfig`
 
@@ -161,7 +161,7 @@ UI セグメントコントロールの定義レコード。
 `SaveNow` はアプリの終了時など、デバウンス（300ms）の完了を待てない場面で使用します。
 終了直前はプロセスが停止するため、非同期保存では書き込みが完了しません。
 
-### インターフェース（`ClipboardZenHanConverter.Core.Interfaces`）
+### インターフェース（`EsUtil.ClipboardZenHanConverter.Core.Interfaces`）
 
 #### `IClipboardService : IDisposable`
 
@@ -174,7 +174,7 @@ UI セグメントコントロールの定義レコード。
 
 - `string Convert(string text)` — テキスト変換
 
-### 変換ロジック（`ClipboardZenHanConverter.Core.Logic`）
+### 変換ロジック（`EsUtil.ClipboardZenHanConverter.Core.Logic`）
 
 #### `CharConverter : ITextConverter, IDisposable`
 
@@ -184,7 +184,7 @@ UI セグメントコントロールの定義レコード。
 
 変換の実行可否（`ConvertConfig.IsEnabledZenHan`）は**参照しません**。変換をスキップするか否かは呼び出し側（画面側）のポリシーです。現在の両アプリ（MewUI 版・WinUI 3 版）は全角/半角変換を常に有効として扱います。
 
-### ウィンドウ位置補正（`ClipboardZenHanConverter.Core.Helpers`）
+### ウィンドウ位置補正（`EsUtil.ClipboardZenHanConverter.Core.Helpers`）
 
 UI フレームワークに依存しないため Core に配置しています。座標は DIP（`Geometry` の型）で扱います。
 
@@ -217,7 +217,7 @@ UI フレームワークに依存しないため Core に配置しています�
 
 `trackHeight` は上下 2 ペインの合計高さとし、分割バーの太さは含めません。
 
-### 幾何型（`ClipboardZenHanConverter.Core.Geometry`）
+### 幾何型（`EsUtil.ClipboardZenHanConverter.Core.Geometry`）
 
 DIP（デバイス非依存ピクセル）座標を表す `readonly record struct` です。物理ピクセルは `Native.PixelBounds` で扱います。
 
@@ -229,7 +229,7 @@ DIP（デバイス非依存ピクセル）座標を表す `readonly record struc
 
 マルチモニタ構成では原点より左上のモニタが存在するため、負座標を含みます。
 
-### 変更検出（`ClipboardZenHanConverter.Core.Logic`）
+### 変更検出（`EsUtil.ClipboardZenHanConverter.Core.Logic`）
 
 #### `ClipboardChangeDetector`
 
@@ -241,7 +241,7 @@ DIP（デバイス非依存ピクセル）座標を表す `readonly record struc
 | `HasChanged()` | `bool` | 前回の確認から変化していれば true を返し、内部状態を更新する |
 | `RecommendedPollIntervalMs` | `int`（const） | 推奨するポーリング間隔（250 ミリ秒）。各 UI のクリップボード監視タイマーが共有する単一所有元 |
 
-### Win32 API（`ClipboardZenHanConverter.Core.Native`）
+### Win32 API（`EsUtil.ClipboardZenHanConverter.Core.Native`）
 
 UI フレームワークに依存しないため Core に配置しています。`user32.dll` を `LibraryImport`（ソース生成 P/Invoke）で呼び出します。
 
@@ -282,7 +282,7 @@ UI フレームワークに依存しないため Core に配置しています�
 
 DIP への換算は呼び出し側の DPI スケールで行います（Core は DPI スケールを知りません）。
 
-### アイコンデータ（`ClipboardZenHanConverter.Core.Icons`）
+### アイコンデータ（`EsUtil.ClipboardZenHanConverter.Core.Icons`）
 
 UI フレームワークに依存しないため Core に配置しています。SVG ファイルをアイコン形状の唯一の定義元とし、`Icons` フォルダの SVG を埋め込みリソースとして登録します。
 

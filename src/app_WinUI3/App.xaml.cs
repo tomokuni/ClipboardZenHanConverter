@@ -1,12 +1,14 @@
-using ClipboardZenHanConverter.App.WinUI.Services;
-using ClipboardZenHanConverter.App.WinUI.Views;
-using ClipboardZenHanConverter.Core.Interfaces;
-using ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.App.WinUI.Services;
+using EsUtil.ClipboardZenHanConverter.App.WinUI.Views;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
+using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace ClipboardZenHanConverter.App.WinUI;
+namespace EsUtil.ClipboardZenHanConverter.App.WinUI;
 
 /// <summary>アプリケーションのエントリポイントとなるクラスです。</summary>
 /// <remarks>

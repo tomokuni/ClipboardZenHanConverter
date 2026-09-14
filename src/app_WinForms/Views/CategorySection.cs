@@ -1,6 +1,10 @@
-using ClipboardZenHanConverter.App.WinForms.ViewModels;
+using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
 
-namespace ClipboardZenHanConverter.App.WinForms.Views;
+namespace EsUtil.ClipboardZenHanConverter.App.WinForms.Views;
 
 /// <summary>変換カテゴリ 1 セクション（見出し・説明・変換項目一覧）を表示します。</summary>
 /// <remarks>

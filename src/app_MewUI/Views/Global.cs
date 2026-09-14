@@ -1,7 +1,6 @@
 using Aprillz.MewUI;
-using ClipboardZenHanConverter.App.MewUI.ViewModels;
 
-namespace ClipboardZenHanConverter.App.MewUI.Views;
+namespace EsUtil.ClipboardZenHanConverter.App.MewUI.Views;
 
 /// <summary>アプリケーション全体で共有されるグローバル状態を提供します。</summary>
 /// <remarks>

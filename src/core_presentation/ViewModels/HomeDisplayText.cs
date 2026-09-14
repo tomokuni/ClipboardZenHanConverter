@@ -1,4 +1,4 @@
-namespace ClipboardZenHanConverter.Presentation.ViewModels;
+namespace EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
 
 /// <summary>ホーム画面で共有する表示文言を提供する静的クラス。</summary>
 /// <remarks>4 つの UI の <c>HomeViewModel</c> が同じ文言を表示するための単一所有元です。<br/>

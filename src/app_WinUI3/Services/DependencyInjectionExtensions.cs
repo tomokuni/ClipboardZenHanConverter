@@ -1,11 +1,12 @@
-using ClipboardZenHanConverter.App.WinUI.ViewModels;
-using ClipboardZenHanConverter.App.WinUI.Views;
-using ClipboardZenHanConverter.Core.Interfaces;
-using ClipboardZenHanConverter.Core.Logic;
-using ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.App.WinUI.ViewModels;
+using EsUtil.ClipboardZenHanConverter.App.WinUI.Views;
+using EsUtil.ClipboardZenHanConverter.Core.Interfaces;
+using EsUtil.ClipboardZenHanConverter.Core.Logic;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ClipboardZenHanConverter.App.WinUI.Services;
+namespace EsUtil.ClipboardZenHanConverter.App.WinUI.Services;
 
 /// <summary>依存性注入（DI）コンテナへのサービス登録を提供する拡張メソッドクラス。</summary>
 /// <remarks>App.xaml.cs での責務を分離し、サービス登録ロジックを専用クラスに抽出します。<br/>

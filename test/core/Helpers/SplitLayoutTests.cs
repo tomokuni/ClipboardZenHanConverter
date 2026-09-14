@@ -1,7 +1,7 @@
-using ClipboardZenHanConverter.Core.Helpers;
+using EsUtil.ClipboardZenHanConverter.Core.Helpers;
 using Xunit;
 
-namespace ClipboardZenHanConverter.Tests.Core.Helpers;
+namespace EsUtil.ClipboardZenHanConverter.Tests.Core.Helpers;
 
 /// <summary><see cref="SplitLayout"/> の分割比率の計算と補正を検証します。</summary>
 /// <remarks>4 つの UI で共通に使用するため、上下限や境界条件をここで固定します。</remarks>

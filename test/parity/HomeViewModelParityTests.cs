@@ -1,12 +1,13 @@
-using ClipboardZenHanConverter.Core.Enums;
-using ClipboardZenHanConverter.Core.Interfaces;
-using ClipboardZenHanConverter.Core.Logic;
-using ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Core.Enums;
+using EsUtil.ClipboardZenHanConverter.Core.Logic;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
+using System;
+using System.Threading.Tasks;
 using Xunit;
-using MewUIHomeViewModel = ClipboardZenHanConverter.App.MewUI.ViewModels.HomeViewModel;
-using WinUIHomeViewModel = ClipboardZenHanConverter.App.WinUI.ViewModels.HomeViewModel;
+using MewUIHomeViewModel = EsUtil.ClipboardZenHanConverter.App.MewUI.ViewModels.HomeViewModel;
+using WinUIHomeViewModel = EsUtil.ClipboardZenHanConverter.App.WinUI.ViewModels.HomeViewModel;
 
-namespace ClipboardZenHanConverter.Tests.Parity;
+namespace EsUtil.ClipboardZenHanConverter.Tests.Parity;
 
 /// <summary>MewUI 版と WinUI 版のホーム画面の挙動が一致することを検証します。</summary>
 /// <remarks>

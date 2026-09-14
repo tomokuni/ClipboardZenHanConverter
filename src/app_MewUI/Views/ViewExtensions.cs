@@ -1,9 +1,9 @@
 using Aprillz.MewUI;
 using Aprillz.MewUI.Controls;
-using ClipboardZenHanConverter.App.MewUI.ViewModels;
-using System.Collections.Specialized;
+using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using System.Collections.Generic;
 
-namespace ClipboardZenHanConverter.App.MewUI.Views;
+namespace EsUtil.ClipboardZenHanConverter.App.MewUI.Views;
 
 
 /// <summary>ビューから ViewModel への選択状態・置換行のバインディングを支援する拡張クラス。</summary>

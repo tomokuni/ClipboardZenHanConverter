@@ -1,7 +1,8 @@
+using System;
 using System.Drawing.Drawing2D;
 using System.Globalization;
 
-namespace ClipboardZenHanConverter.App.WinForms.Helpers;
+namespace EsUtil.ClipboardZenHanConverter.App.WinForms.Helpers;
 
 /// <summary>SVG のパスデータ（d 属性）を GDI+ の図形パスへ変換します。</summary>
 /// <remarks>

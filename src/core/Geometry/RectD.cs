@@ -1,4 +1,4 @@
-namespace ClipboardZenHanConverter.Core.Geometry;
+namespace EsUtil.ClipboardZenHanConverter.Core.Geometry;
 
 /// <summary>DIP（デバイス非依存ピクセル）座標の矩形を表します。</summary>
 /// <param name="X">左上の X 座標（DIP）。</param>

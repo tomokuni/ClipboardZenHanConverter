@@ -1,9 +1,9 @@
-using ClipboardZenHanConverter.App.WinUI.ViewModels;
-using ClipboardZenHanConverter.Core.Helpers;
+using EsUtil.ClipboardZenHanConverter.App.WinUI.ViewModels;
+using EsUtil.ClipboardZenHanConverter.Core.Helpers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
-namespace ClipboardZenHanConverter.App.WinUI.Views;
+namespace EsUtil.ClipboardZenHanConverter.App.WinUI.Views;
 
 /// <summary>ホーム画面を表示するページクラスです。</summary>
 /// <remarks>

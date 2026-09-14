@@ -1,8 +1,10 @@
-using ClipboardZenHanConverter.Core.Interfaces;
+using EsUtil.ClipboardZenHanConverter.Core.Interfaces;
+using System;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 
-namespace ClipboardZenHanConverter.App.WinUI.Services;
+namespace EsUtil.ClipboardZenHanConverter.App.WinUI.Services;
 
 /// <summary>システムクリップボードの読み書きと内容変更監視を提供します。</summary>
 /// <remarks>クリップボードへのアクセスはバックグラウンド時に拒否される場合があります。<br/>

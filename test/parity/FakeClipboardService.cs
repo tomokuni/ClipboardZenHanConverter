@@ -1,6 +1,8 @@
-using ClipboardZenHanConverter.Core.Interfaces;
+using EsUtil.ClipboardZenHanConverter.Core.Interfaces;
+using System;
+using System.Threading.Tasks;
 
-namespace ClipboardZenHanConverter.Tests.Parity;
+namespace EsUtil.ClipboardZenHanConverter.Tests.Parity;
 
 /// <summary>テスト用のクリップボードサービス（各アプリが共有するコア インターフェースの実装）。</summary>
 /// <remarks>各 UI 実装の ViewModel を同じ入力で比較するため、パリティテスト全体で共有します。</remarks>

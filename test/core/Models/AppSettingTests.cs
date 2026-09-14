@@ -1,7 +1,9 @@
-using ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
+using System;
+using System.IO;
 using Xunit;
 
-namespace ClipboardZenHanConverter.Tests.Core.Models;
+namespace EsUtil.ClipboardZenHanConverter.Tests.Core.Models;
 
 /// <summary><see cref="AppSetting"/> の既定値と JSON からの復元を検証します。</summary>
 public sealed class AppSettingTests : IDisposable

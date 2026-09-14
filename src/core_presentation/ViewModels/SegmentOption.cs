@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace ClipboardZenHanConverter.Presentation.ViewModels;
+namespace EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
 
 /// <summary>セグメント選択の選択肢 1 件を表します。</summary>
 /// <remarks>排他選択の表示状態を 1 つの bool（<see cref="IsSelected"/>）で持ちます。<br/>

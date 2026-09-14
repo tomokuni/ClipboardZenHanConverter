@@ -1,11 +1,13 @@
-using ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using Xunit;
 
-namespace ClipboardZenHanConverter.Tests.Presentation.ViewModels;
+namespace EsUtil.ClipboardZenHanConverter.Tests.Presentation.ViewModels;
 
 /// <summary>設定画面初期化のパフォーマンスを計測するテスト。</summary>
 /// <remarks>

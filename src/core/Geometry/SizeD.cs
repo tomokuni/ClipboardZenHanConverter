@@ -1,4 +1,4 @@
-namespace ClipboardZenHanConverter.Core.Geometry;
+namespace EsUtil.ClipboardZenHanConverter.Core.Geometry;
 
 /// <summary>DIP（デバイス非依存ピクセル）座標のサイズを表します。</summary>
 /// <param name="Width">幅（DIP）。</param>

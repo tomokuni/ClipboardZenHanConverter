@@ -1,7 +1,9 @@
-using ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using System.Collections.Generic;
 using Xunit;
 
-namespace ClipboardZenHanConverter.Tests.Presentation.ViewModels;
+namespace EsUtil.ClipboardZenHanConverter.Tests.Presentation.ViewModels;
 
 /// <summary><see cref="ReplacePairItem"/> の編集値とバリデーションを検証します。</summary>
 public sealed class ReplacePairItemTests

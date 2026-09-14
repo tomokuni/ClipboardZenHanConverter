@@ -1,4 +1,6 @@
-namespace ClipboardZenHanConverter.Core.Logic;
+using System;
+
+namespace EsUtil.ClipboardZenHanConverter.Core.Logic;
 
 /// <summary>クリップボードのシーケンス番号を監視し、内容の変更を検出するクラス。</summary>
 /// <remarks>提供機能: <br/>

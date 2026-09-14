@@ -1,10 +1,12 @@
 using Avalonia.Controls;
 using Avalonia.Threading;
-using ClipboardZenHanConverter.App.AvaloniaUI.Views;
+using EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Views;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Frozen;
+using System.Collections.Generic;
 
-namespace ClipboardZenHanConverter.App.AvaloniaUI.Services;
+namespace EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Services;
 
 /// <summary>アプリケーション内の画面遷移を管理します。</summary>
 /// <remarks>

@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
     <IsPackable>false</IsPackable>
-    <RootNamespace>ClipboardZenHanConverter.Tests.Core</RootNamespace>
+    <RootNamespace>EsUtil.ClipboardZenHanConverter.Tests.Core</RootNamespace>
     <AssemblyName>ClipboardZenHanConverter.Tests.Core</AssemblyName>
   </PropertyGroup>
 

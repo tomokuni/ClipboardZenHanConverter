@@ -1,6 +1,8 @@
+using System;
+using System.IO;
 using System.Text;
 
-namespace ClipboardZenHanConverter.Core.Icons;
+namespace EsUtil.ClipboardZenHanConverter.Core.Icons;
 
 /// <summary>Fluent Icons の SVG アセットからパスデータを提供する静的クラス。</summary>
 /// <remarks>提供機能: <br/>

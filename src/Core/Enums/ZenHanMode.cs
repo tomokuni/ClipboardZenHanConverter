@@ -1,4 +1,4 @@
-namespace ClipboardZenHanConverter.Core.Enums;
+namespace EsUtil.ClipboardZenHanConverter.Core.Enums;
 
 /// <summary>全角/半角変換モードを表します。</summary>
 /// <remarks>基本的な文字種別ごとの変換方向を指定します。</remarks>

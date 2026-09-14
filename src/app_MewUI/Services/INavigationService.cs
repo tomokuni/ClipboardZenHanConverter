@@ -1,6 +1,6 @@
 using Aprillz.MewUI.Controls;
 
-namespace ClipboardZenHanConverter.App.MewUI.Services;
+namespace EsUtil.ClipboardZenHanConverter.App.MewUI.Services;
 
 /// <summary>アプリケーション内のページ遷移を管理するインターフェース。</summary>
 /// <remarks>NavigationView のコンテンツ解決（タグからビュー生成・キャッシュ）を抽象化します。<br/>

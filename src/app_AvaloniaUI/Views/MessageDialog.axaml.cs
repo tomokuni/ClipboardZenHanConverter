@@ -1,7 +1,8 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using System.Threading.Tasks;
 
-namespace ClipboardZenHanConverter.App.AvaloniaUI.Views;
+namespace EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Views;
 
 /// <summary>メッセージを表示するシンプルなダイアログです。</summary>
 /// <remarks>提供機能: <br/>

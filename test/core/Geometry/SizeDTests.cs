@@ -1,7 +1,7 @@
-using ClipboardZenHanConverter.Core.Geometry;
+using EsUtil.ClipboardZenHanConverter.Core.Geometry;
 using Xunit;
 
-namespace ClipboardZenHanConverter.Tests.Core.Geometry;
+namespace EsUtil.ClipboardZenHanConverter.Tests.Core.Geometry;
 
 /// <summary><see cref="SizeD"/> の値の保持と等価性を検証します。</summary>
 public sealed class SizeDTests

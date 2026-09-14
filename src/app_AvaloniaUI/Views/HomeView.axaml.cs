@@ -1,10 +1,10 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
-using ClipboardZenHanConverter.App.AvaloniaUI.ViewModels;
-using ClipboardZenHanConverter.Core.Helpers;
+using EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.ViewModels;
+using EsUtil.ClipboardZenHanConverter.Core.Helpers;
 
-namespace ClipboardZenHanConverter.App.AvaloniaUI.Views;
+namespace EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Views;
 
 /// <summary>ホーム画面を表示するビューです。</summary>
 /// <remarks>

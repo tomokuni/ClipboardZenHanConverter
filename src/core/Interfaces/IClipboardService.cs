@@ -1,4 +1,7 @@
-namespace ClipboardZenHanConverter.Core.Interfaces;
+using System;
+using System.Threading.Tasks;
+
+namespace EsUtil.ClipboardZenHanConverter.Core.Interfaces;
 
 /// <summary>システムクリップボードの読み書きと内容変更監視を提供するインターフェース。</summary>
 /// <remarks>DIP（依存性逆転の原則）に従い、抽象に依存するために定義されています。<br/>

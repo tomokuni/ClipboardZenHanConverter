@@ -1,12 +1,14 @@
-using ClipboardZenHanConverter.App.WinUI.Views;
-using ClipboardZenHanConverter.Core.Interfaces;
+using EsUtil.ClipboardZenHanConverter.App.WinUI.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections.Frozen;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace ClipboardZenHanConverter.App.WinUI.Services;
+namespace EsUtil.ClipboardZenHanConverter.App.WinUI.Services;
 
 /// <summary>アプリケーション内のページ遷移を管理します。</summary>
 /// <remarks>ページの事前生成とキャッシュにより、遷移時の生成コストを削減します。<br/>

@@ -202,7 +202,6 @@ sequenceDiagram
 ```text
 test/core_presentation
 ├── AssemblyInfo.cs                          並列実行の無効化（プリセット保存先がプロセス全体で共有されるため）
-├── GlobalUsings.cs                          共有プレゼンテーション層の using
 └── ViewModels/
     ├── SettingsViewModelTests.cs            項目生成・設定同期・置換ルール・プリセット・JSON 入出力
     ├── ZenHanConvertItemTests.cs            排他選択・設定同期・通知・破棄
@@ -223,8 +222,8 @@ test/core_presentation
 
 | 項目 | 内容 |
 | --- | --- |
-| 参照方法 | 各アプリの `GlobalUsings.cs` が `global using ClipboardZenHanConverter.Presentation.ViewModels;` を宣言する |
-| XAML からの参照 | `xmlns:vm="using:ClipboardZenHanConverter.Presentation.ViewModels"` |
+| 参照方法 | 各アプリの ViewModel・View が `using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;` を宣言する |
+| XAML からの参照 | `xmlns:vm="using:EsUtil.ClipboardZenHanConverter.Presentation.ViewModels"` |
 | `HomeViewModel` | 本プロジェクトに含めない（UI スレッドへの委譲方法がフレームワークごとに異なるため） |
 | `MainWindowViewModel` | 本プロジェクトに含めない（画面解決が UI の型に依存するため） |
 | ナビゲーション項目 | アイコン表現が UI の型（`Geometry` / `NavigationIcon` 等）に依存するため各アプリに残す |

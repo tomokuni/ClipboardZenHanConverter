@@ -1,8 +1,12 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using System;
+using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace ClipboardZenHanConverter.Core.Models;
+namespace EsUtil.ClipboardZenHanConverter.Core.Models;
 
 /// <summary>シリアライズに使用する JsonSerializerContext と型を保持するレコード。</summary>
 /// <param name="Context">ソース生成された JsonSerializerContext</param>

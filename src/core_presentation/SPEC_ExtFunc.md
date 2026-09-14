@@ -10,7 +10,7 @@
 
 ## 公開型一覧
 
-### ViewModels（`ClipboardZenHanConverter.Presentation.ViewModels`）
+### ViewModels（`EsUtil.ClipboardZenHanConverter.Presentation.ViewModels`）
 
 4 つの UI（MewUI 版 / WinUI 3 版 / Avalonia UI 版 / WinForms 版）が共有します。
 

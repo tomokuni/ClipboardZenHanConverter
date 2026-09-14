@@ -1,7 +1,7 @@
-using ClipboardZenHanConverter.Core.Native;
+using EsUtil.ClipboardZenHanConverter.Core.Native;
 using Xunit;
 
-namespace ClipboardZenHanConverter.Tests.Core.Native;
+namespace EsUtil.ClipboardZenHanConverter.Tests.Core.Native;
 
 /// <summary><see cref="Win32Clipboard"/> の読み取り系 API を検証します。</summary>
 /// <remarks>クリップボードを書き換える <c>SetText</c> は、実ユーザーのクリップボード内容を<br/>

@@ -1,6 +1,6 @@
-using ClipboardZenHanConverter.Core.Enums;
+using EsUtil.ClipboardZenHanConverter.Core.Enums;
 
-namespace ClipboardZenHanConverter.Core.Models;
+namespace EsUtil.ClipboardZenHanConverter.Core.Models;
 
 /// <summary>設定画面のセグメントコントロール定義を提供する静的クラス。</summary>
 /// <remarks>提供機能: <br/>

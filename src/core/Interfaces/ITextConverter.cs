@@ -1,4 +1,4 @@
-namespace ClipboardZenHanConverter.Core.Interfaces;
+namespace EsUtil.ClipboardZenHanConverter.Core.Interfaces;
 
 /// <summary>テキスト変換を実行するインターフェース。</summary>
 /// <remarks>ISP（インターフェース分離の原則）に従い、テキスト変換に特化した最小限のインターフェースです。<br/>

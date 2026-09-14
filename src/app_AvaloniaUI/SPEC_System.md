@@ -237,7 +237,7 @@ sequenceDiagram
 ## アイコンアセット
 
 使用するアイコンの形状は SVG ファイル（Fluent Icons 24px regular）を唯一の定義元とし、パスデータの二重管理を排除します。
-SVG は `src/core/Icons` が埋め込みリソースとして所有し、`ClipboardZenHanConverter.Core.Icons.FluentIconData` が初回アクセス時に
+SVG は `src/core/Icons` が埋め込みリソースとして所有し、`EsUtil.ClipboardZenHanConverter.Core.Icons.FluentIconData` が初回アクセス時に
 ファイル名一致で読み込み、パスデータ（d 属性の値）を抽出して保持します。
 Avalonia 側の `FluentIcons` がそのパスデータを `Geometry.Parse` でベクター形状へ変換して保持します。
 アイコンデータを Core に置くことで 3 つの UI で同じアイコン形状を利用できます。

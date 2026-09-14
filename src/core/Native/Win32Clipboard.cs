@@ -1,7 +1,8 @@
+using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
-namespace ClipboardZenHanConverter.Core.Native;
+namespace EsUtil.ClipboardZenHanConverter.Core.Native;
 
 /// <summary>Win32 API からクリップボードを読み書きするための P/Invoke ラッパー。</summary>
 /// <remarks>

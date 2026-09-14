@@ -36,8 +36,8 @@ dotnet test test\parity\tests_parity.csproj
 
 > 注意: ソースリンク先のファイルを古いタイムスタンプで上書き（バックアップからの復元など）すると、
 > 増分ビルドが変更を検出せず古い内容で実行されることがあります。その場合は `--no-incremental` で再ビルドしてください。
-> リンク先のソースは `GlobalUsings.cs` が宣言する共有プレゼンテーション層の using を前提とするため、
-> 本プロジェクトにも同じ `global using` が必要です。
+> リンク先のソースは共有プレゼンテーション層の型を `using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;` で参照するため、
+> 本プロジェクトにも同じ名前空間の参照が必要です。
 
 ## 検証済みの一致（自動テストで保証）
 

@@ -1,8 +1,8 @@
-using ClipboardZenHanConverter.Core.Icons;
+using EsUtil.ClipboardZenHanConverter.Core.Icons;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 
-namespace ClipboardZenHanConverter.App.WinUI.Helpers;
+namespace EsUtil.ClipboardZenHanConverter.App.WinUI.Helpers;
 
 /// <summary>アプリで使用する Fluent Icons のアイコン形状を提供する静的クラス。</summary>
 /// <remarks>提供機能: <br/>

@@ -1,14 +1,14 @@
 using Aprillz.MewUI;
-using Aprillz.MewUI.Controls;
-using ClipboardZenHanConverter.App.MewUI.Services;
-using ClipboardZenHanConverter.App.MewUI.Views;
-using ClipboardZenHanConverter.Core.Interfaces;
-using ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.App.MewUI.Services;
+using EsUtil.ClipboardZenHanConverter.App.MewUI.Views;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
-namespace ClipboardZenHanConverter.App.MewUI;
+namespace EsUtil.ClipboardZenHanConverter.App.MewUI;
 
 /// <summary>アプリケーションのエントリポイントを提供します。</summary>
 /// <remarks>

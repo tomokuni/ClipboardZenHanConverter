@@ -1,10 +1,12 @@
-using ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 
-namespace ClipboardZenHanConverter.Presentation.ViewModels;
+namespace EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
 
 /// <summary>設定画面のデータを管理します。</summary>
 /// <remarks>

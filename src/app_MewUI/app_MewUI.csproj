@@ -3,9 +3,8 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>ClipboardZenHanConverter.App.MewUI</RootNamespace>
+    <RootNamespace>EsUtil.ClipboardZenHanConverter.App.MewUI</RootNamespace>
     <AssemblyName>ClipboardZenHanConverter.App.MewUI</AssemblyName>
     <Product>ClipboardZenHanConverter</Product>
     <Version>0.0.1</Version>

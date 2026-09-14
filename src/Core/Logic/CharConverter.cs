@@ -1,13 +1,15 @@
-using ClipboardZenHanConverter.Core.Enums;
-using ClipboardZenHanConverter.Core.Helpers;
-using ClipboardZenHanConverter.Core.Interfaces;
-using ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Core.Enums;
+using EsUtil.ClipboardZenHanConverter.Core.Helpers;
+using EsUtil.ClipboardZenHanConverter.Core.Interfaces;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
 using EsUtil.Helper.ZenHanConverter;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using static EsUtil.Helper.ZenHanConverter.Define;
 
-namespace ClipboardZenHanConverter.Core.Logic;
+namespace EsUtil.ClipboardZenHanConverter.Core.Logic;
 
 /// <summary>ConvertConfig の設定に基づいて文字列の全角/半角変換を実行します。</summary>
 /// <remarks>

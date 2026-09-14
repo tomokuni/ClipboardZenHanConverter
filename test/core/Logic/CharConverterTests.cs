@@ -1,9 +1,10 @@
-using ClipboardZenHanConverter.Core.Enums;
-using ClipboardZenHanConverter.Core.Logic;
-using ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Core.Enums;
+using EsUtil.ClipboardZenHanConverter.Core.Logic;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
+using System;
 using Xunit;
 
-namespace ClipboardZenHanConverter.Tests.Core.Logic;
+namespace EsUtil.ClipboardZenHanConverter.Tests.Core.Logic;
 
 /// <summary><see cref="CharConverter"/> の変換動作を検証します。</summary>
 public sealed class CharConverterTests : IDisposable

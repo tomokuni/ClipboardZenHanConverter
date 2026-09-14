@@ -1,8 +1,8 @@
-using ClipboardZenHanConverter.App.WinUI.Services;
-using ClipboardZenHanConverter.App.WinUI.ViewModels;
+using EsUtil.ClipboardZenHanConverter.App.WinUI.Services;
+using EsUtil.ClipboardZenHanConverter.App.WinUI.ViewModels;
 using Xunit;
 
-namespace ClipboardZenHanConverter.Tests.App.WinUI.ViewModels;
+namespace EsUtil.ClipboardZenHanConverter.Tests.App.WinUI.ViewModels;
 
 public class MainWindowViewModelTests
 {

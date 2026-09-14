@@ -1,9 +1,13 @@
-using ClipboardZenHanConverter.Core.Interfaces;
-using ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Core.Interfaces;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace ClipboardZenHanConverter.App.WinForms.ViewModels;
+namespace EsUtil.ClipboardZenHanConverter.App.WinForms.ViewModels;
 
 /// <summary>ホーム画面のデータを管理し、クリップボード監視と文字変換を実行します。</summary>
 /// <remarks>

@@ -1,15 +1,14 @@
 using Aprillz.MewUI;
 using Aprillz.MewUI.Controls;
 using Aprillz.MewUI.Rendering;
-using ClipboardZenHanConverter.App.MewUI.Helpers;
-using ClipboardZenHanConverter.App.MewUI.Services;
-using ClipboardZenHanConverter.App.MewUI.ViewModels;
-using ClipboardZenHanConverter.Core.Geometry;
-using ClipboardZenHanConverter.Core.Helpers;
-using ClipboardZenHanConverter.Core.Models;
-using ClipboardZenHanConverter.Core.Native;
+using EsUtil.ClipboardZenHanConverter.App.MewUI.Helpers;
+using EsUtil.ClipboardZenHanConverter.App.MewUI.Services;
+using EsUtil.ClipboardZenHanConverter.Core.Geometry;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Core.Native;
+using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
 
-namespace ClipboardZenHanConverter.App.MewUI.Views;
+namespace EsUtil.ClipboardZenHanConverter.App.MewUI.Views;
 
 /// <summary>アプリケーションのメインウィンドウを表します。</summary>
 /// <remarks>

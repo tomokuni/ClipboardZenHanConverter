@@ -1,9 +1,13 @@
-using ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 
-namespace ClipboardZenHanConverter.Presentation.ViewModels;
+namespace EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
 
 /// <summary>プリセット編集ダイアログのデータと検証を管理します。</summary>
 /// <remarks>

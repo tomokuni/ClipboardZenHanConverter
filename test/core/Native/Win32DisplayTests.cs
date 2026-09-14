@@ -1,7 +1,7 @@
-using ClipboardZenHanConverter.Core.Native;
+using EsUtil.ClipboardZenHanConverter.Core.Native;
 using Xunit;
 
-namespace ClipboardZenHanConverter.Tests.Core.Native;
+namespace EsUtil.ClipboardZenHanConverter.Tests.Core.Native;
 
 /// <summary><see cref="Win32Display"/> のシステムメトリック取得を検証します。</summary>
 public sealed class Win32DisplayTests

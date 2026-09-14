@@ -1,8 +1,11 @@
-using ClipboardZenHanConverter.App.WinForms.Services;
-using ClipboardZenHanConverter.Core.Models;
+using EsUtil.ClipboardZenHanConverter.App.WinForms.Services;
+using EsUtil.ClipboardZenHanConverter.Core.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
+using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using System.Collections.Generic;
+using System.Windows.Forms;
 
-namespace ClipboardZenHanConverter.App.WinForms.ViewModels;
+namespace EsUtil.ClipboardZenHanConverter.App.WinForms.ViewModels;
 
 /// <summary>メインウィンドウのデータを管理します。</summary>
 /// <remarks>

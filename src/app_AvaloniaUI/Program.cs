@@ -1,7 +1,9 @@
 using Avalonia;
+using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
-namespace ClipboardZenHanConverter.App.AvaloniaUI;
+namespace EsUtil.ClipboardZenHanConverter.App.AvaloniaUI;
 
 /// <summary>アプリケーションのエントリポイントを提供します。</summary>
 /// <remarks>

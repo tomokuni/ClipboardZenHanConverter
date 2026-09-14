@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using System.Collections;
 
-namespace ClipboardZenHanConverter.App.AvaloniaUI.Views.Controls;
+namespace EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Views.Controls;
 
 /// <summary>変換カテゴリ 1 セクション（見出し・説明・変換項目一覧）を表示します。</summary>
 /// <remarks>

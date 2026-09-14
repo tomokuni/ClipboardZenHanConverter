@@ -1,4 +1,8 @@
-namespace ClipboardZenHanConverter.App.WinForms.Views;
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace EsUtil.ClipboardZenHanConverter.App.WinForms.Views;
 
 /// <summary>クリップボード変換の有効/無効を切り替えるトグルスイッチです。</summary>
 /// <remarks>

@@ -20,7 +20,7 @@
 - `string ConvertedText` — 変換後テキスト
 - 全角/半角変換は常に有効（オン/オフの切り替えはありません）。クリップボード変換（コピー検知・書き戻し）の有効/無効は `AppSetting.IsClipboardConvertEnabled` に従います。
 
-### Views（`ClipboardZenHanConverter.App.MewUI.Views`）
+### Views（`EsUtil.ClipboardZenHanConverter.App.MewUI.Views`）
 
 #### `MainWindow : Window`
 
@@ -37,7 +37,7 @@
 - NavigationView のペイン配置は `Inline` 固定です（MewUI 既定の `Auto` は利用可能幅 1000 DIP 未満でペインを内容へ重ねる形へ切り替わり、狭めるとペインが見えなくなるため）。
 - プロパティは公開しておらず、NavigationView がナビゲーション状態とコンテンツ領域を所有します。
 
-### Helpers（`ClipboardZenHanConverter.App.MewUI.Helpers`）
+### Helpers（`EsUtil.ClipboardZenHanConverter.App.MewUI.Helpers`）
 
 #### `FluentIcons`
 
@@ -70,12 +70,12 @@
 - `const double DefaultRowSpace` / `const double DefaultColumnSpace` / `const int DefaultColumnLimit` — 各プロパティの既定値
 - 実際の列数は幅に応じて上限以下へ減ります。幅が確定できない場合は単列として扱います。
 
-### Services（`ClipboardZenHanConverter.App.MewUI.Services`）
+### Services（`EsUtil.ClipboardZenHanConverter.App.MewUI.Services`）
 
 #### `ClipboardService : IClipboardService`
 
 クリップボードの読み書きと変更監視。Win32 の `GetClipboardSequenceNumber` ポーリングで変更を検出します。
-Win32 API の呼び出しは `ClipboardZenHanConverter.Core.Native.Win32Clipboard`、変更検出は `ClipboardZenHanConverter.Core.Logic.ClipboardChangeDetector` へ委譲します。
+Win32 API の呼び出しは `EsUtil.ClipboardZenHanConverter.Core.Native.Win32Clipboard`、変更検出は `EsUtil.ClipboardZenHanConverter.Core.Logic.ClipboardChangeDetector` へ委譲します。
 ポーリングは `DispatcherTimer` で行い、`ContentChanged` を UI スレッドで発行します（購読側がバインド済みプロパティを更新するため）。
 
 - `event EventHandler<object>? ContentChanged`

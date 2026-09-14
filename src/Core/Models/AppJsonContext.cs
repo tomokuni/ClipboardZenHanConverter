@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace ClipboardZenHanConverter.Core.Models;
+namespace EsUtil.ClipboardZenHanConverter.Core.Models;
 
 /// <summary>System.Text.Json のソースジェネレーター対応JSONシリアライゼーションコンテキスト。</summary>
 /// <remarks>AppSetting、ConvertConfig、ReplacePair の高速なシリアライズ/デシリアライズを提供します。<br/>

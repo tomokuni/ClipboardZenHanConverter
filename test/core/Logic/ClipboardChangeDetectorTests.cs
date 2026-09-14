@@ -1,7 +1,7 @@
-using ClipboardZenHanConverter.Core.Logic;
+using EsUtil.ClipboardZenHanConverter.Core.Logic;
 using Xunit;
 
-namespace ClipboardZenHanConverter.Tests.Core.Logic;
+namespace EsUtil.ClipboardZenHanConverter.Tests.Core.Logic;
 
 /// <summary><see cref="ClipboardChangeDetector"/> の変更検出を検証します。</summary>
 public sealed class ClipboardChangeDetectorTests

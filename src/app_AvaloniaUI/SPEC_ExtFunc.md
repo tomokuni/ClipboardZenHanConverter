@@ -50,7 +50,7 @@
 全角/半角変換は常に有効（オン/オフの切り替えはありません）。クリップボードの読み書き可否は `AppSetting.IsClipboardConvertEnabled` に従います。  
 クリップボード変換スイッチとプリセット選択はタイトルバー（`MainWindow`）が単一所有し、この ViewModel は関与しません。
 
-### Views（`ClipboardZenHanConverter.App.AvaloniaUI.Views`）
+### Views（`EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Views`）
 
 #### `MainWindow : Window`
 
@@ -90,7 +90,7 @@
 - `string Header` / `string Description` / `string Remark` — 見出し・説明・補足（空の場合は非表示）
 - `IEnumerable? Items` — 表示する変換項目（`ZenHanConvertItem` の列挙）
 
-### Services（`ClipboardZenHanConverter.App.AvaloniaUI.Services`）
+### Services（`EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Services`）
 
 #### `INavigationService` interface
 
@@ -111,7 +111,7 @@
 - `Task<string?> GetTextAsync()` / `void SetText(string text)` / `void Flush()`
 - `void RaiseContentChanged()` — テスト用の発火
 
-### Helpers（`ClipboardZenHanConverter.App.AvaloniaUI.Helpers`）
+### Helpers（`EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Helpers`）
 
 #### `FluentIcons` static class
 
@@ -120,7 +120,7 @@ Core のパスデータから Avalonia のアイコン形状を提供します�
 - `Geometry ConvertRange` — ホーム項目用の「Convert Range」アイコン形状
 - `Geometry Settings` — 設定項目用の「Settings」アイコン形状
 
-### Converters（`ClipboardZenHanConverter.App.AvaloniaUI.Converters`）
+### Converters（`EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Converters`）
 
 #### `StringNotEmptyToBoolConverter`
 
