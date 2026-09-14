@@ -20,7 +20,6 @@
     <RootNamespace>EsUtil.ClipboardZenHanConverter.App.WinForms</RootNamespace>
     <AssemblyName>ClipboardZenHanConverter.App.WinForms</AssemblyName>
     <Product>ClipboardZenHanConverter</Product>
-    <Version>0.0.1</Version>
     <Description>ClipboardZenHanConverter (WinForms) - clipboard text converter</Description>
   </PropertyGroup>
 

@@ -7,4 +7,10 @@
     <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- リリースバージョン。全プロジェクトで単一所有し、各 .csproj では指定しない。 -->
+    <!-- main ブランチへの push で .github/workflows/release.yml が .github/scripts/bump-version.ps1 によりインクリメントする -->
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+
 </Project>

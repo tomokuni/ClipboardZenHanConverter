@@ -1,0 +1,171 @@
+# ClipboardZenHanConverter のリリースワークフロー
+#
+# main ブランチへの push を契機に次の順で実行する。
+#   1. bump    … Directory.Build.props（単一所有）のバージョンをインクリメントし、main へコミットしてタグを打つ
+#   2. publish … 4 種のアプリを Release 構成で publish する（windows-latest / Native AOT・自己完結）
+#   3. release … publish 結果を GitHub Release の添付ファイルとして公開する
+#
+# GITHUB_TOKEN による push はワークフローを再トリガーしないため、bump のコミットでループしない。
+name: Release
+
+on:
+  push:
+    branches: [main]
+    # ドキュメントのみの変更ではリリースしない
+    paths-ignore:
+      - '**/*.md'
+  # 手動実行（上げ幅を選択できる）
+  workflow_dispatch:
+    inputs:
+      part:
+        description: 'バージョンの上げ幅'
+        type: choice
+        options: [patch, minor, major]
+        default: patch
+        required: true
+
+# リリース処理は同時に 1 つだけ実行する
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  # ────────────────────────────────────────────────────────────
+  # 1. バージョン更新（単一所有元の更新とタグ作成）
+  # ────────────────────────────────────────────────────────────
+  bump:
+    runs-on: ubuntu-latest
+    # バージョンコミットとタグの push に必要な権限
+    permissions:
+      contents: write
+    outputs:
+      version: ${{ steps.bump.outputs.version }}
+      tag: ${{ steps.bump.outputs.tag }}
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          # タグ作成と履歴参照のため全履歴を取得する
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: バージョンをインクリメント
+        id: bump
+        shell: pwsh
+        run: |
+          # 手動実行時は選択された上げ幅、push 時は patch を使う
+          $part = '${{ inputs.part || 'patch' }}'
+          $version = & ./.github/scripts/bump-version.ps1 -Part $part
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "tag=v$version" >> $env:GITHUB_OUTPUT
+          Write-Host "リリースバージョン: $version"
+
+      - name: コミットとタグを作成して push
+        shell: pwsh
+        env:
+          VERSION: ${{ steps.bump.outputs.version }}
+          TAG: ${{ steps.bump.outputs.tag }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -am "リリースバージョンを $env:VERSION へ更新"
+          git tag $env:TAG
+          git push origin main
+          git push origin $env:TAG
+
+  # ────────────────────────────────────────────────────────────
+  # 2. 4 種のアプリを publish
+  # ────────────────────────────────────────────────────────────
+  publish:
+    needs: bump
+    runs-on: windows-latest
+    # ソースの読み取りのみ
+    permissions:
+      contents: read
+    strategy:
+      # 1 つ失敗しても他の UI の結果を確認できるよう継続する
+      fail-fast: false
+      matrix:
+        include:
+          # attach … Release へ添付するファイル名
+          # archive … 複数ファイルを配布するため zip 化するかどうか
+          - name: MewUI
+            script: MewUI_publish_singleaot.bat
+            published: publish/mewui-win-x64-singleaot/ClipboardZenHanConverter.App.MewUI.exe
+            attach: ClipboardZenHanConverter.App.MewUI.exe
+            archive: false
+          - name: WinUI3
+            script: WinUI3_publish_single.bat
+            published: publish/winui3-win-x64-single/ClipboardZenHanConverter.App.WinUI3.exe
+            attach: ClipboardZenHanConverter.App.WinUI3.exe
+            archive: false
+          - name: WinForms
+            script: WinForms_publish_single.bat
+            published: publish/winforms-win-x64-single/ClipboardZenHanConverter.App.WinForms.exe
+            attach: ClipboardZenHanConverter.App.WinForms.exe
+            archive: false
+          # Avalonia UI は Native AOT でも単一 exe にできない（SkiaSharp 等のネイティブ DLL を
+          # exe へ同梱できない）ため、exe とネイティブ DLL を zip で配布する
+          - name: AvaloniaUI
+            script: AvaloniaUI_publish_aot.bat
+            published: publish/avaloniaui-win-x64-aot
+            attach: ClipboardZenHanConverter.App.AvaloniaUI.zip
+            archive: true
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+        with:
+          # bump が作成したタグ（＝バージョンを更新したコミット）を publish する
+          ref: ${{ needs.bump.outputs.tag }}
+
+      - name: .NET SDK をセットアップ
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: ${{ matrix.name }} を publish
+        shell: cmd
+        run: ${{ matrix.script }}
+
+      - name: 配布物を zip 化
+        if: matrix.archive
+        shell: pwsh
+        # 出力フォルダ自身を zip へ含めず、中身を直下へ配置する
+        run: Compress-Archive -Path '${{ matrix.published }}/*' -DestinationPath '${{ matrix.attach }}' -Force
+
+      - name: 成果物をアップロード
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }}
+          path: ${{ matrix.archive && matrix.attach || matrix.published }}
+          if-no-files-found: error
+
+  # ────────────────────────────────────────────────────────────
+  # 3. GitHub Release を作成して配布物を添付
+  # ────────────────────────────────────────────────────────────
+  release:
+    needs: [bump, publish]
+    runs-on: ubuntu-latest
+    # Release 作成に必要な権限
+    permissions:
+      contents: write
+    steps:
+      - name: 成果物をダウンロード
+        uses: actions/download-artifact@v4
+        with:
+          path: assets
+          # 各 UI の成果物を 1 つのフォルダへ集約する
+          merge-multiple: true
+
+      - name: GitHub Release を作成
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.bump.outputs.tag }}
+          VERSION: ${{ needs.bump.outputs.version }}
+        run: |
+          gh release create "$TAG" \
+            --title "ClipboardZenHanConverter $VERSION" \
+            --generate-notes \
+            --notes "4 種の UI 実装の配布物です。Avalonia UI 版のみ exe とネイティブ DLL の zip で、残りは単一 exe です。" \
+            assets/*

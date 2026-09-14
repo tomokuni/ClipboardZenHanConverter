@@ -17,7 +17,6 @@
     <RootNamespace>EsUtil.ClipboardZenHanConverter.App.AvaloniaUI</RootNamespace>
     <AssemblyName>ClipboardZenHanConverter.App.AvaloniaUI</AssemblyName>
     <Product>ClipboardZenHanConverter</Product>
-    <Version>0.0.1</Version>
     <Description>ClipboardZenHanConverter (Avalonia UI) - clipboard text converter</Description>
   </PropertyGroup>
 

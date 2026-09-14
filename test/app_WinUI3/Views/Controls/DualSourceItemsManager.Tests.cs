@@ -1,5 +1,3 @@
-// このソースコードは、UTF-8、LF で作成します。
-
 using EsUtil.ClipboardZenHanConverter.App.WinUI.Views.Controls;
 using Xunit;
 

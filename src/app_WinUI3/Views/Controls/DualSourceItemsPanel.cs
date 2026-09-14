@@ -1,5 +1,3 @@
-// このソースコードは、UTF-8、LF で作成します。
-
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 

@@ -5,7 +5,6 @@
     <RootNamespace>EsUtil.ClipboardZenHanConverter.Core</RootNamespace>
     <AssemblyName>ClipboardZenHanConverter.Core</AssemblyName>
     <Description>Core logic, models and platform APIs for ClipboardZenHanConverter (UI framework agnostic)</Description>
-    <Version>0.0.1</Version>
     <Copyright>Copyright (c) 2025</Copyright>
     <!-- Win32 P/Invoke（LibraryImport ソース生成）が unsafe コードを生成するため許可する -->
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

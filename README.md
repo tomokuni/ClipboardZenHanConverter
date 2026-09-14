@@ -154,6 +154,47 @@ dotnet run --project src/app_WinForms/app_WinForms.csproj
 
 起動するとホーム画面が表示され、クリップボードにコピーしたテキストを自動変換します。
 
+## リリース（GitHub Actions）
+
+`main` ブランチへ push すると `.github/workflows/release.yml` が起動し、バージョンを更新して 4 種のアプリの配布物を GitHub Release として公開します。
+
+### バージョンの単一所有
+
+アセンブリバージョンは `Directory.Build.props` の `<Version>` が単一所有します（各 `.csproj` では指定しません）。
+`AssemblyVersion` / `FileVersion` / 表示バージョンはこの値から導出されます。
+
+### main への push 時（自動）
+
+1. バージョンを 1 つ進める（既定は `patch`。`0.0.1` → `0.0.2`）
+2. 変更を `github-actions[bot]` として `main` へコミットし、`v0.0.2` のタグを作成
+3. 4 種のアプリを Release 構成で publish（`windows-latest`）
+4. 配布物を添付した GitHub Release を作成（リリースノートは前回のタグからの差分を自動生成）
+
+- バージョン更新には `.github/scripts/bump-version.ps1` を使用します（ローカルでも実行できます）。
+- `GITHUB_TOKEN` による push はワークフローを再トリガーしないため、バージョン更新コミットでループしません。
+- ドキュメント（`*.md`）のみの変更では起動しません。
+- `publish` ジョブは 4 種を並列実行し、いずれかが失敗した場合は Release を作成しません。
+
+### 手動実行
+
+`Actions` → `Release` → `Run workflow` で、`patch` / `minor` / `major` から上げ幅を選んで実行できます。
+
+```powershell
+# バージョンだけを更新する場合（ワークフローを介さずローカルで実行）
+$version = & ./.github/scripts/bump-version.ps1 -Part minor
+```
+
+### Release の添付ファイル
+
+| UI | 添付ファイル | 形式 |
+| --- | --- | --- |
+| MewUI 版 | `ClipboardZenHanConverter.App.MewUI.exe` | 単一 exe（Native AOT） |
+| WinUI 3 版 | `ClipboardZenHanConverter.App.WinUI3.exe` | 単一 exe（自己完結） |
+| Avalonia UI 版 | `ClipboardZenHanConverter.App.AvaloniaUI.zip` | exe + ネイティブ DLL 3 個 |
+| WinForms 版 | `ClipboardZenHanConverter.App.WinForms.exe` | 単一 exe（自己完結） |
+
+publish はリポジトリ直下の `*_publish_*.bat` をそのまま実行するため、ローカルでの配布用ビルドと同一の手順・出力になります。
+
 ## 元リポジトリ
 
 WinUI 3 版の実装は `../ClipboardZenHanConverter` にありました。本リポジトリに統合済みです（`src/app_WinUI3`）。

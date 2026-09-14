@@ -17,7 +17,6 @@
 
   <PropertyGroup>
     <Product>ClipboardZenHanConverter</Product>
-    <Version>0.0.1</Version>
     <Description>A utility application that automatically converts text in the clipboard, such as converting full-width to half-width characters.</Description>
     <RootNamespace>EsUtil.ClipboardZenHanConverter.App.WinUI</RootNamespace>
     <!-- exe （アセンブリ）名はプロジェクト名に合せる。名前空間は既存の App.WinUI のまま（変更すると全ソース・XAML へ波及するため） -->

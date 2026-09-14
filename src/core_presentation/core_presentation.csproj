@@ -5,7 +5,6 @@
     <RootNamespace>EsUtil.ClipboardZenHanConverter.Presentation</RootNamespace>
     <AssemblyName>ClipboardZenHanConverter.Presentation</AssemblyName>
     <Description>UI framework agnostic presentation layer (ViewModels) for ClipboardZenHanConverter</Description>
-    <Version>0.0.1</Version>
     <Copyright>Copyright (c) 2025</Copyright>
   </PropertyGroup>
 

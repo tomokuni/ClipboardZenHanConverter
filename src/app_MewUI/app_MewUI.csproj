@@ -7,7 +7,6 @@
     <RootNamespace>EsUtil.ClipboardZenHanConverter.App.MewUI</RootNamespace>
     <AssemblyName>ClipboardZenHanConverter.App.MewUI</AssemblyName>
     <Product>ClipboardZenHanConverter</Product>
-    <Version>0.0.1</Version>
     <Description>ClipboardZenHanConverter (MewUI) - clipboard text converter</Description>
   </PropertyGroup>
 
