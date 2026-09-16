@@ -43,7 +43,7 @@ jobs:
       tag: ${{ steps.bump.outputs.tag }}
     steps:
       - name: チェックアウト
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: main
           # タグ作成と履歴参照のため全履歴を取得する
@@ -114,13 +114,13 @@ jobs:
             archive: true
     steps:
       - name: チェックアウト
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           # bump が作成したタグ（＝バージョンを更新したコミット）を publish する
           ref: ${{ needs.bump.outputs.tag }}
 
       - name: .NET SDK をセットアップ
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.0.x'
 
@@ -135,7 +135,7 @@ jobs:
         run: Compress-Archive -Path '${{ matrix.published }}/*' -DestinationPath '${{ matrix.attach }}' -Force
 
       - name: 成果物をアップロード
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.name }}
           path: ${{ matrix.archive && matrix.attach || matrix.published }}
@@ -152,7 +152,7 @@ jobs:
       contents: write
     steps:
       - name: 成果物をダウンロード
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           path: assets
           # 各 UI の成果物を 1 つのフォルダへ集約する

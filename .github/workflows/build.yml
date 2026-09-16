@@ -1,0 +1,46 @@
+# ClipboardZenHanConverter の CI ワークフロー
+#
+# push と Pull Request のたびに、復元・Release ビルド・全テストを実行する。
+# README の「build」バッジはこのワークフローの status を表示する（badge.svg?branch=main）。
+#
+# 配布物の作成は行わない（Release ワークフローが担当する）。
+name: Build
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main]
+  # 手動実行
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# 同一ブランチの古い実行は打ち切る（バッジは最新の実行結果を表示する）
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v5
+
+      - name: .NET SDK をセットアップ
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      # 以降は --no-restore / --no-build で工程を分け、失敗箇所を切り分けやすくする
+      - name: 復元
+        run: dotnet restore ClipboardZenHanConverter.slnx
+
+      - name: ビルド（Release）
+        run: dotnet build ClipboardZenHanConverter.slnx -c Release --no-restore
+
+      # WinUI 3 / Avalonia UI / WinForms を含む全 7 テストプロジェクトを実行する
+      - name: テスト（Release）
+        run: dotnet test ClipboardZenHanConverter.slnx -c Release --no-build
