@@ -1,0 +1,98 @@
+# 全 UI を publish してアーティファクトとして保管する再利用ワークフロー（workflow_call）。
+#
+# UI の定義（名前・publish スクリプト・出力・配布名・zip の要否）は
+# .github/release-config.json が単一所有する。UI を追加・変更する場合はこのファイルだけを変更する。
+#
+# 呼び出し側:
+#   build.yml   … 通常の push で呼ぶ（リポジトリのバージョンをそのまま使用）
+#   release.yml … リリース時に呼ぶ（version を渡し、そのバージョンでビルドする）
+name: Publish
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: 'ビルドするバージョン（省略時はリポジトリの値を使用）'
+        required: false
+        type: string
+        default: ''
+      upload_artifacts:
+        description: '成果物をアーティファクトとして保管するか'
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  # ────────────────────────────────────────────────────────────
+  # 1. 設定を読む（UI の定義を単一ソースから取り出す）
+  # ────────────────────────────────────────────────────────────
+  config:
+    runs-on: ubuntu-latest
+    outputs:
+      uis: ${{ steps.read.outputs.uis }}
+      version_file: ${{ steps.read.outputs.version_file }}
+      retention: ${{ steps.read.outputs.retention }}
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v5
+
+      - name: release-config.json を読む
+        id: read
+        run: |
+          # matrix で使うため 1 行の JSON として出力する
+          echo "uis=$(jq -c .uis .github/release-config.json)" >> "$GITHUB_OUTPUT"
+          echo "version_file=$(jq -r .versionFile .github/release-config.json)" >> "$GITHUB_OUTPUT"
+          echo "retention=$(jq -r .artifactRetentionDays .github/release-config.json)" >> "$GITHUB_OUTPUT"
+
+  # ────────────────────────────────────────────────────────────
+  # 2. 全 UI を publish して保管（登録は行わない）
+  # ────────────────────────────────────────────────────────────
+  publish:
+    needs: config
+    runs-on: windows-latest
+    strategy:
+      # 1 つ失敗しても他の UI の結果を確認できるよう継続する
+      fail-fast: false
+      matrix:
+        ui: ${{ fromJson(needs.config.outputs.uis) }}
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v5
+
+      - name: .NET SDK をセットアップ
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      # リリース時は、コミット前に publish するため作業ツリーへバージョンを適用する
+      # （公開する成果物と、リリースでコミットするバージョンを一致させる）
+      - name: バージョンを設定
+        if: inputs.version != ''
+        shell: pwsh
+        env:
+          VERSION: ${{ inputs.version }}
+          VERSION_FILE: ${{ needs.config.outputs.version_file }}
+        run: ./.github/scripts/set-version.ps1 -Version $env:VERSION -VersionFile $env:VERSION_FILE | Out-Null
+
+      - name: ${{ matrix.ui.name }} を publish
+        shell: cmd
+        run: .\${{ matrix.ui.script }}
+
+      - name: 配布物を zip 化
+        if: matrix.ui.zip
+        shell: pwsh
+        # 出力フォルダ自身を zip へ含めず、中身を直下へ配置する
+        run: Compress-Archive -Path '${{ matrix.ui.output }}/*' -DestinationPath '${{ matrix.ui.asset }}' -Force
+
+      - name: 成果物をアップロード
+        if: inputs.upload_artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ matrix.ui.name }}
+          # 複数ファイルを配布する UI は zip 済みのファイルを、単一 exe の UI は exe を保管する
+          path: ${{ matrix.ui.zip && matrix.ui.asset || matrix.ui.output }}
+          if-no-files-found: error
+          retention-days: ${{ needs.config.outputs.retention }}

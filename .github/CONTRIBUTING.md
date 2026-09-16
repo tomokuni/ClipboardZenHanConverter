@@ -3,7 +3,7 @@
 本ドキュメントは ClipboardZenHanConverter を**ビルド・テストする開発者**向けの情報です。
 アプリの利用方法は [`../README.md`](../README.md)、各 UI の利用仕様は `../src/app_*/README.md` を参照してください。
 
-- リリース手順（バージョン更新・GitHub Release の作成）は [`RELEASE.md`](RELEASE.md) に分離しています。
+- リリース手順は [`RELEASE.md`](RELEASE.md)、他のリポジトリへの流用方法は [`REUSING.md`](REUSING.md) に分離しています。
 
 ## リポジトリ構成
 
@@ -15,9 +15,12 @@ ClipboardZenHanConverter/
 ├── .github/
 │   ├── CONTRIBUTING.md            # 本ドキュメント（開発者向け）
 │   ├── RELEASE.md                 # リリース手順
-│   ├── workflows/build.yml        # push / PR で復元・ビルド・全テスト（CI）
-│   ├── workflows/release.yml      # main への push でバージョン更新・publish・Release 作成
-│   └── scripts/bump-version.ps1   # バージョン更新（単一所有元の更新）
+│   ├── REUSING.md                 # 他のリポジトリへの流用方法
+│   ├── release-config.json        # リリース設定（UI 定義・バージョンファイル等の単一ソース）
+│   ├── workflows/build.yml        # push / PR でビルド・テスト・publish（登録なし）
+│   ├── workflows/publish.yml      # 全 UI の publish（build / release から呼ばれる共通ワークフロー）
+│   ├── workflows/release.yml      # 手動実行で検証・publish・タグ・Release 作成
+│   └── scripts/                   # version.ps1（バージョン規則） / set-version.ps1 / verify-release-version.ps1
 ├── MewUI_publish_singleaot.bat / MewUI_run_publish.bat    # MewUI 版の単一 exe ビルド/実行（Native AOT）
 ├── WinUI3_publish_single.bat / WinUI3_run_publish.bat     # WinUI 3 版の単一 exe ビルド/実行（自己完結）
 ├── AvaloniaUI_publish_aot.bat / AvaloniaUI_run_publish.bat     # Avalonia UI 版の AOT ビルド/実行（Native AOT + ネイティブ DLL）
@@ -83,7 +86,7 @@ dotnet build ClipboardZenHanConverter.slnx
 同一メジャー内の最新版が復元時に選ばれるため、常に最新の状態でビルドできます。
 
 - メジャーが上がる変更（破壊的変更を含む）は自動では取り込まれません。手動で更新します。
-- リリースバージョン（`<Version>`）は `Directory.Build.props` が単一所有します。各 `.csproj` では指定しません（詳細は [`RELEASE.md`](RELEASE.md)）。
+- リリースバージョン（`<Version>`）は `Directory.Build.props` が単一所有します。自動インクリメントは行わず、リリース時にワークフローが設定します（詳細は [`RELEASE.md`](RELEASE.md)）。
 - 復元結果は `project.assets.json`（`obj/` 配下）に記録されます。固定したい場合は `obj/` を削除するか `dotnet restore --force-evaluate` を実行します。
 
 ## テスト
@@ -157,13 +160,29 @@ dotnet run --project src/app_WinForms/app_WinForms.csproj
 
 ## CI（ビルドとテスト）
 
-[`workflows/build.yml`](workflows/build.yml) が、`main` / `dev` への push と `main` 向け Pull Request のたびに次を実行します。
+[`workflows/build.yml`](workflows/build.yml) が、`main` / `dev` / `release/**` への push と `main` 向け Pull Request のたびに次を実行します。
 
 1. 復元（`dotnet restore ClipboardZenHanConverter.slnx`）
 2. Release ビルド（`dotnet build -c Release --no-restore`）
 3. 全テスト（`dotnet test -c Release --no-build`。7 テストプロジェクト）
+4. 全 UI の **publish**（`workflows/publish.yml` を呼ぶ）とアーティファクト保管（保持 30 日）
 
-配布物の作成は行いません（[`workflows/release.yml`](workflows/release.yml) が担当します）。`README.md` 先頭の build バッジはこのワークフローの状態を表示します。
+publish は **Pull Request とバージョン更新のみのコミット（バージョンファイルだけの変更）では実行しません**。
+バージョン更新のみのコミットはリリース時に配布物を作成済みのため、AOT ビルドの再実行を避けています。
+
+GitHub Release への**登録は行いません**。登録は手動実行の [`workflows/release.yml`](workflows/release.yml) が担当します（[`RELEASE.md`](RELEASE.md) を参照）。
+この実行結果はリリースの前提（ゲート）になるため、push 時は（バージョン更新のみのコミットを除き）publish までを行います。
+`README.md` 先頭の build バッジはこのワークフローの状態を表示します。
+
+### ワークフローの分担
+
+| ワークフロー | 実行契機 | 責務 |
+| --- | --- | --- |
+| [`workflows/publish.yml`](workflows/publish.yml) | `workflow_call`（直接は実行されない） | 全 UI の publish と保管。**UI の定義と publish 手順の単一実装** |
+| [`workflows/build.yml`](workflows/build.yml) | push / PR / 手動 | ビルドとテスト。push 時は publish.yml を呼ぶ |
+| [`workflows/release.yml`](workflows/release.yml) | 手動のみ | リリース（検証 → publish → 公開） |
+
+UI を追加・変更する場合は、**`release-config.json` の `uis` を編集するだけ**です（ワークフローの変更は不要）。
 
 publish と同等の条件（クリーンな状態）で事前確認する場合:
 

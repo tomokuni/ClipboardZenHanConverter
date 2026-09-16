@@ -1,0 +1,37 @@
+{
+  "product": "ClipboardZenHanConverter",
+  "versionFile": "Directory.Build.props",
+  "gateWorkflow": "build.yml",
+  "artifactRetentionDays": 30,
+  "releaseNotes": "4 種の UI 実装の配布物です。Avalonia UI 版のみ exe とネイティブ DLL の zip で、残りは単一 exe です。",
+  "uis": [
+    {
+      "name": "MewUI",
+      "script": "MewUI_publish_singleaot.bat",
+      "output": "publish/mewui-win-x64-singleaot/ClipboardZenHanConverter.App.MewUI.exe",
+      "asset": "ClipboardZenHanConverter.App.MewUI.exe",
+      "zip": false
+    },
+    {
+      "name": "WinUI3",
+      "script": "WinUI3_publish_single.bat",
+      "output": "publish/winui3-win-x64-single/ClipboardZenHanConverter.App.WinUI3.exe",
+      "asset": "ClipboardZenHanConverter.App.WinUI3.exe",
+      "zip": false
+    },
+    {
+      "name": "WinForms",
+      "script": "WinForms_publish_single.bat",
+      "output": "publish/winforms-win-x64-single/ClipboardZenHanConverter.App.WinForms.exe",
+      "asset": "ClipboardZenHanConverter.App.WinForms.exe",
+      "zip": false
+    },
+    {
+      "name": "AvaloniaUI",
+      "script": "AvaloniaUI_publish_aot.bat",
+      "output": "publish/avaloniaui-win-x64-aot",
+      "asset": "ClipboardZenHanConverter.App.AvaloniaUI.zip",
+      "zip": true
+    }
+  ]
+}

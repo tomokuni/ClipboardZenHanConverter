@@ -9,7 +9,7 @@
 
   <PropertyGroup>
     <!-- リリースバージョン。全プロジェクトで単一所有し、各 .csproj では指定しない。 -->
-    <!-- main ブランチへの push で .github/workflows/release.yml が .github/scripts/bump-version.ps1 によりインクリメントする -->
+    <!-- 自動インクリメントは行わない。リリース時に .github/workflows/release.yml が入力値へ更新する。 -->
     <Version>0.1.1</Version>
   </PropertyGroup>
 

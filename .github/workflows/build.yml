@@ -1,17 +1,27 @@
-# ClipboardZenHanConverter の CI ワークフロー
+# ClipboardZenHanConverter のビルドワークフロー
 #
-# push と Pull Request のたびに、復元・Release ビルド・全テストを実行する。
+# push（main / dev / release/*）と Pull Request のたびに、復元・Release ビルド・全テストを実行し、
+# 全 UI を publish してアーティファクトとして保管する（GitHub Release への登録は行わない）。
+#
+# publish の実装は publish.yml（workflow_call）が単一所有する。UI の定義は .github/release-config.json。
+# 本ワークフローは「いつ publish するか」だけを決める。
+#
+# この実行結果はリリースの前提（ゲート）になる。Release ワークフローは、リリース対象コミットに対する
+# 本ワークフローの成功実行が存在することを確認してから Release を作成する。
+#
+# バージョン更新のみのコミット（バージョンファイルだけの変更）では publish をスキップする。
+# このようなコミットの配布物は Release ワークフローがリリース時に作成済みであり、再実行は無駄になるため。
+# ビルドとテストは常に実行する（リリースされたコミットの検証とゲートの充足のため）。
+#
 # README の「build」バッジはこのワークフローの status を表示する（badge.svg?branch=main）。
-#
-# 配布物の作成は行わない（Release ワークフローが担当する）。
 name: Build
 
 on:
   push:
-    branches: [main, dev]
+    branches: [main, dev, 'release/**']
   pull_request:
     branches: [main]
-  # 手動実行
+  # 手動実行（バージョンコミットの検証を起動する場合にも使用する）
   workflow_dispatch:
 
 permissions:
@@ -23,16 +33,50 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # ────────────────────────────────────────────────────────────
+  # 1. ビルドとテスト（配布物を作る前の検証）
+  # ────────────────────────────────────────────────────────────
   build:
     runs-on: windows-latest
+    outputs:
+      publish_required: ${{ steps.changed.outputs.required }}
     steps:
       - name: チェックアウト
         uses: actions/checkout@v5
+        with:
+          # 直前のコミットとの差分から publish の要否を判定するため 2 件取得する
+          fetch-depth: 2
 
       - name: .NET SDK をセットアップ
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.0.x'
+
+      - name: publish の要否を判定
+        id: changed
+        shell: pwsh
+        # 差分がバージョンファイルのみなら、配布物はリリース時に作成済みのため publish を省く
+        run: |
+          # バージョンファイル（単一所有元）のパスを設定から読む
+          $versionFile = (Get-Content .github/release-config.json -Raw | ConvertFrom-Json).versionFile
+
+          # 親コミットが無い（初回コミット・浅い clone）場合は要と判定する
+          git rev-parse --verify --quiet HEAD^ 2>&1 | Out-Null
+
+          # 注意: if 式の出力は配列がスカラーへ自動展開されるため、配列の代入は代入文で行う
+          $changed = @()
+          if ($LASTEXITCODE -eq 0) {
+            $changed = @(git diff --name-only HEAD^ HEAD)
+          }
+
+          if ($changed.Count -eq 1 -and $changed[0] -eq $versionFile) {
+            "required=false" >> $env:GITHUB_OUTPUT
+            Write-Host "publish をスキップします（バージョン更新のみのコミット: $versionFile）"
+          }
+          else {
+            "required=true" >> $env:GITHUB_OUTPUT
+            Write-Host "publish を実行します（変更: $($changed -join ', ')）"
+          }
 
       # 以降は --no-restore / --no-build で工程を分け、失敗箇所を切り分けやすくする
       - name: 復元
@@ -44,3 +88,13 @@ jobs:
       # WinUI 3 / Avalonia UI / WinForms を含む全 7 テストプロジェクトを実行する
       - name: テスト（Release）
         run: dotnet test ClipboardZenHanConverter.slnx -c Release --no-build
+
+  # ────────────────────────────────────────────────────────────
+  # 2. 全 UI を publish して保管（実装は publish.yml に集約）
+  # ────────────────────────────────────────────────────────────
+  publish:
+    needs: build
+    # publish は push 時のみ、かつバージョン更新以外の変更がある場合に行う
+    # （Pull Request とバージョン更新のみのコミットではビルドとテストまでを検証する）
+    if: github.event_name != 'pull_request' && needs.build.outputs.publish_required == 'true'
+    uses: ./.github/workflows/publish.yml
