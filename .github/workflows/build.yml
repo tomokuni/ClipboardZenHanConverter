@@ -55,8 +55,28 @@ jobs:
         id: config
         uses: ./.github/actions/read-config
 
+      # .NET SDK は毎回ダウンロードされると 300MB（展開に約 20 秒）かかるため、
+      # インストール先をジョブの一時領域へ移してキャッシュする。
+      # 既定の C:\Program Files\dotnet はランナー画像のシステム領域でキャッシュできない。
+      # setup-dotnet より前に復元する（dotnet-install.ps1 は同じバージョンが既にあれば
+      # ダウンロードも展開も行わないため、2 回目以降のセットアップは実質ゼロ時間になる）。
+      - name: .NET SDK をキャッシュ
+        uses: actions/cache@v6
+        with:
+          # ワークスペースの外へ置き、チェックアウトの clean やハッシュ計算へ影響させない
+          path: ${{ runner.temp }}/dotnet
+          # global.json の内容でキーを作る。SDK が更新されてキャッシュが古くなった場合は
+          # 末尾の版（v1）を上げると作り直される
+          key: dotnet-${{ runner.os }}-v1-${{ hashFiles('global.json') }}
+          # global.json が変わっても直近のキャッシュから復元し、足りない分だけをインストールさせる
+          restore-keys: |
+            dotnet-${{ runner.os }}-v1-
+
       - name: .NET SDK をセットアップ
         uses: actions/setup-dotnet@v5
+        env:
+          # キャッシュ対象と同じディレクトリへインストールする（上の path と揃えること）
+          DOTNET_INSTALL_DIR: ${{ runner.temp }}/dotnet
         with:
           # バージョンは global.json が単一所有する（dotnet-version は指定しない）
           # NuGet のグローバル パッケージ フォルダをキャッシュする

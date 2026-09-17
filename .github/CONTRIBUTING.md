@@ -95,6 +95,10 @@ dotnet build ClipboardZenHanConverter.slnx
   （例: Avalonia 12 に対する `SkiaSharp` 4 系・`HarfBuzzSharp` 14 系）描画や Native AOT が壊れる恐れがあるため、更新しません。
 - テストは **xunit.v3 4 系**（Microsoft.Testing.Platform）を使用します。VSTest 専用の `Microsoft.NET.Test.Sdk` / `xunit.runner.visualstudio` / `coverlet.collector` は参照しません。
 - .NET SDK のバージョンとテスト ランナーはリポジトリルートの `global.json` が単一所有します（ワークフローへ `dotnet-version` を書きません。`actions/setup-dotnet` が `global.json` を読みます）。
+  - ビルドを高速化するため、ワークフローは SDK のインストール先を `DOTNET_INSTALL_DIR`（`${{ runner.temp }}/dotnet`）へ
+    移して `actions/cache` で再利用します（`dotnet-install` は同じバージョンが既にあればダウンロードも展開もしません）。
+    **SDK が更新されてキャッシュが古くなった場合は、`build.yml` / `publish.yml` のキャッシュ キー末尾の版（`v1`）を上げてください**
+    （キーが同じままだと新しい SDK が毎回ダウンロードされます）。
 - リリースバージョン（`<Version>`）は `Directory.Build.props` が単一所有します。自動インクリメントは行わず、リリース時にワークフローが設定します（詳細は [`RELEASE.md`](RELEASE.md)）。
 - 復元結果は `project.assets.json`（`obj/` 配下）に記録されます。固定したい場合は `obj/` を削除するか `dotnet restore --force-evaluate` を実行します。
 
