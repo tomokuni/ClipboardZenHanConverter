@@ -8,28 +8,28 @@
     "release/**"
   ],
   "artifactRetentionDays": 30,
-  "releaseNotes": "4 種の UI 実装の配布物です。Avalonia UI 版のみ exe とネイティブ DLL の zip で、残りは単一 exe です。",
+  "releaseNotes": "4 種の UI 実装の配布物です。いずれも zip で、展開すると exe（Avalonia UI 版はネイティブ DLL も）が入っています。",
   "uis": [
     {
       "name": "MewUI",
       "script": "buildScript/MewUI_publish_singleaot.bat",
       "output": "publish/mewui-win-x64-singleaot/ClipboardZenHanConverter.App.MewUI.exe",
-      "asset": "ClipboardZenHanConverter.App.MewUI.exe",
-      "zip": false
+      "asset": "ClipboardZenHanConverter.App.MewUI.zip",
+      "zip": true
     },
     {
       "name": "WinUI3",
       "script": "buildScript/WinUI3_publish_single.bat",
       "output": "publish/winui3-win-x64-single/ClipboardZenHanConverter.App.WinUI3.exe",
-      "asset": "ClipboardZenHanConverter.App.WinUI3.exe",
-      "zip": false
+      "asset": "ClipboardZenHanConverter.App.WinUI3.zip",
+      "zip": true
     },
     {
       "name": "WinForms",
       "script": "buildScript/WinForms_publish_single.bat",
       "output": "publish/winforms-win-x64-single/ClipboardZenHanConverter.App.WinForms.exe",
-      "asset": "ClipboardZenHanConverter.App.WinForms.exe",
-      "zip": false
+      "asset": "ClipboardZenHanConverter.App.WinForms.zip",
+      "zip": true
     },
     {
       "name": "AvaloniaUI",

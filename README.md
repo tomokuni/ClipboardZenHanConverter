@@ -23,14 +23,15 @@
 [GitHub Releases](https://github.com/tomokuni/ClipboardZenHanConverter/releases) から最新版をダウンロードします。
 いずれも自己完結で、.NET ランタイムのインストールは不要です。
 
-| UI | ファイル | 形式 |
+| UI | ファイル | 内容 |
 | --- | --- | --- |
-| MewUI 版 | `ClipboardZenHanConverter.App.MewUI.exe` | 単一 exe（Native AOT） |
-| WinUI 3 版 | `ClipboardZenHanConverter.App.WinUI3.exe` | 単一 exe（自己完結） |
+| MewUI 版 | `ClipboardZenHanConverter.App.MewUI.zip` | 単一 exe（Native AOT） |
+| WinUI 3 版 | `ClipboardZenHanConverter.App.WinUI3.zip` | 単一 exe（自己完結） |
 | Avalonia UI 版 | `ClipboardZenHanConverter.App.AvaloniaUI.zip` | exe + ネイティブ DLL 3 個 |
-| WinForms 版 | `ClipboardZenHanConverter.App.WinForms.exe` | 単一 exe（自己完結） |
+| WinForms 版 | `ClipboardZenHanConverter.App.WinForms.zip` | 単一 exe（自己完結） |
 
-- Avalonia UI 版は exe 単体では起動しません。zip を展開し、同じフォルダーにあるネイティブ DLL と一緒に使用します。
+- いずれも zip を展開して使用します。
+- Avalonia UI 版は exe 単体では起動しません。展開したフォルダーにあるネイティブ DLL と同じ場所に置いて使用します。
 - 起動するとホーム画面が表示され、クリップボードにコピーしたテキストを自動変換します。
 
 ## 設定ファイル
