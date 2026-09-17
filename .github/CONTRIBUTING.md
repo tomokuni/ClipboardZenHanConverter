@@ -120,6 +120,11 @@ dotnet test --project test\parity\tests_parity.csproj
 実行され、位置引数（`dotnet test ClipboardZenHanConverter.slnx`）はテスト アプリへの引数として扱われて
 **0 件・終了コード 5** になります（実行基盤の指定は `global.json` の `test.runner` が単一所有します）。
 
+**WinUI 3 を参照するテスト（`test/app_WinUI3` / `test/parity`）は `WindowsAppSDKSelfContained=true` を設定します。**
+未設定の場合は Windows App Runtime のインストールを前提とする構成（`Microsoft.WindowsAppRuntime.Bootstrap.dll` が同梱）になり、
+ランタイムが無い環境では起動時のブートストラップが導入ダイアログを出して待ち続けるため、**出力を出さずにテストが停止**します
+（CI のランナー イメージには Windows App Runtime が含まれていないため、ローカルでは再現しません）。
+
 `test/core` は `src/core` のみを参照し、UI フレームワークに依存しないことを保証します。  
 `test/core_presentation` は `src/core_presentation` のみを参照し、同じく UI フレームワークに依存しないことを保証します。  
 設定ファイルを書き込むテストは、実ユーザーの `%LOCALAPPDATA%` 配下を汚さないよう

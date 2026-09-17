@@ -11,6 +11,13 @@
     <!-- Windows App SDK のビルド要件（リポジトリ共通の Directory.Build.props には置かない） -->
     <Platforms>x64</Platforms>
     <SelfContained>true</SelfContained>
+    <!--
+      Windows App SDK も自己完結にする（実行環境に Windows App Runtime が不要になる）。
+      未設定の場合は Microsoft.WindowsAppRuntime.Bootstrap.dll が同梱され、起動時に
+      インストール済みのランタイムを探しに行く。見つからない環境（CI など）では
+      導入を促すダイアログを出して待ち続けるため、テストが無言で停止する。
+    -->
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
   </PropertyGroup>
 
   <ItemGroup>
