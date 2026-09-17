@@ -5,18 +5,23 @@
 
 ## 何が流用できるか
 
-**リポジトリ固有の知識を `release-config.json` と `*_publish_*.bat` に閉じ込めています。** それ以外は汎用です。
+**リポジトリ固有の知識を `release-config.json` と `buildScript/*_publish_*.bat` に閉じ込めています。** それ以外は汎用です。
 
 | ファイル | 流用 | 備考 |
 | --- | --- | --- |
 | [`release-config.json`](release-config.json) | **コピーして編集** | 唯一のリポジトリ固有設定 |
+| [`actions/read-config`](actions/read-config/action.yml) | **コピーして調整** | `release-config.json` を読んで各ワークフローへ渡す共通アクション。**キーを増やす場合は `outputs` にも追加する** |
+| [`../global.json`](../global.json) | **コピーして編集** | .NET SDK のバージョン（対象フレームワークに合わせる） |
 | [`scripts/version.ps1`](scripts/version.ps1) | **そのまま** | バージョンの規則（リポジトリ非依存） |
 | [`scripts/set-version.ps1`](scripts/set-version.ps1) | **そのまま** | バージョンファイルのパスは引数・設定で渡す |
-| [`scripts/verify-release-version.ps1`](scripts/verify-release-version.ps1) | **そのまま** | ブランチ規則も汎用 |
-| [`workflows/publish.yml`](workflows/publish.yml) | **そのまま** | 設定を読んで UI を publish する |
-| [`workflows/release.yml`](workflows/release.yml) | **そのまま** | 設定を読むため変更不要 |
-| [`workflows/build.yml`](workflows/build.yml) | **コピーして編集** | ビルド・テストのコマンドのみリポジトリ依存 |
-| `*_publish_*.bat` | **新規作成** | UI ごとの publish 手順 |
+| [`scripts/verify-release-version.ps1`](scripts/verify-release-version.ps1) | **そのまま** | ブランチ規則は `releaseBranches` が持つため変更不要 |
+| [`scripts/show-current-versions.ps1`](scripts/show-current-versions.ps1) | **コピーして調整** | 現在のバージョン状況を表示する（読み取りのみ）。配布物の表示方法のみリポジトリ依存 |
+| [`dependabot.yml`](dependabot.yml) | **コピーして調整** | GitHub Actions / NuGet の更新 PR。`directories` を対象プロジェクトに合わせる |
+| [`rulesets/tag-version.json`](rulesets/tag-version.json) | **コピー（編集不要）** | Tag ruleset の定義。リポジトリの Settings へインポートする |
+| [`workflows/publish.yml`](workflows/publish.yml) | **コピーして調整** | `uis[]` を読んで配布物を作る。`.bat` の呼び出しと zip 化はこのリポジトリ固有 |
+| [`workflows/release.yml`](workflows/release.yml) | **そのまま** | 設定を読むため変更不要（配布物はファイル名のまま添付する） |
+| [`workflows/build.yml`](workflows/build.yml) | **コピーして編集** | 実行環境（`windows-latest`）のみリポジトリ依存 |
+| `buildScript/*_publish_*.bat` | **新規作成** | UI ごとの publish 手順 |
 | 本ドキュメント・`RELEASE.md`・`CONTRIBUTING.md` | コピーして調整 | |
 
 ## 手順
@@ -25,19 +30,56 @@
 
 ```text
 <新しいリポジトリ>/
+├── Directory.Build.props     # リリースバージョン（新規作成。下記「2.」の versionFile が指す）
+├── global.json               # .NET SDK のバージョン（新規作成。ワークフローでは指定しない）
 ├── .github/
 │   ├── release-config.json
+│   ├── actions/
+│   │   └── read-config/
+│   │       └── action.yml
+│   ├── dependabot.yml
 │   ├── RELEASE.md
 │   ├── REUSING.md
+│   ├── rulesets/
+│   │   └── tag-version.json
 │   ├── scripts/
 │   │   ├── version.ps1
 │   │   ├── set-version.ps1
-│   │   └── verify-release-version.ps1
+│   │   ├── verify-release-version.ps1
+│   │   └── show-current-versions.ps1
 │   └── workflows/
-│       ├── publish.yml
 │       ├── build.yml
+│       ├── publish.yml
 │       └── release.yml
-└── <UI ごとの publish スクリプト>.bat
+└── buildScript/
+    └── <UI ごとの publish スクリプト>.bat
+```
+
+`Directory.Build.props` はリポジトリルートに置く最小構成でかまいません。
+
+```xml
+<Project>
+
+  <PropertyGroup>
+    <!-- リリースバージョン。各 .csproj では指定しない。 -->
+    <!-- 自動インクリメントは行わない。リリース時に release.yml が入力値へ更新する。 -->
+    <Version>0.0.1</Version>
+  </PropertyGroup>
+
+</Project>
+```
+
+既存の共通プロパティ（`Nullable` / `ImplicitUsings` / `LangVersion` など）をここへまとめてもかまいません。
+
+`global.json` には対象フレームワークに合う SDK を記載します（ワークフローには書きません）。
+
+```json
+{
+  "sdk": {
+    "version": "10.0.100",
+    "rollForward": "latestFeature"
+  }
+}
 ```
 
 ### 2. `release-config.json` を編集する
@@ -45,8 +87,10 @@
 | キー | 内容 | 例 |
 | --- | --- | --- |
 | `product` | リリース名とアセットのタイトルに使う表示名 | `"ClipboardZenHanConverter"` |
-| `versionFile` | バージョンを所有するファイル（リポジトリルートからの相対パス） | `"Directory.Build.props"` |
+| `versionFile` | バージョン（`<Version>`）を記載するファイル（リポジトリルートからの相対パス） | `"Directory.Build.props"` |
+| `solutionFile` | ビルド・テストの対象となるソリューション ファイル（リポジトリルートからの相対パス） | `"ClipboardZenHanConverter.slnx"` |
 | `gateWorkflow` | リリースの前提（ゲート）となるワークフローのファイル名 | `"build.yml"` |
+| `releaseBranches` | **リリースを許可するブランチ**（完全一致とワイルドカード。未指定は `main` のみ。`release/` 配下は `release/<major>.<minor>` の形式に限定される） | `["main"]` / `["main", "release/**"]` |
 | `artifactRetentionDays` | アーティファクトの保持日数 | `30` |
 | `releaseNotes` | Release 本文の冒頭に付ける説明 | `"..."` |
 | `uis[]` | 配布する UI の定義（下記） | — |
@@ -56,47 +100,55 @@
 | キー | 内容 |
 | --- | --- |
 | `name` | アーティファクト名（ジョブの表示にも使う） |
-| `script` | publish スクリプト（リポジトリルートからの相対パス） |
+| `script` | publish スクリプト（リポジトリルートからの相対パス。例: `buildScript/MewUI_publish_singleaot.bat`） |
 | `output` | publish の出力パス（複数ファイルの場合はフォルダ） |
 | `asset` | Release に添付するファイル名（zip の場合は作成後の名前） |
 | `zip` | 出力がフォルダの場合は `true`（配布前に zip 化する） |
 
-**UI を増やす場合はこの配列に要素を追加するだけです。** ワークフローとスクリプトの変更は不要です。
+**UI を増やす場合はこの配列に要素を追加します。** ワークフローとスクリプトの変更は不要です。
+
+設定の値は [`actions/read-config`](actions/read-config/action.yml) がまとめて読み取ります。
+**キーを追加する場合は、同アクションの `outputs` にも追加してください**（追加しないとワークフローから参照できません）。
+**必須のキー（`product` / `versionFile` / `solutionFile` / `gateWorkflow` / `uis`）が空の場合、読み取り時に失敗します**
+（ワークフロー側で原因の分かりにくいエラーになるのを防ぐため）。
+
+> **注意**: バージョンはリポジトリルートの `Directory.Build.props` に `<Version>` として記載し、
+> 各 `.csproj` には記載しないでください（全プロジェクトが同じ値を継承します）。
 
 ### 3. `build.yml` を編集する
 
-`build` ジョブのコマンドのみ、リポジトリに合わせて変更します。
+リポジトリに合わせて変更するのは**実行環境だけ**です（対象のソリューション ファイルは `solutionFile` が持ちます）。
 
-```yaml
-      - name: 復元
-        run: dotnet restore <ソリューション>.slnx
+- Windows 固有のターゲット（WinUI 3 / WPF / Windows Forms など）を含む場合は `runs-on: windows-latest`。
+- クロスプラットフォームのみの場合は `runs-on: ubuntu-latest`（`publish.yml` も `windows-latest` から変更する）。
 
-      - name: ビルド（Release）
-        run: dotnet build <ソリューション>.slnx -c Release --no-restore
-
-      - name: テスト（Release）
-        run: dotnet test <ソリューション>.slnx -c Release --no-build
-```
-
-テストが無い・不要な場合はテストのステップを削除します。`publish` の要否判定（バージョン更新のみのコミットをスキップする処理）はそのまま使えます。
+`publish` は push では実行しません（配布物の作成はリリース時に 1 度だけ）。ゲートはビルドとテストの成功です。
 
 ### 4. publish スクリプトを用意する
 
-UI ごとに `<名前>_publish_*.bat` を作成します。仕様は次のとおりです。
+UI ごとに `buildScript/<名前>_publish_*.bat` を作成します。仕様は次のとおりです。
 
-- リポジトリルートを基準に動作する（`pushd "%~dp0"` でスクリプト位置へ移動する）
+- **スクリプトの場所（`buildScript/`）からリポジトリルートへ移動してから実行する**（`pushd "%~dp0.."`）。これにより、呼び出し元のカレントディレクトリに依存しません。
 - 成功時は終了コード 0、失敗時は非 0 で終了する
 - 出力先は `release-config.json` の `output` と一致させる
+- 他のスクリプトを呼ぶ場合は、カレントディレクトリではなく `%~dp0` を基準にする（例: `call "%~dp0MewUI_publish_singleaot.bat"`）
 
-[AvaloniaUI_publish_aot.bat](../AvaloniaUI_publish_aot.bat) と [MewUI_publish_singleaot.bat](../MewUI_publish_singleaot.bat) が参考になります。
+[buildScript/AvaloniaUI_publish_aot.bat](../buildScript/AvaloniaUI_publish_aot.bat) と [buildScript/MewUI_publish_singleaot.bat](../buildScript/MewUI_publish_singleaot.bat) が参考になります。
 
-### 5. 動作を確認する
+### 5. `show-current-versions.ps1` を調整する
+
+`release.yml` のドライラン（バージョン未入力時）が、このスクリプトで現在のバージョン状況を実行サマリーへ表示します。
+本リポジトリは「最新の GitHub Release に添付されている配布物」を表示しますが、配布先（NuGet.org など）が異なる場合は
+その公開状況の表示に置き換えます。**読み取りのみ**を行い、状態を変更しないようにしてください。
+
+### 6. 動作を確認する
 
 ```powershell
-# スクリプトの単体確認（バージョン設定・検証）
+# スクリプトの単体確認（バージョン設定・検証。既定のバージョンファイルは Directory.Build.props）
 Copy-Item Directory.Build.props "$env:TEMP/dbp.bak"
 & ./.github/scripts/set-version.ps1 -Version 0.0.2
 & ./.github/scripts/verify-release-version.ps1 -Version 0.0.3 -Branch main
+& ./.github/scripts/show-current-versions.ps1 -Branch main -NoNetwork
 Copy-Item "$env:TEMP/dbp.bak" Directory.Build.props
 
 # パイプラインの確認（CI と同一条件）
@@ -106,26 +158,29 @@ dotnet build <ソリューション>.slnx -c Release --no-restore
 dotnet test <ソリューション>.slnx -c Release --no-build
 ```
 
-その後、`main` へ push して Build が成功することを確認し、`Actions` → `Release` を手動実行します。
+その後、`main` へ push して Build が成功することを確認し、`Actions` → `Release` を手動実行します
+（最初は `version` を空欄にしてドライランを行い、現在のバージョン状況を確認します）。
 
 ## 流用時に必要になる可能性がある変更
 
 | 状況 | 対応 |
 | --- | --- |
-| **リポジトリが private** | Actions の分数が有料になります。毎 push の publish は実行時間が長いため、`build.yml` の `publish` ジョブを `paths` で限定する（`on.push.paths` に `src/**` を追加する）ことを検討してください |
+| **リポジトリが private** | Actions の分数が有料になります。リリース時の publish は実行時間が長いため、`uis[]` を減らすか、`build.yml` の `on.push` に `paths` を追加してゲートの実行回数を抑えることを検討してください |
 | **NuGet ギャラリー未公開のパッケージを参照する** | クリーンな CI からは復元できません。リポジトリへ同梱し `NuGet.config` のソースに追加するか、公開してください |
-| **複数系列の保守（バックポート）が不要** | `verify-release-version.ps1` のブランチ分岐（`release/X.Y`）はそのままでも害はありませんが、`release/**` のトリガーを `build.yml` から外しても構いません |
+| **複数系列の保守（バックポート）が不要** | `releaseBranches` を `["main"]` にし、`build.yml` の `release/**` トリガーを外します |
 | **バージョンを自動で決めたい** | 本仕組みは「人が入力する」前提です。自動化（Conventional Commits からの算出など）を併用する場合は、`verify-release-version.ps1` の検証はそのまま活かせます |
-| **Release 以外にも配布したい（NuGet など）** | `release-config.json` に項目を足し、`release.yml` の `release` ジョブにステップを追加します。publish の成果物はアーティファクトとして揃っているため、そのまま公開できます |
+| **NuGet などにも配布したい** | `release-config.json` に項目を足し、`release.yml` の `release` ジョブへ公開ステップを追加します。配布物は `publish.yml` の `pack` 相当（`dotnet pack`）に置き換えます |
+| **タグの保護（Tag ruleset）を入れる** | `rulesets/tag-version.json` をそのまま使えます（`v*` の作成・更新・削除を禁止し、bypass に GitHub Actions を指定）。Settings → Rules → Rulesets → **Import a ruleset** で読み込んでください。手順は `RELEASE.md` の「リポジトリの設定（初回のみ）」を参照 |
 
-## 設計上の約束（変更時に守ること）
+## 変更時の注意事項
 
-流用先でも同じ品質を保つため、次の関係を崩さないでください。
-
-| # | 約束 | 理由 |
-| --- | --- | --- |
-| 1 | **UI の定義は `release-config.json` だけに置く** | ワークフローへ書き戻すと二重管理になり、追加時に漏れる |
-| 2 | **バージョンの規則は `version.ps1` だけに置く** | 正規表現や比較を各所に書くと、判定がずれる |
-| 3 | **publish を push より前に実行する** | 失敗時にバージョンとタグを消費しないため |
-| 4 | **タグは `gh release create --target` に作成させる** | publish 成功後に初めてタグができる |
-| 5 | **バージョンの単一所有元は 1 ファイル** | 番号と成果物の不一致を防ぐ |
+- **UI の定義（`uis[]`）は `release-config.json` に置いてください。** ワークフローへ書き戻すと二重管理になり、追加時に漏れます。
+- **ビルド対象のソリューション ファイル（`solutionFile`）は `release-config.json` に置いてください。** ワークフローへソリューション名を書くと、リポジトリごとにワークフローが分かれます。
+- **設定の読み取りは `actions/read-config` に置いてください。** ワークフローごとに `jq` や `Get-Content` で読み直すと、キーを追加したときに読み取り漏れが起きます。
+- **.NET SDK のバージョンは `global.json` に置いてください。** ワークフローへ `dotnet-version` を書くと二重管理になり、更新時にずれます。
+- **バージョンの規則（形式・比較・系列・タグの列挙）は `scripts/version.ps1` に置いてください。** 他のスクリプトで再実装すると判定がずれます。
+- **バージョンを記載するファイルは 1 つにしてください**（本リポジトリは `Directory.Build.props`）。番号と成果物が不一致になるのを防ぎます。
+- **配布物の作成（publish）は、タグ作成とバージョンコミットより前に実行してください。** 失敗してもタグとバージョンを消費しないようにします。
+- **タグは `gh release create --target` に作成させてください**（配布物の作成が成功した後にのみタグが作られます）。
+- **`releaseBranches` のワイルドカードに頼りすぎないでください。** `release/` 配下は `release/<major>.<minor>` に限定され、入力バージョンの系列と一致していることも `verify-release-version.ps1` が検証します。
+- **配布物を作る重い処理を push に戻さないでください。** ゲートはビルドとテストの成功であり、配布物が作成できることはリリース実行時に検証されます（`RELEASE.md` の「失敗した場合の復旧」を参照）。

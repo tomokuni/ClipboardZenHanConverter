@@ -13,8 +13,8 @@ for /f "tokens=2 delims=:" %%a in ('chcp') do set "ORIG_CP=%%a"
 set "ORIG_CP=%ORIG_CP: =%"
 chcp 65001 >nul
 
-rem スクリプトの場所を基準にリポジトリルートを取得する
-pushd "%~dp0"
+rem スクリプトの場所（buildScript）からリポジトリルートへ移動する
+pushd "%~dp0.."
 
 rem ターゲットランタイム（既定: win-x64）
 if "%~1"=="" (set "RID=win-x64") else (set "RID=%~1")
@@ -23,8 +23,8 @@ rem 発行先は AvaloniaUI_publish_aot.bat と揃える（絶対パス）
 set "OUTDIR=%CD%\publish\avaloniaui-%RID%-aot"
 set "APP_EXE=%OUTDIR%\ClipboardZenHanConverter.App.AvaloniaUI.exe"
 
-rem ビルドを実行
-call "AvaloniaUI_publish_aot.bat" %RID%
+rem ビルドを実行（同じフォルダにある publish スクリプトを呼ぶ）
+call "%~dp0AvaloniaUI_publish_aot.bat" %RID%
 if errorlevel 1 (
   echo.
   echo [ERROR] Build failed. Aborting.

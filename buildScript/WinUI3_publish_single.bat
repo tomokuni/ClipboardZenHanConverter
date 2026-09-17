@@ -9,8 +9,8 @@ rem  注意: WinUI 3 は Native AOT に未対応です。PublishAot=true は
 rem        発行自体は成功しますが、起動時に XAML 初期化で失敗します。
 rem ============================================================
 
-rem スクリプトの場所を基準にリポジトリルートを取得する
-pushd "%~dp0"
+rem スクリプトの場所（buildScript）からリポジトリルートへ移動する
+pushd "%~dp0.."
 
 rem ターゲットランタイム（既定: win-x64）
 if "%~1"=="" (set "RID=win-x64") else (set "RID=%~1")

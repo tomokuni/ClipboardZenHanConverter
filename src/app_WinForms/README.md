@@ -100,12 +100,13 @@
 
 ## 配布用ビルド（単一 exe）
 
-リポジトリルートの `WinForms_publish_single.bat`（ビルド）と `WinForms_run_publish.bat`（ビルドして起動）で、自己完結の単一 exe を作成できます。
+`buildScript/` の `WinForms_publish_single.bat`（ビルド）と `WinForms_run_publish.bat`（ビルドして起動）で、自己完結の単一 exe を作成できます。
+スクリプトはリポジトリルートを基準に動作するため、どこから実行しても同じ結果になります。
 
 ```powershell
-WinForms_publish_single.bat          # publish\winforms-win-x64-single\ClipboardZenHanConverter.App.WinForms.exe
-WinForms_run_publish.bat             # 上記をビルドして起動
-WinForms_publish_single.bat win-arm64
+.\buildScript\WinForms_publish_single.bat          # publish\winforms-win-x64-single\ClipboardZenHanConverter.App.WinForms.exe
+.\buildScript\WinForms_run_publish.bat             # 上記をビルドして起動
+.\buildScript\WinForms_publish_single.bat win-arm64
 ```
 
 - 出力は exe 1 ファイル（約 119 MB）です。初回起動時に依存ファイルを `%TEMP%\.net\ClipboardZenHanConverter.App.WinForms\` へ展開するため、初回のみ起動に時間がかかります。
@@ -114,7 +115,7 @@ WinForms_publish_single.bat win-arm64
 
 ## Release ビルドと実行
 
-発行を行わず、Release 構成のビルドと実行だけを行う場合は `WinForms_run_release.bat` を使用します（`src\app_WinForms\bin\Release\net10.0-windows\` の exe を起動します。AOT と単一ファイル化は適用されません）。
+発行を行わず、Release 構成のビルドと実行だけを行う場合は `buildScript\WinForms_run_release.bat` を使用します（`src\app_WinForms\bin\Release\net10.0-windows\` の exe を起動します。AOT と単一ファイル化は適用されません）。
 
 ## リポジトリ
 

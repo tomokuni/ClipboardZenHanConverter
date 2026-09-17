@@ -2,12 +2,12 @@ using EsUtil.ClipboardZenHanConverter.Core.Enums;
 using EsUtil.ClipboardZenHanConverter.Core.Helpers;
 using EsUtil.ClipboardZenHanConverter.Core.Interfaces;
 using EsUtil.ClipboardZenHanConverter.Core.Models;
-using EsUtil.Helper.ZenHanConverter;
+using EsUtil.Text.ZenHanConverter;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
-using static EsUtil.Helper.ZenHanConverter.Define;
+using static EsUtil.Text.ZenHanConverter.Define;
 
 namespace EsUtil.ClipboardZenHanConverter.Core.Logic;
 
@@ -21,7 +21,7 @@ namespace EsUtil.ClipboardZenHanConverter.Core.Logic;
 /// - タブ/改行/連続スペースの整形<br/>
 /// - ユーザー定義の置換ルール適用<br/><br/>
 /// 特徴: <br/>
-/// - EsUtil.Helper.ZenHanConverter ライブラリに基づく正確な変換ペア<br/>
+/// - EsUtil.Text.ZenHanConverter ライブラリに基づく正確な変換ペア<br/>
 /// - 結果はキャッシュされてパフォーマンスを最適化<br/>
 /// - Config 変更時にキャッシュ自動無効化<br/><br/>
 /// 最適化手法: <br/>

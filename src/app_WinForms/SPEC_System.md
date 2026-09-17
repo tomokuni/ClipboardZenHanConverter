@@ -16,7 +16,7 @@ UI フレームワークに **Windows Forms**（.NET 10）を使用します。
 - Windows Forms（`UseWindowsForms` / `net10.0-windows`）
 - CommunityToolkit.Mvvm 8.*（変換設定・ViewModel）
 - Microsoft.Extensions.Hosting 10.*（DI）
-- EsUtil.Helper.ZenHanConverter（変換ペア、`src/core` 経由）
+- EsUtil.Text.ZenHanConverter（変換ペア、`src/core` 経由）
 
 ## 共有コア
 
@@ -37,8 +37,9 @@ dotnet run --project src/app_WinForms/app_WinForms.csproj
 
 ### 配布用ビルド（単一 exe）
 
-リポジトリルートの `WinForms_publish_single.bat`（ビルド）と `WinForms_run_publish.bat`（ビルドして起動）で、自己完結の単一 exe を
+`buildScript/` の `WinForms_publish_single.bat`（ビルド）と `WinForms_run_publish.bat`（ビルドして起動）で、自己完結の単一 exe を
 `publish\winforms-<RID>-single\ClipboardZenHanConverter.App.WinForms.exe` に出力します（既定 RID は `win-x64`、約 119 MB）。
+スクリプトはリポジトリルートを基準に動作します。
 
 単一 exe 化に必要なプロパティは次のとおりです。
 

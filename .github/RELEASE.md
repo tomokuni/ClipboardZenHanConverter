@@ -6,54 +6,187 @@
 
 リリースは **手動実行のみ**です。バージョンの**自動インクリメントは行いません**。
 
-## 設計
+## 構成
 
-リリースに関する設定と手順は、次の 3 つに集約しています。**同じ知識を複数箇所に置かない**ことが設計方針です。
+リリースの設定と処理は、次のファイルが持ちます。**同じ知識を複数箇所に置かない**ことが設計方針です。
 
-| 単一ソース | 内容 |
+| ファイル | 内容 |
 | --- | --- |
-| [`release-config.json`](release-config.json) | プロダクト名、バージョンファイル、ゲートのワークフロー、UI の定義（名前・publish スクリプト・出力・配布名・zip の要否） |
-| [`workflows/publish.yml`](workflows/publish.yml) | 全 UI の publish とアーティファクト保管（`build.yml` と `release.yml` が共通で呼ぶ） |
-| [`scripts/version.ps1`](scripts/version.ps1) | バージョンの規則（形式・比較・系列・プレリリース判定） |
+| [`release-config.json`](release-config.json) | プロダクト名、バージョンファイル、**ビルド対象のソリューション ファイル**、ゲートのワークフロー、**リリースを許可するブランチ**、配布する UI の定義 |
+| [`actions/read-config`](actions/read-config/action.yml) | `release-config.json` を読んで各ワークフローへ渡す共通アクション（読み取りの実装はここだけ） |
+| [`../Directory.Build.props`](../Directory.Build.props) | リリースバージョン（`<Version>`）。各 `.csproj` では指定しない |
+| [`../global.json`](../global.json) | .NET SDK のバージョン。ワークフローでは指定しない |
+| [`workflows/publish.yml`](workflows/publish.yml) | 全 UI の publish とアーティファクト保管の実装（`release.yml` が呼ぶ） |
+| [`scripts/version.ps1`](scripts/version.ps1) | バージョンの規則（形式・比較・系列・プレリリース判定・タグの列挙） |
 
-UI の追加・変更は **`release-config.json` を編集するだけ**です（ワークフローとスクリプトの変更は不要）。
+UI の追加・変更は **`release-config.json` の `uis[]` を編集します**（ワークフローとスクリプトの変更は不要です）。
+**ビルド・テストの対象は `solutionFile` が持ちます**（ワークフローには書きません）。
+**リリースを許可するブランチは `releaseBranches` が持ちます**（本リポジトリは `["main", "release/**"]`。
+`release/` 配下は **`release/<major>.<minor>` の形式**に限定され、入力バージョンの系列と一致させる必要があります）。
+
+```text
+<リポジトリルート>/
+├── Directory.Build.props     # リリースバージョン（各 .csproj では指定しない）
+├── global.json               # .NET SDK のバージョン（ワークフローでは指定しない）
+├── buildScript/              # UI ごとの publish 手順（release-config.json の uis[].script が指す）
+└── .github/
+    ├── release-config.json        # リリース設定（リポジトリ固有の設定はこのファイルのみ）
+    ├── actions/
+    │   └── read-config/
+    │       └── action.yml         # release-config.json を読む共通アクション
+    ├── dependabot.yml             # GitHub Actions / NuGet の更新 PR
+    ├── RELEASE.md                 # 本ドキュメント
+    ├── REUSING.md                 # 他のリポジトリへの流用方法
+    ├── CONTRIBUTING.md            # 開発環境（ビルド・テスト・CI）
+    ├── rulesets/
+    │   └── tag-version.json       # Tag ruleset の定義（Settings へインポートする）
+    ├── scripts/
+    │   ├── version.ps1            # バージョンの規則
+    │   ├── set-version.ps1        # バージョンファイルの書き換え（冪等）
+    │   ├── verify-release-version.ps1  # リリース可否の検証
+    │   └── show-current-versions.ps1   # 現在のバージョン状況の表示
+    └── workflows/
+        ├── build.yml              # push / PR でビルド・テスト（配布物は作らない）
+        ├── publish.yml            # 全 UI の publish と保管（release.yml から呼ばれる）
+        └── release.yml            # 手動実行で検証・publish・タグ・Release 作成
+```
+
+**注意事項**:
+
+- リリースバージョンは `Directory.Build.props` の `<Version>` に記載し、**各 `.csproj` には記載しないでください**。
+  リリース時に `release.yml` がこの 1 行を入力値へ書き換えてコミットします。
+- **.NET SDK のバージョンは `global.json` に記載し、ワークフローには記載しないでください**
+  （`actions/setup-dotnet` が `global.json` を読むため、`dotnet-version` の指定は不要です）。
+- 同じ設定を複数箇所に置かないでください（例: UI の定義をワークフローへ直接書く、ソリューション名をワークフローへ書く、バージョンを `.csproj` にも書く、SDK のバージョンをワークフローにも書く）。
+  変更時の注意事項は [`REUSING.md`](REUSING.md) にも記載しています。
+- **`build.yml` / `publish.yml` / `release.yml` は Windows 固有のターゲットを含むため、ビルド系のジョブは
+  `windows-latest` で実行します**（`release.yml` の検証のみ `ubuntu-latest`）。
+
+## 依存関係の更新（Dependabot）
+
+[`dependabot.yml`](dependabot.yml) が、GitHub Actions と NuGet パッケージの更新 Pull Request を作成します。
+
+| 対象 | 間隔 | まとめ方 |
+| --- | --- | --- |
+| GitHub Actions（`uses:` で参照しているアクション） | 毎週月曜 09:00（Asia/Tokyo） | すべてを 1 つの Pull Request にまとめる |
+| NuGet（`src/` と `test/` の各プロジェクト） | 毎月 | minor / patch を 1 つの Pull Request にまとめる |
+
+**注意事項**:
+
+- Dependabot の Pull Request は**読み取り専用トークン・シークレット無し**で実行されます。`build.yml` はシークレットを使わないため、CI はそのまま動作します。
+- **NuGet のメジャー更新は作成されません**（テストの書き方が変わるため、手動で判断します）。
+- Dependabot は**指定したディレクトリ直下のみを走査します**（再帰しません）。プロジェクトを増やした場合は
+  `dependabot.yml` の `directories` にも追加してください。
+- Pull Request の内容を確認して `main` へマージします（マージ方式は Squash merge を推奨）。マージ後の `main` への push で `build.yml`（ゲート）が実行されます。
+- 破壊的な変更（`actions/upload-artifact` のメジャー更新など）は、CI が失敗した内容を確認して修正します。
+
+## リポジトリの設定（初回のみ）
+
+次はワークフローでは設定できません。リポジトリの **Settings** で有効化します。
+
+### タグの保護（Tag ruleset）
+
+タグ（`v*`）の作成・更新・削除をワークフロー経由に限定します。定義は
+[`rulesets/tag-version.json`](rulesets/tag-version.json) にあります。
+
+| 項目 | 値 |
+| --- | --- |
+| Ruleset name | `Protect version tags` |
+| Target | **Tags** |
+| Enforcement status | **Active** |
+| Target tags | `v*`（内部的には `refs/tags/v*`） |
+| Tag protections | **Restrict creations** / **Restrict updates** / **Restrict deletions** / **Block force pushes** |
+| Bypass list | **GitHub Actions**（アプリ。ID `15368`） |
+
+**設定手順**:
+
+1. **Settings → Rules → Rulesets** を開く
+2. **New ruleset** のドロップダウンから **Import a ruleset** を選び、`rulesets/tag-version.json` を指定する
+   - インポートできない場合は **New tag ruleset** で上表のとおり手動設定する
+3. 内容を確認して **Create** を押下する
+
+**注意事項**:
+
+- `release.yml` は `GITHUB_TOKEN`（= GitHub Actions アプリ）でタグを作成するため、**bypass に GitHub Actions を追加しないとリリースが失敗します**。
+- 導入後は、**Actions → Release** を 1 度実行してタグ作成が通ることを確認してください。
+- ローカルからの `git push origin v0.2.0` や `git push --tags` は拒否されます（タグは Release 実行時に作成します）。
+- 定義を変更した場合は、**同じ JSON の値と実際の ruleset を一致**させてください（ruleset はコードから自動適用されないため、変更時は手動で更新します）。
 
 ## ワークフロー
 
 | ワークフロー | 実行契機 | 内容 |
 | --- | --- | --- |
-| [`workflows/build.yml`](workflows/build.yml) | `main` / `dev` / `release/**` への push、`main` 向け PR、手動 | ビルド・テスト・全 UI の publish・アーティファクト保管（**登録は行わない**） |
-| [`workflows/publish.yml`](workflows/publish.yml) | `workflow_call` | publish と保管の単一実装（`version` を受け取るとそのバージョンでビルドする） |
-| [`workflows/release.yml`](workflows/release.yml) | **手動実行のみ** | 検証 → publish → タグ作成 → GitHub Release 作成 |
+| [`workflows/build.yml`](workflows/build.yml) | `main` への push、`main` 向け PR（**必ず実行**）、`release/**` への push、手動実行（dev など任意のブランチ） | 復元・ビルド・テスト（**配布物は作らない**） |
+| [`workflows/publish.yml`](workflows/publish.yml) | `workflow_call` | 全 UI の publish と保管の単一実装（`version` を受け取るとそのバージョンでビルドする） |
+| [`workflows/release.yml`](workflows/release.yml) | **手動実行のみ。実行ブランチは `releaseBranches` に従う**（`version` 未入力ならドライラン） | 検証 → 全 UI の publish → バージョンコミット → タグ + GitHub Release 作成 |
 
 `build.yml` の成功実行はリリースの**前提（ゲート）**です。`release.yml` は、リリース対象コミットに対する `build.yml` の成功実行が存在することを確認してから Release を作成します。
 
+**配布物を作る処理は重い（Native AOT を含む）ため、push では実行しません。** 配布物の作成はリリース時に 1 度だけ行います。
+
 ```mermaid
 flowchart TD
-    A["dev へ push"] --> B["build.yml<br/>ビルド + テスト + publish + 保管"]
-    C["main へ push（マージ含む）"] --> B
+    A["main へ push（マージ含む）"] --> B["build.yml（必ず実行）<br/>復元 + ビルド + テスト"]
     B --> D{"リリースする?"}
 
-    subgraph rel ["release.yml（手動実行のみ）"]
+    subgraph rel ["release.yml（手動実行のみ / 実行できるブランチは releaseBranches）"]
         F["verify<br/>ブランチ / ゲート / バージョン / タグ未作成"]
-        G["publish<br/>publish.yml を呼ぶ（version を適用）"]
+        G["publish<br/>publish.yml を呼ぶ<br/>全 UI を publish して保管"]
         H["release<br/>バージョンをコミット → push → タグ + Release 作成"]
-        I["バージョンコミットの検証を起動<br/>publish はスキップ"]
+        I["バージョンコミットの検証を起動"]
         F --> G --> H --> I
     end
 
-    D -->|"Actions → Release → Run workflow<br/>（main を選択し version を入力）"| F
-    G -->|失敗| J["中断<br/>タグと Release は作られない"]
+    D -->|"Actions → Release → Run workflow<br/>（main を選択。version を空欄で実行）"| D1["verify<br/>現在のバージョン状況を<br/>実行サマリーへ表示（ドライラン）"]
+    D1 -->|"確認後の version を入力して再度実行"| F
+    G -->|失敗| J["中断<br/>バージョンコミットとタグは作られない"]
+    style D1 fill:#fff3cd
     style I fill:#d4edda
 ```
 
 ## リリース手順
 
 1. `dev` の変更を `main` へマージ（push）する
-2. `Actions` → **Build** が成功するまで待つ
-3. `Actions` → **Release** → `Run workflow` を開く
-4. **実行ブランチに `main` を選び**、`version` にリリースするバージョンを入力して実行する
+2. `Actions` → **Build** が成功するまで待つ（`dev` への push では Build は実行されません）
+3. **現在のバージョンを確認する**（まだ `version` を入力しない）
+   - `Actions` → **Release** → `Run workflow` を開き、**実行ブランチに `main` を選び、`version` を空欄のまま実行**する
+   - リリースは行われず、**実行サマリーに現在のバージョン（`<Version>`・タグ・GitHub Release・配布物）が表示されます**
+   - リリース前の事前確認であるため、実行ブランチの検証やゲートの確認も行いません（失敗しません）
+4. サマリーの「`version` に入力する値」を確認し、`version` にリリースするバージョンを入力して、もう一度 **Run workflow** を実行する
 5. ログの「結果をまとめ」でバージョン・タグ・対象コミットを確認する
+6. <https://github.com/tomokuni/ClipboardZenHanConverter/releases> に配布物が添付されていることを確認する
+
+**注意事項**:
+
+- **リリースできるブランチは `release-config.json` の `releaseBranches` が決めます**（本リポジトリは `["main", "release/**"]`）。
+  `verify` ジョブが最初に実行ブランチを検証し、含まれない場合は失敗します。
+  `release/` 配下のブランチは **`release/<major>.<minor>`**（例: `release/0.1`）にしてください。
+  系列ブランチからのリリース方法は[バックポート](#バックポート旧系列へのリリース)を参照してください。
+- **`version` が未入力の場合はドライランになります。** 現在のバージョン状況の表示だけを行い、
+  検証・publish・タグ作成・Release 作成は実行しません（成功として終了します）。
+  実行名は `Release （現在のバージョンを確認）` になります。
+- **入力フォームには現在のバージョンを表示できません。** `workflow_dispatch` の入力の `default` には式を
+  指定できないため（GitHub Actions の仕様）、静的な文字列しか設定できません。
+  入力フォームの説明文にも「未入力のまま実行すると現在のバージョンだけを Summary に表示する」旨を記載しています。
+  なお、**前回の Release 実行のサマリーはリリース前の状態**なので、リリース直後は「今出したバージョン」が
+  載っていません。最新の状態はドライランで確認してください。
+- 実行サマリーに表示される項目は、実行ブランチ、**リリース可能なブランチ**、`Directory.Build.props` の `<Version>`、
+  タグの最大、**系列（`major.minor`）ごとのタグの最大**（系列が 2 つ以上ある場合）、最新の GitHub Release、
+  最新の GitHub Release に添付されている配布物の一覧です。
+- **`version` には、比較対象より大きいバージョンを入力します。** 比較対象は同じ系列のタグの最大です
+  （サマリーの「`version` に入力する値」を参照）。
+  - **通常のリリース**: 例では「全タグの最大」が目安になります（新しい系列を出す場合を除き、同じ系列の最大と一致します）
+  - **バックポート（旧系列へのリリース）**: 対象系列のタグの最大と比較されるため、全タグの最大より小さくても入力できます
+    （例: `v1.0.0` がある状態で `0.1.2` をリリース）
+- **`main` からのバックポートでは `Directory.Build.props` のバージョンを書き換えません**（main のバージョンを旧系列へ
+  戻さないため）。配布物には入力したバージョンが適用され、タグと GitHub Release は通常どおり作成されます。
+- 同じ系列の中で既存以下のバージョンは検証で失敗します（同値の再リリースも不可）。
+- サマリーの値はリリース前の状態です。通常のリリースでは、リリース後に `version` と
+  `Directory.Build.props` の `<Version>` が入力値へ更新されます。
+- サマリーを表示するステップが失敗しても、リリースは中止されません（情報の表示のみで、状態を変更しません）。
+  GitHub への問い合わせに失敗した項目は「なし」として表示されます。
+- 実行一覧（`Actions` → **Release**）では、実行名が **`Release <入力したバージョン>`** になります
+  （どのバージョンを出した実行かを一覧で判別できます。ドライランは `Release （現在のバージョンを確認）`）。
 
 ## バージョンの指定
 
@@ -78,37 +211,41 @@ semver 形式で入力します。数値部分の**先頭 0 は使用できま�
 
 | # | 条件 | 失敗する例 |
 | --- | --- | --- |
-| 1 | 実行ブランチが `main` または `release/<major>.<minor>` | `dev` を選んで実行 |
-| 2 | 対象コミットに対する `build.yml` の**成功実行がある** | push 直後（Build 実行中・失敗）に実行 |
-| 3 | バージョンが semver 形式（先頭 0 不可） | `1.2`、`01.2.3` |
-| 4 | `main`: **全タグの最大より大きい** | `v2.0.0` があるのに `1.3.0` を入力 |
-| 5 | `release/X.Y`: 入力の系列が `X.Y` に一致し、**`vX.Y.*` の最大より大きい** | `release/1.2` に `1.3.0` を入力 |
+| 1 | 実行ブランチが `releaseBranches` に一致する（完全一致またはワイルドカード） | `dev` を選んで実行 |
+| 2 | `release/X.Y` の場合、入力バージョンの系列が `X.Y` に一致する | `release/0.1` に `0.2.0` を入力 |
+| 3 | 対象コミットに対する `build.yml` の**成功実行がある** | push 直後（Build 実行中・失敗）に実行 |
+| 4 | バージョンが semver 形式（先頭 0 不可） | `1.2`、`01.2.3` |
+| 5 | **同じ系列のタグの最大より大きい** | `v0.1.1` があるのに `0.1.1` を入力 |
 | 6 | タグ `v<version>` が**未作成** | 既存と同じバージョンを入力 |
 
-条件 4・5 により、**同値の入力も失敗**します（同じバージョンの再リリースはできません）。
+条件 5・6 により、**同値の入力も失敗**します（同じバージョンの再リリースはできません）。
 
 ## バックポートリリース
 
 古い系列の保守リリースは、`release/<major>.<minor>` ブランチから実行します。
 
 ```text
-例: v2.0.0 をリリース済みで、1.2 系に修正を出したい場合
+例: v1.0.0 をリリース済みで、0.1 系に修正を出したい場合
 
-1. release/1.2 ブランチを作成し、修正を cherry-pick する
-2. release/1.2 へ push する（Build が成功するまで待つ）
+1. release/0.1 ブランチを作成し、修正を cherry-pick する
+2. release/0.1 へ push する（Build が成功するまで待つ）
 3. Actions → Release → Run workflow で
-   実行ブランチに release/1.2 を選び、version に 1.2.2 を入力する
+   実行ブランチに release/0.1 を選び、version に 0.1.2 を入力する
 ```
 
-| 実行ブランチ | 比較対象 | 例（タグ: v1.2.1 / v2.0.0） |
-| --- | --- | --- |
-| `main` | **全タグ**の最大 | `2.0.1` は OK / `1.3.0` は失敗（誤った系列への逆戻りを防ぐ） |
-| `release/1.2` | `v1.2.*` の最大 | `1.2.2` は **OK（バックポート）** / `1.2.1` は失敗（同値） |
+| 実行ブランチ | 比較対象 | 例（タグ: v0.1.1 / v1.0.0） | バージョンファイル | Latest |
+| --- | --- | --- | --- | --- |
+| `main`（新しい系列） | 入力バージョンと**同じ系列**の最大 | `1.0.1` は OK / `1.0.0` は失敗（同値） | 書き換える | 更新する |
+| `main`（旧系列を入力＝バックポート） | 同上 | `0.1.2` は OK（同じ系列の最大 `0.1.1` より大きい） / `0.1.1` は失敗（同値） | **書き換えない**（main のバージョンを旧系列へ戻さないため） | 更新しない |
+| `release/0.1` | 同じ系列の最大 | `0.1.2` は OK / `1.0.1` は失敗（系列不一致） | 書き換える | 更新しない |
 
-バックポートでは次を自動で行います。
+系列ブランチ（`release/X.Y`）と、`main` からのバックポートでは次を自動で行います。
 
 - `--latest=false`（古い系列を Latest にしない）
-- `--notes-start-tag v1.2.1`（リリースノートの範囲を系列内に限定）
+- `--notes-start-tag v0.1.1`（リリースノートの範囲を系列内に限定）
+
+なお、`main` から旧系列のバージョン（例: `v1.0.0` がある状態で `0.1.2`）をリリースした場合は、
+`main` の `Directory.Build.props` を旧系列へ戻さないため**バージョンファイルを書き換えません**。
 
 ## Release の添付ファイル
 
@@ -121,7 +258,8 @@ semver 形式で入力します。数値部分の**先頭 0 は使用できま�
 | Avalonia UI 版 | `ClipboardZenHanConverter.App.AvaloniaUI.zip` | exe + ネイティブ DLL 3 個 |
 | WinForms 版 | `ClipboardZenHanConverter.App.WinForms.exe` | 単一 exe（自己完結） |
 
-publish はリポジトリ直下の `*_publish_*.bat` をそのまま実行するため、ローカルでの配布用ビルドと同一の手順・出力になります。
+publish は `buildScript/` の `*_publish_*.bat` をそのまま実行するため、ローカルでの配布用ビルドと同一の手順・出力になります。
+スクリプトは `buildScript/` からリポジトリルートへ移動してから実行されるため、カレントディレクトリに依存しません。
 
 ## 失敗した場合の復旧
 
@@ -141,15 +279,8 @@ publish はリポジトリ直下の `*_publish_*.bat` をそのまま実行す�
 そこで `release.yml` が push 後に [`gh workflow run`](https://docs.github.com/en/rest/actions/workflows) で `build.yml` の検証を起動します（`workflow_dispatch` は例外として起動できる）。
 
 - バージョンコミットにもチェックが付き、**テストが実行される**（リリースされたコミットが未検証にならない）。
-- **バージョン更新のみのコミットでは publish をスキップ**する。このようなコミットの配布物はリリース時に作成済みで、AOT ビルドの再実行は無駄になるため。
 - 検証が成功すると、そのコミットが次のリリースのゲートを満たす。**リリース直後でも続けて次のリリースが可能**。
-
-| コミットの種類 | ビルド | テスト | publish |
-| --- | --- | --- | --- |
-| ソース変更を含む | 実施 | 実施 | 実施 |
-| バージョン更新のみ（バージョンファイルだけの変更） | 実施 | 実施 | **スキップ** |
-
-検証の起動は非同期です（完了は待ちません）。結果は `Actions` → Build で確認してください。
+- 検証の起動は非同期です（完了は待ちません）。結果は `Actions` → Build で確認してください。
 
 ## ローカルでの確認
 
@@ -159,11 +290,14 @@ publish はリポジトリ直下の `*_publish_*.bat` をそのまま実行す�
 # バージョンを設定する（バージョンファイルを更新。冪等）
 & ./.github/scripts/set-version.ps1 -Version 0.2.0
 
-# リリース可否を事前確認する（形式・系列・単調性・タグ未作成）
+# リリース可否を事前確認する（形式・ブランチ・系列・単調性・タグ未作成）
 $info = & ./.github/scripts/verify-release-version.ps1 -Version 0.2.0 -Branch main | ConvertFrom-Json
 $info.tag           # -> v0.2.0
 $info.notesStartTag # -> v0.1.1
 $info.prerelease    # -> False
+
+# 現在のバージョン状況を確認する（読み取りのみ。ネットワークを使わない場合は -NoNetwork）
+& ./.github/scripts/show-current-versions.ps1 -Branch main
 ```
 
 バージョンの規則（形式・比較）だけを確認する場合は、ライブラリを直接使えます。
@@ -179,6 +313,9 @@ Get-MaxVersion -Versions @('1.0.0', '1.2.0')      # -> 1.2.0
 
 - ワークフローが `main`（または `release/X.Y`）へ push するため、**ブランチ保護**で `github-actions[bot]` の push が拒否される場合は許可設定（または PAT への切り替え）が必要です。
 - `release.yml` は `actions: write` 権限を使用します（ゲートの参照と、バージョンコミットの検証の起動）。
-- `build.yml` は `main` / `dev` / `release/**` への push のたびに publish します（ドキュメントのみの変更でも実行されます）。これはリリースのゲートを常に満たすためです。バージョン更新のみのコミットではスキップされます。
-- アーティファクトの保持期間は `release-config.json` の `artifactRetentionDays`（既定 30 日）です。リリース時に改めて publish するため、保管はゲートの記録と確認用です。
+- **`build.yml` は配布物を作成しません。** ゲートはビルドとテストの成功であり、配布物が作成できることはリリース実行時に初めて検証されます
+  （publish の失敗はタグとバージョンを消費しません。上の「失敗した場合の復旧」を参照）。
+- `dev` への push では `build.yml` を実行しません。`dev` で検証する場合は `workflow_dispatch`（手動実行）を使用してください。
+- 配布物（アーティファクト）の保持期間は `release-config.json` の `artifactRetentionDays`（既定 30 日）です。
+  保持期間を過ぎると `release.yml` の `release` ジョブが成果物を取得できなくなるため、リリースは publish の直後に完了させてください。
 - `release.yml` の `publish` と `release` は別ジョブのため、バージョンは 2 回適用されます（publish は作業ツリーのみ、release はコミット）。どちらも冪等で、同一の入力から同一の成果物になります。

@@ -16,8 +16,8 @@ rem        （exe 単体で起動すると DllNotFoundException: libSkiaSharp �
 rem        そのため単一ファイル化は行わず、exe とネイティブ DLL を並べて配置します。
 rem ============================================================
 
-rem スクリプトの場所を基準にリポジトリルートを取得する
-pushd "%~dp0"
+rem スクリプトの場所（buildScript）からリポジトリルートへ移動する
+pushd "%~dp0.."
 
 rem ターゲットランタイム（既定: win-x64）
 if "%~1"=="" (set "RID=win-x64") else (set "RID=%~1")

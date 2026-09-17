@@ -115,15 +115,16 @@ dotnet run --project src/app_AvaloniaUI/app_AvaloniaUI.csproj
 
 ## 配布用ビルド（Native AOT）
 
-リポジトリルートの `AvaloniaUI_publish_aot.bat`（ビルド）と `AvaloniaUI_run_publish.bat`（ビルドして起動）で、Native AOT の配布用フォルダーを作成できます。
+`buildScript/` の `AvaloniaUI_publish_aot.bat`（ビルド）と `AvaloniaUI_run_publish.bat`（ビルドして起動）で、Native AOT の配布用フォルダーを作成できます。
+スクリプトはリポジトリルートを基準に動作するため、どこから実行しても同じ結果になります。
 
 ```powershell
-AvaloniaUI_publish_aot.bat             # publish\avaloniaui-win-x64-aot\
-AvaloniaUI_run_publish.bat             # 上記をビルドして起動
-AvaloniaUI_publish_aot.bat win-arm64
+.\buildScript\AvaloniaUI_publish_aot.bat             # publish\avaloniaui-win-x64-aot\
+.\buildScript\AvaloniaUI_run_publish.bat             # 上記をビルドして起動
+.\buildScript\AvaloniaUI_publish_aot.bat win-arm64
 ```
 
-発行を行わず、Release 構成のビルドと実行だけを行う場合は `AvaloniaUI_run_release.bat` を使用します（`src\app_AvaloniaUI\bin\Release\net10.0\` の exe を起動します。Native AOT は適用されません）。
+発行を行わず、Release 構成のビルドと実行だけを行う場合は `buildScript\AvaloniaUI_run_release.bat` を使用します（`src\app_AvaloniaUI\bin\Release\net10.0\` の exe を起動します。Native AOT は適用されません）。
 
 出力は **exe 1 個 + SkiaSharp のネイティブ DLL 3 個**（約 43.8 MB）です。
 

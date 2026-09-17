@@ -12,7 +12,7 @@
 
 - .NET 10
 - CommunityToolkit.Mvvm 8.*
-- EsUtil.Helper.ZenHanConverter 1.*（全角/半角変換ペア）
+- EsUtil.Text.ZenHanConverter 1.*（全角/半角変換ペア）
 - Win32 API（`user32.dll` の P/Invoke。UI フレームワーク非依存）
 - Fluent Icons の SVG アセット（埋め込みリソース。パスデータは UI フレームワーク非依存の文字列として提供）
 

@@ -6,8 +6,8 @@ rem  ClipboardZenHanConverter (MewUI) 単一 exe ビルド&実行スクリプト
 rem  MewUI_publish_singleaot.bat で Native AOT build し、実行する
 rem ============================================================
 
-rem スクリプトの場所を基準にリポジトリルートを取得する
-pushd "%~dp0"
+rem スクリプトの場所（buildScript）からリポジトリルートへ移動する
+pushd "%~dp0.."
 
 rem ターゲットランタイム（既定: win-x64）
 if "%~1"=="" (set "RID=win-x64") else (set "RID=%~1")
@@ -16,8 +16,8 @@ rem 出力先は MewUI_publish_singleaot.bat と揃える（絶対パス）
 set "OUTDIR=%CD%\publish\mewui-%RID%-singleaot"
 set "APP_EXE=%OUTDIR%\ClipboardZenHanConverter.App.MewUI.exe"
 
-rem ビルドを実行
-call "MewUI_publish_singleaot.bat" %RID%
+rem ビルドを実行（同じフォルダにある publish スクリプトを呼ぶ）
+call "%~dp0MewUI_publish_singleaot.bat" %RID%
 if errorlevel 1 (
   echo.
   echo [ERROR] Build failed. Aborting.

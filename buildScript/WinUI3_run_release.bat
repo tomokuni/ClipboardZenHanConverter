@@ -7,8 +7,8 @@ rem  Release 構成でビルドし、生成された exe を実行する
 rem  （publish を行わないため、単一ファイル化は適用されない）
 rem ============================================================
 
-rem スクリプトの場所を基準にリポジトリルートを取得する
-pushd "%~dp0"
+rem スクリプトの場所（buildScript）からリポジトリルートへ移動する
+pushd "%~dp0.."
 
 set "PROJECT=src\app_WinUI3\app_WinUI3.csproj"
 set "TFM=net10.0-windows10.0.26100.0"

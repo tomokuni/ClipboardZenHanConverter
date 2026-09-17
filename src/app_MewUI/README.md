@@ -71,11 +71,12 @@
 
 ### ビルドと実行
 
-リポジトリルートのスクリプトで、発行（配布用）と Release ビルド（確認用）を行えます。
+`buildScript/` のスクリプトで、発行（配布用）と Release ビルド（確認用）を行えます。
+スクリプトはリポジトリルートを基準に動作するため、どこから実行しても同じ結果になります。
 
 ```powershell
-MewUI_run_publish.bat     # Native AOT の単一 exe をビルドして起動（publish\mewui-win-x64-singleaot\）
-MewUI_run_release.bat     # Release 構成でビルドして起動（src\app_MewUI\bin\Release\net10.0\。AOT は適用されません）
+.\buildScript\MewUI_run_publish.bat     # Native AOT の単一 exe をビルドして起動（publish\mewui-win-x64-singleaot\）
+.\buildScript\MewUI_run_release.bat     # Release 構成でビルドして起動（src\app_MewUI\bin\Release\net10.0\。AOT は適用されません）
 ```
 
 ### ライセンス・著作権

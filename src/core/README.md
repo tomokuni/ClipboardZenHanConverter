@@ -18,7 +18,7 @@
 ## 依存
 
 - `CommunityToolkit.Mvvm` — ObservableProperty 生成・変更通知
-- `EsUtil.Helper.ZenHanConverter` — 全角/半角変換ペア
+- `EsUtil.Text.ZenHanConverter` — 全角/半角変換ペア
 
 UI フレームワークおよび Win32 以外の OS API には依存しません。
 

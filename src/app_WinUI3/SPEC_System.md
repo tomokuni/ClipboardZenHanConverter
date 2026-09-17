@@ -46,8 +46,9 @@ dotnet run --project src/app_WinUI3/app_WinUI3.csproj
 
 ### 単一 exe
 
-リポジトリルートの `WinUI3_publish_single.bat`（ビルド）と `WinUI3_run_publish.bat`（ビルドして起動）で、自己完結の単一 exe を
+`buildScript/` の `WinUI3_publish_single.bat`（ビルド）と `WinUI3_run_publish.bat`（ビルドして起動）で、自己完結の単一 exe を
 `publish\winui3-<RID>-single\ClipboardZenHanConverter.App.WinUI3.exe` に出力します（既定 RID は `win-x64`）。
+スクリプトはリポジトリルートを基準に動作します。
 
 単一 exe 化に必要なプロパティは次のとおりです。
 

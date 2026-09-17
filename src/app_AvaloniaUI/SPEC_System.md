@@ -17,7 +17,7 @@ UI フレームワークとして Avalonia UI（クロスプラットフォー�
 - AvaloniaUI.DiagnosticsSupport 2.*（Debug 構成のみ。廃止された `Avalonia.Diagnostics` は使用しません）
 - CommunityToolkit.Mvvm 8.*（変換設定・ViewModel）
 - Microsoft.Extensions.Hosting 10.*（DI）
-- EsUtil.Helper.ZenHanConverter（変換ペア、`src/core` 経由）
+- EsUtil.Text.ZenHanConverter（変換ペア、`src/core` 経由）
 
 ## 共有コア
 
@@ -32,7 +32,7 @@ flowchart LR
     AppMewUI[src/app_MewUI (MewUI)] -->|参照| Core[src/core (UI 非依存)]
     AppWinUI3[src/app_WinUI3 (WinUI 3)] -->|参照| Core
     AppAvalonia[src/app_AvaloniaUI (Avalonia UI)] -->|参照| Core
-    Core -->|PackageReference| EsUtil[EsUtil.Helper.ZenHanConverter]
+    Core -->|PackageReference| EsUtil[EsUtil.Text.ZenHanConverter]
     AppAvalonia -->|PackageReference| Avalonia[Avalonia UI]
 ```
 
@@ -47,8 +47,9 @@ dotnet run --project src/app_AvaloniaUI/app_AvaloniaUI.csproj
 
 ### 配布用ビルド（Native AOT）
 
-リポジトリルートの `AvaloniaUI_publish_aot.bat`（ビルド）と `AvaloniaUI_run_publish.bat`（ビルドして起動）で、Native AOT の配布用フォルダーを
+`buildScript/` の `AvaloniaUI_publish_aot.bat`（ビルド）と `AvaloniaUI_run_publish.bat`（ビルドして起動）で、Native AOT の配布用フォルダーを
 `publish\avaloniaui-<RID>-aot\` に出力します（既定 RID は `win-x64`、exe 1 個 + DLL 3 個 約 43.8 MB）。
+スクリプトはリポジトリルートを基準に動作します。
 
 必要なプロパティは次のとおりです。
 

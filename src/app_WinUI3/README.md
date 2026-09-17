@@ -220,15 +220,16 @@ dotnet run --project src/app_WinUI3/app_WinUI3.csproj
 
 ## 単一 exe の作成
 
-リポジトリルートの `WinUI3_publish_single.bat`（ビルド）と `WinUI3_run_publish.bat`（ビルドして起動）で、自己完結の単一 exe を作成できます。
+`buildScript/` の `WinUI3_publish_single.bat`（ビルド）と `WinUI3_run_publish.bat`（ビルドして起動）で、自己完結の単一 exe を作成できます。
+スクリプトはリポジトリルートを基準に動作するため、どこから実行しても同じ結果になります。
 
 ```powershell
-WinUI3_publish_single.bat          # publish\winui3-win-x64-single\ClipboardZenHanConverter.App.WinUI3.exe
-WinUI3_run_publish.bat             # 上記をビルドして起動
-WinUI3_publish_single.bat win-arm64
+.\buildScript\WinUI3_publish_single.bat          # publish\winui3-win-x64-single\ClipboardZenHanConverter.App.WinUI3.exe
+.\buildScript\WinUI3_run_publish.bat             # 上記をビルドして起動
+.\buildScript\WinUI3_publish_single.bat win-arm64
 ```
 
-発行を行わず、Release 構成のビルドと実行だけを行う場合は `WinUI3_run_release.bat` を使用します（`src\app_WinUI3\bin\Release\net10.0-windows10.0.26100.0\win-x64\` の exe を起動します。単一ファイル化は適用されません）。
+発行を行わず、Release 構成のビルドと実行だけを行う場合は `buildScript\WinUI3_run_release.bat` を使用します（`src\app_WinUI3\bin\Release\net10.0-windows10.0.26100.0\win-x64\` の exe を起動します。単一ファイル化は適用されません）。
 
 - 出力は exe 1 ファイル（約 179 MB）です。初回起動時に依存ファイルを `%TEMP%\.net\ClipboardZenHanConverter.App.WinUI3\` へ展開するため、初回のみ起動に時間がかかります。
 - 発行はリポジトリ外の一時領域（`%TEMP%\czhc-single-winui-<RID>`）で行い、exe のみを出力先へ配置します。リポジトリ内へ直接発行するとフレームワーク配置のファイルが混在し、それをアプリのコンテンツとして取り込むと単一 exe が肥大化します。

@@ -6,8 +6,8 @@ rem  ClipboardZenHanConverter (MewUI) 単一 exe ビルドスクリプト
 rem  Release / Native AOT / 単一 exe を生成する
 rem ============================================================
 
-rem スクリプトの場所を基準にリポジトリルートを取得する
-pushd "%~dp0"
+rem スクリプトの場所（buildScript）からリポジトリルートへ移動する
+pushd "%~dp0.."
 
 rem ターゲットランタイム（既定: win-x64）
 if "%~1"=="" (set "RID=win-x64") else (set "RID=%~1")

@@ -1,6 +1,6 @@
 using EsUtil.ClipboardZenHanConverter.Core.Enums;
 using EsUtil.ClipboardZenHanConverter.Core.Helpers;
-using EsUtil.Helper.ZenHanConverter;
+using EsUtil.Text.ZenHanConverter;
 using System;
 using System.Linq;
 using Xunit;

@@ -1,6 +1,6 @@
 using EsUtil.ClipboardZenHanConverter.Core.Enums;
-using EsUtil.Helper.ZenHanConverter;
-using static EsUtil.Helper.ZenHanConverter.Define;
+using EsUtil.Text.ZenHanConverter;
+using static EsUtil.Text.ZenHanConverter.Define;
 
 namespace EsUtil.ClipboardZenHanConverter.Core.Helpers;
 
