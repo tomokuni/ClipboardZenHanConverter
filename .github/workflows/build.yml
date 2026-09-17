@@ -48,7 +48,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: チェックアウト
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       # 対象のソリューション ファイルは release-config.json が単一所有する
       - name: リリース設定を読む
@@ -56,7 +56,7 @@ jobs:
         uses: ./.github/actions/read-config
 
       - name: .NET SDK をセットアップ
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           # バージョンは global.json が単一所有する（dotnet-version は指定しない）
           # NuGet のグローバル パッケージ フォルダをキャッシュする
