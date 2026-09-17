@@ -90,15 +90,28 @@ jobs:
       - name: 配布物を zip 化
         if: matrix.ui.zip
         shell: pwsh
-        # 出力フォルダ自身を zip へ含めず、中身を直下へ配置する
-        run: Compress-Archive -Path '${{ matrix.ui.output }}/*' -DestinationPath '${{ matrix.ui.asset }}' -Force
+        env:
+          # 出力は単一ファイル（exe）とフォルダ（exe + ネイティブ DLL）の両方がある
+          OUTPUT: ${{ matrix.ui.output }}
+          ASSET: ${{ matrix.ui.asset }}
+        run: |
+          if (Test-Path -LiteralPath $env:OUTPUT -PathType Container) {
+            # フォルダの場合はフォルダ自身を zip へ含めず、中身を直下へ配置する
+            Compress-Archive -Path "$($env:OUTPUT)/*" -DestinationPath $env:ASSET -Force
+          }
+          else {
+            # 単一ファイルの場合はそのファイルを直下へ配置する
+            Compress-Archive -Path $env:OUTPUT -DestinationPath $env:ASSET -Force
+          }
+
+          Write-Host "zip を作成しました: $env:ASSET"
 
       # この成果物は release.yml が GitHub Release へ添付する（公開先は GitHub Release のみ）
       - name: 成果物をアップロード
         uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.ui.name }}
-          # 複数ファイルを配布する UI は zip 済みのファイルを、単一 exe の UI は exe を保管する
+          # zip する UI は作成済みの zip を、しない UI は出力そのものを保管する
           path: ${{ matrix.ui.zip && matrix.ui.asset || matrix.ui.output }}
           if-no-files-found: error
           retention-days: ${{ needs.config.outputs.retention }}

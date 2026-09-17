@@ -253,12 +253,15 @@ semver 形式で入力します。数値部分の**先頭 0 は使用できま�
 
 添付するファイルは `release-config.json` の `uis[].asset` が決めます。`release.yml` は保管された成果物をそのまま添付するため、**UI を追加してもワークフローは変更不要**です。
 
-| UI | 添付ファイル | 形式 |
+| UI | 添付ファイル | zip の中身 |
 | --- | --- | --- |
-| MewUI 版 | `ClipboardZenHanConverter.App.MewUI.exe` | 単一 exe（Native AOT） |
-| WinUI 3 版 | `ClipboardZenHanConverter.App.WinUI3.exe` | 単一 exe（自己完結） |
-| Avalonia UI 版 | `ClipboardZenHanConverter.App.AvaloniaUI.zip` | exe + ネイティブ DLL 3 個 |
-| WinForms 版 | `ClipboardZenHanConverter.App.WinForms.exe` | 単一 exe（自己完結） |
+| MewUI 版 | `ClipboardZenHanConverter.App.MewUI.zip` | exe 1 個（Native AOT） |
+| WinUI 3 版 | `ClipboardZenHanConverter.App.WinUI3.zip` | exe 1 個（自己完結） |
+| Avalonia UI 版 | `ClipboardZenHanConverter.App.AvaloniaUI.zip` | exe 1 個 + ネイティブ DLL 3 個 |
+| WinForms 版 | `ClipboardZenHanConverter.App.WinForms.zip` | exe 1 個（自己完結） |
+
+**すべて zip で配布します。** `uis[].zip` が `true` の UI は、publish 後に配布物を zip 化してから保管します
+（出力が単一ファイル（exe）でもフォルダでも同じ指定で扱えます）。
 
 publish は `buildScript/` の `*_publish_*.bat` をそのまま実行するため、ローカルでの配布用ビルドと同一の手順・出力になります。
 スクリプトは `buildScript/` からリポジトリルートへ移動してから実行されるため、カレントディレクトリに依存しません。
