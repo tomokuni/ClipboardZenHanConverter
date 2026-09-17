@@ -10,7 +10,7 @@
   <PropertyGroup>
     <!-- リリースバージョン。全プロジェクトで単一所有し、各 .csproj では指定しない。 -->
     <!-- 自動インクリメントは行わない。リリース時に .github/workflows/release.yml が入力値へ更新する。 -->
-    <Version>0.1.1</Version>
+    <Version>0.1.2</Version>
   </PropertyGroup>
 
 </Project>
