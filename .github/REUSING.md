@@ -11,7 +11,7 @@
 | --- | --- | --- |
 | [`release-config.json`](release-config.json) | **コピーして編集** | 唯一のリポジトリ固有設定 |
 | [`actions/read-config`](actions/read-config/action.yml) | **コピーして調整** | `release-config.json` を読んで各ワークフローへ渡す共通アクション。**キーを増やす場合は `outputs` にも追加する** |
-| [`../global.json`](../global.json) | **コピーして編集** | .NET SDK のバージョン（対象フレームワークに合わせる） |
+| [`../global.json`](../global.json) | **コピーして編集** | .NET SDK のバージョンとテスト ランナー（対象フレームワークに合わせる） |
 | [`scripts/version.ps1`](scripts/version.ps1) | **そのまま** | バージョンの規則（リポジトリ非依存） |
 | [`scripts/set-version.ps1`](scripts/set-version.ps1) | **そのまま** | バージョンファイルのパスは引数・設定で渡す |
 | [`scripts/verify-release-version.ps1`](scripts/verify-release-version.ps1) | **そのまま** | ブランチ規則は `releaseBranches` が持つため変更不要 |
@@ -31,7 +31,7 @@
 ```text
 <新しいリポジトリ>/
 ├── Directory.Build.props     # リリースバージョン（新規作成。下記「2.」の versionFile が指す）
-├── global.json               # .NET SDK のバージョン（新規作成。ワークフローでは指定しない）
+├── global.json               # .NET SDK のバージョンとテスト ランナー（新規作成。ワークフローでは指定しない）
 ├── .github/
 │   ├── release-config.json
 │   ├── actions/
@@ -72,15 +72,27 @@
 既存の共通プロパティ（`Nullable` / `ImplicitUsings` / `LangVersion` など）をここへまとめてもかまいません。
 
 `global.json` には対象フレームワークに合う SDK を記載します（ワークフローには書きません）。
+xunit.v3 4 系（Microsoft.Testing.Platform）を使う場合は `test.runner` もここで単一所有します。
 
 ```json
 {
   "sdk": {
     "version": "10.0.100",
     "rollForward": "latestFeature"
+  },
+  "test": {
+    "runner": "Microsoft.Testing.Platform"
   }
 }
 ```
+
+`test.runner` を指定しないと、.NET 10 SDK の `dotnet test` は VSTest モードで実行され、次のエラーになります。
+
+```text
+error: Testing with VSTest target is no longer supported by Microsoft.Testing.Platform on .NET 10 SDK and later.
+```
+
+MTP モードではテスト対象を `--solution` / `--project` で指定します（位置引数を渡すとテスト アプリへの引数として扱われ、0 件・終了コード 5 になります）。
 
 ### 2. `release-config.json` を編集する
 
@@ -124,6 +136,11 @@
 
 `publish` は push では実行しません（配布物の作成はリリース時に 1 度だけ）。ゲートはビルドとテストの成功です。
 
+テストの実行コマンドはテスト フレームワークに依存します（Windows 固有のターゲットを含む場合は `runs-on: windows-latest` のままにします）。
+
+- **xunit.v3 4 系（Microsoft.Testing.Platform）**: `dotnet test --solution <ソリューション>`（対象は `--solution` / `--project` で指定する）
+- **VSTest（`Microsoft.NET.Test.Sdk`）**: `dotnet test <ソリューション>`
+
 ### 4. publish スクリプトを用意する
 
 UI ごとに `buildScript/<名前>_publish_*.bat` を作成します。仕様は次のとおりです。
@@ -155,7 +172,7 @@ Copy-Item "$env:TEMP/dbp.bak" Directory.Build.props
 git clean -xdf -- src test
 dotnet restore <ソリューション>.slnx
 dotnet build <ソリューション>.slnx -c Release --no-restore
-dotnet test <ソリューション>.slnx -c Release --no-build
+dotnet test --solution <ソリューション>.slnx -c Release --no-build
 ```
 
 その後、`main` へ push して Build が成功することを確認し、`Actions` → `Release` を手動実行します
@@ -167,6 +184,7 @@ dotnet test <ソリューション>.slnx -c Release --no-build
 | --- | --- |
 | **リポジトリが private** | Actions の分数が有料になります。リリース時の publish は実行時間が長いため、`uis[]` を減らすか、`build.yml` の `on.push` に `paths` を追加してゲートの実行回数を抑えることを検討してください |
 | **NuGet ギャラリー未公開のパッケージを参照する** | クリーンな CI からは復元できません。リポジトリへ同梱し `NuGet.config` のソースに追加するか、公開してください |
+| **テスト ランナーを VSTest のままにする** | `global.json` の `test.runner` を削除し、`build.yml` のテストを `dotnet test <ソリューション>`（位置引数）に戻します。ただし xunit.v3 4 系は VSTest をサポートしないため、`xunit.v3` は 3 系以下にする必要があります |
 | **複数系列の保守（バックポート）が不要** | `releaseBranches` を `["main"]` にし、`build.yml` の `release/**` トリガーを外します |
 | **バージョンを自動で決めたい** | 本仕組みは「人が入力する」前提です。自動化（Conventional Commits からの算出など）を併用する場合は、`verify-release-version.ps1` の検証はそのまま活かせます |
 | **NuGet などにも配布したい** | `release-config.json` に項目を足し、`release.yml` の `release` ジョブへ公開ステップを追加します。配布物は `publish.yml` の `pack` 相当（`dotnet pack`）に置き換えます |
@@ -177,7 +195,7 @@ dotnet test <ソリューション>.slnx -c Release --no-build
 - **UI の定義（`uis[]`）は `release-config.json` に置いてください。** ワークフローへ書き戻すと二重管理になり、追加時に漏れます。
 - **ビルド対象のソリューション ファイル（`solutionFile`）は `release-config.json` に置いてください。** ワークフローへソリューション名を書くと、リポジトリごとにワークフローが分かれます。
 - **設定の読み取りは `actions/read-config` に置いてください。** ワークフローごとに `jq` や `Get-Content` で読み直すと、キーを追加したときに読み取り漏れが起きます。
-- **.NET SDK のバージョンは `global.json` に置いてください。** ワークフローへ `dotnet-version` を書くと二重管理になり、更新時にずれます。
+- **.NET SDK のバージョンとテスト ランナーは `global.json` に置いてください。** ワークフローへ `dotnet-version` やランナー指定を書くと二重管理になり、更新時にずれます。
 - **バージョンの規則（形式・比較・系列・タグの列挙）は `scripts/version.ps1` に置いてください。** 他のスクリプトで再実装すると判定がずれます。
 - **バージョンを記載するファイルは 1 つにしてください**（本リポジトリは `Directory.Build.props`）。番号と成果物が不一致になるのを防ぎます。
 - **配布物の作成（publish）は、タグ作成とバージョンコミットより前に実行してください。** 失敗してもタグとバージョンを消費しないようにします。

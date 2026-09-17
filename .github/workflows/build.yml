@@ -13,6 +13,7 @@
 # 本ワークフローの成功実行が存在することを確認してから Release を作成する。
 #
 # .NET SDK のバージョンはリポジトリルートの global.json が単一所有する（ワークフローでは指定しない）。
+# テストの実行基盤（Microsoft.Testing.Platform / MTP）も global.json の test.runner が単一所有する。
 # dotnet の対象（ソリューション ファイル）は release-config.json の solutionFile が単一所有する。
 # NuGet パッケージのキャッシュは setup-dotnet の cache 機能を使う（actions/cache を別途書かない）。
 #
@@ -68,5 +69,7 @@ jobs:
         run: dotnet build '${{ steps.config.outputs.solution_file }}' -c Release --no-restore
 
       # 4 つの UI のテストを含む全テストプロジェクトを実行する
+      # xunit.v3 4 系は Microsoft.Testing.Platform（MTP）で実行するため、対象は位置引数ではなく
+      # --solution で指定する（位置引数を渡すとテスト アプリへの引数として扱われ、0 件・終了コード 5 になる）
       - name: テスト（Release）
-        run: dotnet test '${{ steps.config.outputs.solution_file }}' -c Release --no-build
+        run: dotnet test --solution '${{ steps.config.outputs.solution_file }}' -c Release --no-build

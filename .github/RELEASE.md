@@ -15,7 +15,7 @@
 | [`release-config.json`](release-config.json) | プロダクト名、バージョンファイル、**ビルド対象のソリューション ファイル**、ゲートのワークフロー、**リリースを許可するブランチ**、配布する UI の定義 |
 | [`actions/read-config`](actions/read-config/action.yml) | `release-config.json` を読んで各ワークフローへ渡す共通アクション（読み取りの実装はここだけ） |
 | [`../Directory.Build.props`](../Directory.Build.props) | リリースバージョン（`<Version>`）。各 `.csproj` では指定しない |
-| [`../global.json`](../global.json) | .NET SDK のバージョン。ワークフローでは指定しない |
+| [`../global.json`](../global.json) | .NET SDK のバージョンと**テスト ランナー**（Microsoft.Testing.Platform）。ワークフローでは指定しない |
 | [`workflows/publish.yml`](workflows/publish.yml) | 全 UI の publish とアーティファクト保管の実装（`release.yml` が呼ぶ） |
 | [`scripts/version.ps1`](scripts/version.ps1) | バージョンの規則（形式・比較・系列・プレリリース判定・タグの列挙） |
 
@@ -27,7 +27,7 @@ UI の追加・変更は **`release-config.json` の `uis[]` を編集します*
 ```text
 <リポジトリルート>/
 ├── Directory.Build.props     # リリースバージョン（各 .csproj では指定しない）
-├── global.json               # .NET SDK のバージョン（ワークフローでは指定しない）
+├── global.json               # .NET SDK のバージョンとテスト ランナー（ワークフローでは指定しない）
 ├── buildScript/              # UI ごとの publish 手順（release-config.json の uis[].script が指す）
 └── .github/
     ├── release-config.json        # リリース設定（リポジトリ固有の設定はこのファイルのみ）
@@ -57,6 +57,9 @@ UI の追加・変更は **`release-config.json` の `uis[]` を編集します*
   リリース時に `release.yml` がこの 1 行を入力値へ書き換えてコミットします。
 - **.NET SDK のバージョンは `global.json` に記載し、ワークフローには記載しないでください**
   （`actions/setup-dotnet` が `global.json` を読むため、`dotnet-version` の指定は不要です）。
+- **テスト ランナー（`test.runner`）も `global.json` が単一所有します。** xunit.v3 4 系は Microsoft.Testing.Platform（MTP）で
+  実行するため、`test.runner` に `Microsoft.Testing.Platform` を指定します（未指定だと VSTest ターゲットが使われて失敗します）。
+  MTP モードではテスト対象を `--solution` / `--project` で指定してください（位置引数はテスト アプリへの引数として扱われます）。
 - 同じ設定を複数箇所に置かないでください（例: UI の定義をワークフローへ直接書く、ソリューション名をワークフローへ書く、バージョンを `.csproj` にも書く、SDK のバージョンをワークフローにも書く）。
   変更時の注意事項は [`REUSING.md`](REUSING.md) にも記載しています。
 - **`build.yml` / `publish.yml` / `release.yml` は Windows 固有のターゲットを含むため、ビルド系のジョブは

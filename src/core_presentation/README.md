@@ -58,7 +58,7 @@ dotnet build src/core_presentation/core_presentation.csproj
 `test/core_presentation` が本プロジェクトの単体テストを持ちます。
 
 ```powershell
-dotnet test test/core_presentation/tests_core_presentation.csproj
+dotnet test --project test/core_presentation/tests_core_presentation.csproj
 ```
 
 詳細な設計は `SPEC_System.md`、公開 API は `SPEC_ExtFunc.md` を参照してください。

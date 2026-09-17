@@ -11,7 +11,7 @@
 ## 実行
 
 ```powershell
-dotnet test test\parity\tests_parity.csproj
+dotnet test --project test\parity\tests_parity.csproj
 ```
 
 ## 構成

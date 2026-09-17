@@ -6,7 +6,9 @@
 # 注意事項:
 # - Dependabot の Pull Request は fork 相当（読み取り専用トークン・シークレット無し）で実行される。
 #   本リポジトリの build.yml はシークレットを使用しないため、CI はそのまま動作する。
-# - NuGet のメジャー更新（xunit 3 系など、API が大きく変わるもの）は自動では作成しない。
+# - NuGet のメジャー更新（xunit.v3 4 系など、テストの書き方と実行基盤が変わるもの）は自動では作成しない。
+#   ignore の dependency-name は**実際のパッケージ ID と完全一致**させること
+#   （xunit では xunit.v3 / xunit.analyzers に一致しない）。
 version: 2
 
 updates:
@@ -53,8 +55,9 @@ updates:
         patterns: ["*"]
         update-types: ["minor", "patch"]
     ignore:
-      # xunit 3 系はテストの書き方が変わる（破壊的変更）ため、メジャー更新は手動で判断する
-      - dependency-name: "xunit"
+      # xunit 系はテストの書き方・実行基盤が変わる（破壊的変更）ため、メジャー更新は手動で判断する
+      # 対象パッケージは**実際の ID と完全一致**させる（本リポジトリは xunit.v3 系列を使用する）
+      - dependency-name: "xunit.v3"
         update-types: ["version-update:semver-major"]
-      - dependency-name: "xunit.runner.visualstudio"
+      - dependency-name: "xunit.analyzers"
         update-types: ["version-update:semver-major"]

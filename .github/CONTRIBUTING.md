@@ -10,7 +10,7 @@
 ```text
 ClipboardZenHanConverter/
 ├── Directory.Build.props           # 共通プロパティ（LangVersion / Nullable / ImplicitUsings / リリースバージョン）
-├── global.json                     # .NET SDK のバージョン（ワークフローでは指定しない）
+├── global.json                     # .NET SDK のバージョンとテスト ランナー（ワークフローでは指定しない）
 ├── ClipboardZenHanConverter.slnx
 ├── .github/
 │   ├── CONTRIBUTING.md            # 本ドキュメント（開発者向け）
@@ -89,27 +89,37 @@ dotnet build ClipboardZenHanConverter.slnx
 同一メジャー内の最新版が復元時に選ばれるため、常に最新の状態でビルドできます。
 
 - メジャーが上がる変更（破壊的変更を含む）は自動では取り込まれません。手動で更新します。
-- .NET SDK のバージョンはリポジトリルートの `global.json` が単一所有します（ワークフローへ `dotnet-version` を書きません。`actions/setup-dotnet` が `global.json` を読みます）。
+- **浮動指定（`12.*` など）は復元時に同一メジャーの最新版を解決します。** そのため更新が必要になるのはメジャーが上がったときだけです。
+  更新の有無は `dotnet list ClipboardZenHanConverter.slnx package --outdated` で確認できます（プレリリースも見る場合は `--include-prerelease`）。
+- **推移依存（`SkiaSharp` など）は親パッケージが指定する範囲の最小版が選ばれます。** 直接参照で強制すると
+  （例: Avalonia 12 に対する `SkiaSharp` 4 系・`HarfBuzzSharp` 14 系）描画や Native AOT が壊れる恐れがあるため、更新しません。
+- テストは **xunit.v3 4 系**（Microsoft.Testing.Platform）を使用します。VSTest 専用の `Microsoft.NET.Test.Sdk` / `xunit.runner.visualstudio` / `coverlet.collector` は参照しません。
+- .NET SDK のバージョンとテスト ランナーはリポジトリルートの `global.json` が単一所有します（ワークフローへ `dotnet-version` を書きません。`actions/setup-dotnet` が `global.json` を読みます）。
 - リリースバージョン（`<Version>`）は `Directory.Build.props` が単一所有します。自動インクリメントは行わず、リリース時にワークフローが設定します（詳細は [`RELEASE.md`](RELEASE.md)）。
 - 復元結果は `project.assets.json`（`obj/` 配下）に記録されます。固定したい場合は `obj/` を削除するか `dotnet restore --force-evaluate` を実行します。
 
 ## テスト
 
-```powershell
-# ソリューション全体（7 テストプロジェクト、479 件）
-dotnet test ClipboardZenHanConverter.slnx
+テストは UI を起動せずに実行できます。
 
-# 個別に実行する場合
-dotnet test test\core\tests_core.csproj
-dotnet test test\core_presentation\tests_core_presentation.csproj
-dotnet test test\app_MewUI\tests_app_MewUI.csproj
-dotnet test test\app_WinUI3\tests_app_WinUI3.csproj
-dotnet test test\app_AvaloniaUI\tests_app_AvaloniaUI.csproj
-dotnet test test\app_WinForms\tests_app_WinForms.csproj
-dotnet test test\parity\tests_parity.csproj
+```powershell
+# ソリューション全体（7 テストプロジェクト、449 件）
+dotnet test --solution ClipboardZenHanConverter.slnx
+
+# 個別に実行する場合（プロジェクトは --project で指定する）
+dotnet test --project test\core\tests_core.csproj
+dotnet test --project test\core_presentation\tests_core_presentation.csproj
+dotnet test --project test\app_MewUI\tests_app_MewUI.csproj
+dotnet test --project test\app_WinUI3\tests_app_WinUI3.csproj
+dotnet test --project test\app_AvaloniaUI\tests_app_AvaloniaUI.csproj
+dotnet test --project test\app_WinForms\tests_app_WinForms.csproj
+dotnet test --project test\parity\tests_parity.csproj
 ```
 
-テストは UI を起動せずに実行できます。  
+**対象の指定には `--solution` / `--project` を使ってください。** xunit.v3 4 系は Microsoft.Testing.Platform（MTP）で
+実行され、位置引数（`dotnet test ClipboardZenHanConverter.slnx`）はテスト アプリへの引数として扱われて
+**0 件・終了コード 5** になります（実行基盤の指定は `global.json` の `test.runner` が単一所有します）。
+
 `test/core` は `src/core` のみを参照し、UI フレームワークに依存しないことを保証します。  
 `test/core_presentation` は `src/core_presentation` のみを参照し、同じく UI フレームワークに依存しないことを保証します。  
 設定ファイルを書き込むテストは、実ユーザーの `%LOCALAPPDATA%` 配下を汚さないよう
@@ -170,7 +180,7 @@ dotnet run --project src/app_WinForms/app_WinForms.csproj
 
 1. 復元（`dotnet restore <solutionFile>`）
 2. Release ビルド（`dotnet build -c Release --no-restore`）
-3. 全テスト（`dotnet test -c Release --no-build`。7 テストプロジェクト）
+3. 全テスト（`dotnet test --solution <solutionFile> -c Release --no-build`。7 テストプロジェクト）
 
 - 対象のソリューション ファイルは `release-config.json` の `solutionFile` が単一所有します（ワークフローには書きません）。
 - **`dev` への push では実行しません。** `dev` で検証する場合は Actions → Build → **Run workflow**（手動実行）を使用します。
@@ -197,5 +207,5 @@ publish と同等の条件（クリーンな状態）で事前確認する場合
 git clean -xdf -- src test
 dotnet restore ClipboardZenHanConverter.slnx
 dotnet build ClipboardZenHanConverter.slnx -c Release --no-restore
-dotnet test ClipboardZenHanConverter.slnx -c Release --no-build
+dotnet test --solution ClipboardZenHanConverter.slnx -c Release --no-build
 ```
