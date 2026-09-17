@@ -99,6 +99,11 @@ dotnet build ClipboardZenHanConverter.slnx
     移して `actions/cache` で再利用します（`dotnet-install` は同じバージョンが既にあればダウンロードも展開もしません）。
     **SDK が更新されてキャッシュが古くなった場合は、`build.yml` / `publish.yml` のキャッシュ キー末尾の版（`v1`）を上げてください**
     （キーが同じままだと新しい SDK が毎回ダウンロードされます）。
+  - NuGet のキャッシュは目的別に分けています。**`build.yml` は共通の 1 つ**（全 13 プロジェクトをビルドするため約 1.9GB が必要）、
+    **`publish.yml` は UI ごと**（4 ジョブが同時に走るため共通キャッシュを 4 重に復元すると競合し、
+    不要な分まで復元することになる。MewUI は約 50MB、Avalonia UI は約 1.2GB）です。
+  - 参考実測（`build.yml`）: SDK 80 秒 → **48 秒**、全体 161 秒 → **116 秒**（キャッシュ ヒット時）。
+    内訳は NuGet キャッシュの復元 約 41 秒 / ビルド 45 秒 / その他 30 秒です。
 - リリースバージョン（`<Version>`）は `Directory.Build.props` が単一所有します。自動インクリメントは行わず、リリース時にワークフローが設定します（詳細は [`RELEASE.md`](RELEASE.md)）。
 - 復元結果は `project.assets.json`（`obj/` 配下）に記録されます。固定したい場合は `obj/` を削除するか `dotnet restore --force-evaluate` を実行します。
 
