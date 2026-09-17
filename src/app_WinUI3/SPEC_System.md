@@ -44,6 +44,12 @@ dotnet build src/app_WinUI3/app_WinUI3.csproj
 dotnet run --project src/app_WinUI3/app_WinUI3.csproj
 ```
 
+プロジェクトは **Windows App SDK も自己完結**（`WindowsAppSDKSelfContained=true`）です。実行環境に
+Windows App Runtime のインストールは不要で、同梱した DLL を reg-free WinRT で解決します。
+これは、ブートストラップの自動初期化（既定は `OnNoMatch_ShowUI`）がアセンブリへ埋め込まれ、
+このアセンブリを読み込むテスト（`test/app_WinUI3` / `test/parity`）が Windows App Runtime の無い
+環境（CI など）で導入ダイアログを出して停止するのを防ぐためです。
+
 ### 単一 exe
 
 `buildScript/` の `WinUI3_publish_single.bat`（ビルド）と `WinUI3_run_publish.bat`（ビルドして起動）で、自己完結の単一 exe を
@@ -54,8 +60,8 @@ dotnet run --project src/app_WinUI3/app_WinUI3.csproj
 
 1. `WindowsPackageType=None`（非パッケージ。プロジェクトで設定済み）
 2. `PublishSingleFile=true`
-3. `SelfContained=true`
-4. `WindowsAppSDKSelfContained=true`
+3. `SelfContained=true`（.NET ランタイム。プロジェクトで設定済み）
+4. `WindowsAppSDKSelfContained=true`（Windows App SDK。プロジェクトで設定済み）
 5. `EnableMsixTooling=true`（埋め込み `resources.pri` の生成に必須）
 6. `IncludeAllContentForSelfExtract=true`（DLL の SxS リダイレクトに必須）
 
@@ -224,7 +230,7 @@ DI コンテナへのサービス登録拡張メソッド。
 
 **実装**: `IDisposable`
 
-**依存**: `ConvertConfig`, `ITextConverter`, `IClipboardService`, `AppSetting`
+**依存**: `ConvertConfig`, `ITextConverter`, `IClipboardService`, `AppSetting`, `DispatcherQueue?`（UI スレッドのディスパッチキュー。UI 層が取得してコンストラクターから注入し、未指定の場合はバックグラウンドで処理する）
 
 **ObservableProperty**:
 

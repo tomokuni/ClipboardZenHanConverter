@@ -13,6 +13,15 @@
     <!-- Windows App SDK のビルド要件（リポジトリ共通の Directory.Build.props には置かない） -->
     <Platforms>x64</Platforms>
     <SelfContained>true</SelfContained>
+    <!--
+      Windows App SDK も自己完結にする（実行環境に Windows App Runtime を要求しない）。
+      未設定の場合はアセンブリにブートストラップの自動初期化（既定は OnNoMatch_ShowUI）が埋め込まれ、
+      起動時にインストール済みのランタイムを探す。無い環境では導入ダイアログを出して待ち続けるため、
+      このアセンブリを読み込むテスト（test/app_WinUI3・test/parity）が CI で停止する。
+      自己完結にするとブートストラップは使われず、同梱した DLL を reg-free WinRT で解決する。
+      publish（buildScript/WinUI3_publish_single.bat）も同じ設定を指定しているため挙動が一致する。
+    -->
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
   </PropertyGroup>
 
   <PropertyGroup>

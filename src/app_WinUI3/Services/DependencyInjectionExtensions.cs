@@ -5,6 +5,7 @@ using EsUtil.ClipboardZenHanConverter.Core.Logic;
 using EsUtil.ClipboardZenHanConverter.Core.Models;
 using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Dispatching;
 
 namespace EsUtil.ClipboardZenHanConverter.App.WinUI.Services;
 
@@ -32,7 +33,12 @@ public static class DependencyInjectionExtensions
 
         // ViewModels
         services.AddSingleton<MainWindowViewModel>();
-        services.AddSingleton<HomeViewModel>();
+        // HomeViewModel は UI スレッドへの委譲先を受け取る（UI 層で生成して渡す）
+        services.AddSingleton(sp => new HomeViewModel(
+            sp.GetRequiredService<ITextConverter>(),
+            sp.GetRequiredService<IClipboardService>(),
+            sp.GetRequiredService<AppSetting>(),
+            CreateUiDispatcher()));
         services.AddSingleton<SettingsViewModel>();
 
         // Views
@@ -41,5 +47,14 @@ public static class DependencyInjectionExtensions
         services.AddSingleton<SettingsPage>();
 
         return services;
+    }
+
+    /// <summary>現在のスレッドのディスパッチキューをラップした UI 委譲先を生成します。</summary>
+    /// <returns>UI 委譲先。UI スレッド以外（ディスパッチキューが取得できない場合）は null。</returns>
+    /// <remarks>DI の解決は UI スレッドで行われるため、ここで取得したキューが UI スレッドのものになります。</remarks>
+    private static IUiDispatcher? CreateUiDispatcher()
+    {
+        var dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        return dispatcherQueue is null ? null : new DispatcherQueueUiDispatcher(dispatcherQueue);
     }
 }

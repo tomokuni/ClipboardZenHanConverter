@@ -1,8 +1,8 @@
+using EsUtil.ClipboardZenHanConverter.App.WinUI.Services;
 using EsUtil.ClipboardZenHanConverter.Core.Interfaces;
 using EsUtil.ClipboardZenHanConverter.Core.Models;
 using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.UI.Dispatching;
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -38,8 +38,8 @@ public partial class HomeViewModel : ObservableObject, IDisposable
     private readonly IClipboardService _clipboardService;
     /// <summary>アプリ設定。クリップボード変換の有効/無効を参照します。</summary>
     private readonly AppSetting _appSetting;
-    /// <summary>UIスレッドへのディスパッチキュー。</summary>
-    private readonly DispatcherQueue? _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+    /// <summary>UI スレッドへの委譲先（null の場合はバックグラウンドで処理します）。</summary>
+    private readonly IUiDispatcher? _uiDispatcher;
     /// <summary>クリップボード変更イベントの排他制御用セマフォ。</summary>
     private readonly SemaphoreSlim _clipboardSemaphore = new(1, 1);
     /// <summary>クリップボード書き戻し中フラグ（再帰防止）。</summary>
@@ -62,12 +62,18 @@ public partial class HomeViewModel : ObservableObject, IDisposable
     /// <param name="converter">テキスト変換器</param>
     /// <param name="clipboardService">クリップボードサービス</param>
     /// <param name="appSetting">アプリ設定。クリップボード変換の有効/無効を参照します。</param>
+    /// <param name="uiDispatcher">UI スレッドへの委譲先（未指定の場合はバックグラウンドで処理します。null 可）。</param>
+    /// <remarks>UI スレッドへの委譲先は UI 層（DI 登録）が生成して渡します。<br/>
+    /// 本 ViewModel が Windows App SDK の型（DispatcherQueue 等）を参照すると、<br/>
+    /// UI を持たないテストの実行時にも WinRT の初期化が必要になり、<br/>
+    /// Windows App Runtime を持たない環境（CI の非対話セッション）でテストが停止するためです。</remarks>
     public HomeViewModel(ITextConverter converter,
-        IClipboardService clipboardService, AppSetting appSetting)
+        IClipboardService clipboardService, AppSetting appSetting, IUiDispatcher? uiDispatcher = null)
     {
         _converter = converter;
         _clipboardService = clipboardService;
         _appSetting = appSetting;
+        _uiDispatcher = uiDispatcher;
         _clipboardService.ContentChanged += Clipboard_ContentChanged;
     }
 
@@ -113,9 +119,9 @@ public partial class HomeViewModel : ObservableObject, IDisposable
             return;
         }
 
-        if (_dispatcherQueue is not null)
+        if (_uiDispatcher is not null)
         {
-            _dispatcherQueue.TryEnqueue(async () => await HandleClipboardChangeAsync());
+            _uiDispatcher.TryEnqueue(() => _ = HandleClipboardChangeAsync());
         }
         else
         {

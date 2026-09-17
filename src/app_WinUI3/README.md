@@ -192,7 +192,8 @@ ClipboardZenHanConverter は、クリップボードにコピーされたテキ�
 ## 動作環境
 
 - Windows 10 (version 1809+) / Windows 11
-- .NET 10 ランタイム
+- .NET 10 ランタイム（配布用の単一 exe は自己完結のため不要）
+- Windows App Runtime のインストールは不要です（Windows App SDK も自己完結。同梱の DLL を reg-free WinRT で解決します）
 - 64-bit (x64)
 
 ## 開発環境
@@ -230,6 +231,8 @@ dotnet run --project src/app_WinUI3/app_WinUI3.csproj
 ```
 
 発行を行わず、Release 構成のビルドと実行だけを行う場合は `buildScript\WinUI3_run_release.bat` を使用します（`src\app_WinUI3\bin\Release\net10.0-windows10.0.26100.0\win-x64\` の exe を起動します。単一ファイル化は適用されません）。
+
+- 通常ビルドも **.NET と Windows App SDK の両方が自己完結**です（実行環境に Windows App Runtime のインストールは不要）。
 
 - 出力は exe 1 ファイル（約 179 MB）です。初回起動時に依存ファイルを `%TEMP%\.net\ClipboardZenHanConverter.App.WinUI3\` へ展開するため、初回のみ起動に時間がかかります。
 - 発行はリポジトリ外の一時領域（`%TEMP%\czhc-single-winui-<RID>`）で行い、exe のみを出力先へ配置します。リポジトリ内へ直接発行するとフレームワーク配置のファイルが混在し、それをアプリのコンテンツとして取り込むと単一 exe が肥大化します。

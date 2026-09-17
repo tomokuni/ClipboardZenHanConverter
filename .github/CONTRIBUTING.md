@@ -120,10 +120,16 @@ dotnet test --project test\parity\tests_parity.csproj
 実行され、位置引数（`dotnet test ClipboardZenHanConverter.slnx`）はテスト アプリへの引数として扱われて
 **0 件・終了コード 5** になります（実行基盤の指定は `global.json` の `test.runner` が単一所有します）。
 
-**WinUI 3 を参照するテスト（`test/app_WinUI3` / `test/parity`）は `WindowsAppSDKSelfContained=true` を設定します。**
-未設定の場合は Windows App Runtime のインストールを前提とする構成（`Microsoft.WindowsAppRuntime.Bootstrap.dll` が同梱）になり、
-ランタイムが無い環境では起動時のブートストラップが導入ダイアログを出して待ち続けるため、**出力を出さずにテストが停止**します
-（CI のランナー イメージには Windows App Runtime が含まれていないため、ローカルでは再現しません）。
+**WinUI 3 を参照するテスト（`test/app_WinUI3` / `test/parity`）から WinRT（Windows App SDK）を起動しないでください。**
+UI 型の実処理（`DispatcherQueue.GetForCurrentThread()` など）は Windows App SDK の初期化を伴い、`CoreMessagingXP.dll` を
+読み込みます。UI を持たない CI（非対話セッション）ではこれが**出力を出さないまま停止**します（Windows App Runtime が
+インストール済みのローカルでは再現しません）。UI スレッドへの依存は UI 層（`DependencyInjectionExtensions` が生成する
+`IUiDispatcher`）からコンストラクターで受け取り、ViewModel 側で静的に取得しないでください。
+
+**`src/app_WinUI3` は Windows App SDK を自己完結にしています**（`WindowsAppSDKSelfContained=true`）。未設定にすると
+アプリのアセンブリにブートストラップの自動初期化（`OnNoMatch_ShowUI`）が埋め込まれ、これを読み込むテストが
+Windows App Runtime の無い CI で導入ダイアログ待ちのまま停止します。テスト用プロジェクト側は
+`WindowsAppSdkAutoInitialize=false` で自動初期化を無効にしています。
 
 `test/core` は `src/core` のみを参照し、UI フレームワークに依存しないことを保証します。  
 `test/core_presentation` は `src/core_presentation` のみを参照し、同じく UI フレームワークに依存しないことを保証します。  
@@ -177,6 +183,8 @@ dotnet run --project src/app_WinForms/app_WinForms.csproj
 | `WinForms_run_release.bat` | WinForms 版 | `src\app_WinForms\bin\Release\net10.0-windows\` |
 
 - 生成物はフレームワーク依存のため、実行には .NET 10 ランタイム（WinUI 3 版は Windows App SDK を含む）が必要です。
+  - ただし **WinUI 3 版は .NET と Windows App SDK の両方が自己完結**（`SelfContained` / `WindowsAppSDKSelfContained`）のため、
+    Windows App Runtime のインストールは不要です（単一 exe 化は行わないため、実行には出力フォルダーごと必要です）。
 - 配布用の exe が必要な場合は上記の `*_publish_*.bat` を使用してください。
 
 ## CI（ビルドとテスト）

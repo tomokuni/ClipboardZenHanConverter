@@ -29,7 +29,8 @@
 - `bool TestMode` — テスト用の同期実行モード
 
 全角/半角変換は常に有効（オン/オフの切り替えはありません）。クリップボードの読み書き可否は `AppSetting.IsClipboardConvertEnabled` に従います。  
-クリップボード変換スイッチとプリセット選択はタイトルバー（`MainWindow`）が単一所有し、この ViewModel は関与しません。
+クリップボード変換スイッチとプリセット選択はタイトルバー（`MainWindow`）が単一所有し、この ViewModel は関与しません。  
+UI スレッドのディスパッチキューは UI 層（`DependencyInjectionExtensions`）が取得してコンストラクターから渡します（ViewModel は静的に取得しません）。
 
 #### `MainWindowViewModel`
 
