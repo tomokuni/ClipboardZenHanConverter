@@ -127,6 +127,10 @@ UI の追加・変更は **`release-config.json` の `uis[]` を編集します*
 
 **配布物を作る処理は重い（Native AOT を含む）ため、push では実行しません。** 配布物の作成はリリース時に 1 度だけ行います。
 
+**各ジョブには `timeout-minutes` を設定しています**（停止した場合に既定の 6 時間待たないため）。
+ビルド・テスト・検証・公開は 30 分、設定の読み取りは 10 分、配布物の作成（`publish.yml` の `publish`）は 60 分です。
+なお、再利用ワークフローを呼ぶジョブ（`release.yml` の `publish`）には指定できないため、タイムアウトは呼び先の `publish.yml` が持ちます。
+
 ```mermaid
 flowchart TD
     A["main へ push（マージ含む）"] --> B["build.yml（必ず実行）<br/>復元 + ビルド + テスト"]
