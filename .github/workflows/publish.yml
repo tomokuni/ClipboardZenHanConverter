@@ -64,39 +64,19 @@ jobs:
       - name: チェックアウト
         uses: actions/checkout@v5
 
-      # SDK は matrix の各ジョブがそれぞれセットアップするため、キャッシュの効果が大きい
-      # （1 回のリリースで 4 ジョブ × 約 27 秒の削減）
-      - name: .NET SDK をキャッシュ
-        uses: actions/cache@v6
-        with:
-          path: ${{ runner.temp }}/dotnet
-          key: dotnet-${{ runner.os }}-v1-${{ hashFiles('global.json') }}
-          restore-keys: |
-            dotnet-${{ runner.os }}-v1-
-
+      # .NET SDK はランナー イメージの最新版を使う（setup-dotnet は不要）。
       # NuGet のキャッシュは UI ごとに分ける。
       # 4 ジョブが同時に走るため、共通の大きなキャッシュ（約 1.9GB）を 4 重に復元すると
       # 競合して 1 ジョブあたりの復元が 40 秒台から 90 秒超へ伸びる。
-      # UI ごとに分けると復元量も必要な分だけになる（例: MewUI は約 100MB、Avalonia UI は約 1.5GB）。
+      # UI ごとに分けると復元量も必要な分だけになる（例: MewUI は約 50MB、Avalonia UI は約 1.2GB）。
       - name: NuGet をキャッシュ
         uses: actions/cache@v6
         with:
-          path: ${{ runner.temp }}/nuget
+          # 既定のグローバル パッケージ フォルダ（%USERPROFILE%\.nuget\packages）。NUGET_PACKAGES は変更しない
+          path: ~/.nuget/packages
           key: nuget-${{ runner.os }}-${{ matrix.ui.name }}-${{ hashFiles('**/*.csproj') }}
           restore-keys: |
             nuget-${{ runner.os }}-${{ matrix.ui.name }}-
-
-      - name: .NET SDK をセットアップ
-        uses: actions/setup-dotnet@v5
-        env:
-          # キャッシュ対象と同じディレクトリへインストールする（上の path と揃えること）
-          DOTNET_INSTALL_DIR: ${{ runner.temp }}/dotnet
-          # NuGet のグローバル パッケージ フォルダも上のキャッシュと揃える
-          NUGET_PACKAGES: ${{ runner.temp }}/nuget
-        with:
-          # バージョンは global.json が単一所有する（dotnet-version は指定しない）
-          # NuGet のキャッシュは上で UI ごとに取るため、setup-dotnet の共通キャッシュは使わない
-          cache: false
 
       # リリース時は、コミット前に publish するため作業ツリーへバージョンを適用する
       # （公開する成果物と、リリースでコミットするバージョンを一致させる）
