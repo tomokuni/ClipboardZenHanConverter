@@ -15,7 +15,11 @@
 # .NET SDK のバージョンはリポジトリルートの global.json が単一所有する（ワークフローでは指定しない）。
 # テストの実行基盤（Microsoft.Testing.Platform / MTP）も global.json の test.runner が単一所有する。
 # dotnet の対象（ソリューション ファイル）は release-config.json の solutionFile が単一所有する。
-# NuGet パッケージのキャッシュは setup-dotnet の cache 機能を使う（actions/cache を別途書かない）。
+# .NET SDK はランナー イメージに含まれる最新版をそのまま使う（actions/setup-dotnet は使わない）。
+# イメージの SDK は C:\Program Files\dotnet に入り PATH も通っているため、そのまま dotnet を実行できる。
+# global.json は rollForward: latestFeature のため、イメージの最新 10.0 SDK で要件を満たす。
+# setup-dotnet を使うと「10.0 の最新」を取得しようとしてイメージに無い版を毎回ダウンロードする。
+# キャッシュは NuGet の復元（最も時間を使う工程）だけを対象にする。
 #
 # WinUI 3 / Windows Forms のテストを含むため windows-latest で実行する。
 #
@@ -55,33 +59,19 @@ jobs:
         id: config
         uses: ./.github/actions/read-config
 
-      # .NET SDK は毎回ダウンロードされると 300MB（展開に約 20 秒）かかるため、
-      # インストール先をジョブの一時領域へ移してキャッシュする。
-      # 既定の C:\Program Files\dotnet はランナー画像のシステム領域でキャッシュできない。
-      # setup-dotnet より前に復元する（dotnet-install.ps1 は同じバージョンが既にあれば
-      # ダウンロードも展開も行わないため、2 回目以降のセットアップは実質ゼロ時間になる）。
-      - name: .NET SDK をキャッシュ
+      # .NET SDK はランナー イメージの最新版を使う（setup-dotnet は不要。イメージが C:\Program Files\dotnet を
+      # PATH へ追加しているため、以降のステップでそのまま dotnet を実行できる）。
+      # NuGet のグローバル パッケージ フォルダはキャッシュする（復元が最も時間を使う工程のため）。
+      - name: NuGet をキャッシュ
         uses: actions/cache@v6
         with:
-          # ワークスペースの外へ置き、チェックアウトの clean やハッシュ計算へ影響させない
-          path: ${{ runner.temp }}/dotnet
-          # global.json の内容でキーを作る。SDK が更新されてキャッシュが古くなった場合は
-          # 末尾の版（v1）を上げると作り直される
-          key: dotnet-${{ runner.os }}-v1-${{ hashFiles('global.json') }}
-          # global.json が変わっても直近のキャッシュから復元し、足りない分だけをインストールさせる
+          # 既定のグローバル パッケージ フォルダ（%USERPROFILE%\.nuget\packages）。NUGET_PACKAGES は変更しない
+          path: ~/.nuget/packages
+          # 参照しているパッケージが変わったときだけキャッシュを作り直す
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+          # 一致するキャッシュが無い場合は直近のものから復元し、不足分だけをダウンロードさせる
           restore-keys: |
-            dotnet-${{ runner.os }}-v1-
-
-      - name: .NET SDK をセットアップ
-        uses: actions/setup-dotnet@v5
-        env:
-          # キャッシュ対象と同じディレクトリへインストールする（上の path と揃えること）
-          DOTNET_INSTALL_DIR: ${{ runner.temp }}/dotnet
-        with:
-          # バージョンは global.json が単一所有する（dotnet-version は指定しない）
-          # NuGet のグローバル パッケージ フォルダをキャッシュする
-          cache: true
-          cache-dependency-path: '**/*.csproj'
+            nuget-${{ runner.os }}-
 
       # 以降は --no-restore / --no-build で工程を分け、失敗箇所を切り分けやすくする
       # パスは設定（release-config.json）が持つため、空白を含んでいても壊れないよう引用符で囲む

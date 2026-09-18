@@ -185,7 +185,7 @@ dotnet test --solution <ソリューション>.slnx -c Release --no-build
 | **リポジトリが private** | Actions の分数が有料になります。リリース時の publish は実行時間が長いため、`uis[]` を減らすか、`build.yml` の `on.push` に `paths` を追加してゲートの実行回数を抑えることを検討してください |
 | **NuGet ギャラリー未公開のパッケージを参照する** | クリーンな CI からは復元できません。リポジトリへ同梱し `NuGet.config` のソースに追加するか、公開してください |
 | **テスト ランナーを VSTest のままにする** | `global.json` の `test.runner` を削除し、`build.yml` のテストを `dotnet test <ソリューション>`（位置引数）に戻します。ただし xunit.v3 4 系は VSTest をサポートしないため、`xunit.v3` は 3 系以下にする必要があります |
-| **ビルドをもっと速くしたい** | `build.yml` は SDK（`DOTNET_INSTALL_DIR` + `actions/cache`）と NuGet を別々にキャッシュします。残る大きなコストは NuGet キャッシュの復元（約 1.9GB / 約 41 秒）とビルド（約 45 秒）です。前者は `Avalonia.Skia` が不要なプラットフォームのネイティブ アセット（Linux / WebAssembly で約 480MB）を無条件に要求するため削減できません。後者は `bin` / `obj` をソース ハッシュでキャッシュすれば短縮できますが、古い成果物を使うリスクがあるため採用していません |
+| **ビルドをもっと速くしたい** | `.NET SDK` は**ランナー イメージの最新版**をそのまま使います（`actions/setup-dotnet` を使わない）。イメージの SDK は PATH が通っており、`global.json` は `rollForward: latestFeature` のためイメージの最新 SDK で要件を満たします。`setup-dotnet` を使うと「チャネルの最新」を取得しようとしてイメージに無い版を毎回ダウンロードします。キャッシュは **NuGet の復元だけ**を対象にします（`build.yml` は共通の 1 つ、`publish.yml` は UI ごと）。残るコストは NuGet キャッシュの復元（約 1.9GB / 約 41 秒）とビルド（約 45 秒）です。前者は `Avalonia.Skia` が不要なプラットフォームのネイティブ アセット（Linux / WebAssembly で約 480MB）を無条件に要求するため削減できません。後者は `bin` / `obj` をソース ハッシュでキャッシュすれば短縮できますが、**キャッシュが約 2GB 増えて復元コストと相殺する**ため採用していません |
 | **複数系列の保守（バックポート）が不要** | `releaseBranches` を `["main"]` にし、`build.yml` の `release/**` トリガーを外します |
 | **バージョンを自動で決めたい** | 本仕組みは「人が入力する」前提です。自動化（Conventional Commits からの算出など）を併用する場合は、`verify-release-version.ps1` の検証はそのまま活かせます |
 | **NuGet などにも配布したい** | `release-config.json` に項目を足し、`release.yml` の `release` ジョブへ公開ステップを追加します。配布物は `publish.yml` の `pack` 相当（`dotnet pack`）に置き換えます |

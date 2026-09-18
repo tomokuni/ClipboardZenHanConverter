@@ -94,16 +94,16 @@ dotnet build ClipboardZenHanConverter.slnx
 - **推移依存（`SkiaSharp` など）は親パッケージが指定する範囲の最小版が選ばれます。** 直接参照で強制すると
   （例: Avalonia 12 に対する `SkiaSharp` 4 系・`HarfBuzzSharp` 14 系）描画や Native AOT が壊れる恐れがあるため、更新しません。
 - テストは **xunit.v3 4 系**（Microsoft.Testing.Platform）を使用します。VSTest 専用の `Microsoft.NET.Test.Sdk` / `xunit.runner.visualstudio` / `coverlet.collector` は参照しません。
-- .NET SDK のバージョンとテスト ランナーはリポジトリルートの `global.json` が単一所有します（ワークフローへ `dotnet-version` を書きません。`actions/setup-dotnet` が `global.json` を読みます）。
-  - ビルドを高速化するため、ワークフローは SDK のインストール先を `DOTNET_INSTALL_DIR`（`${{ runner.temp }}/dotnet`）へ
-    移して `actions/cache` で再利用します（`dotnet-install` は同じバージョンが既にあればダウンロードも展開もしません）。
-    **SDK が更新されてキャッシュが古くなった場合は、`build.yml` / `publish.yml` のキャッシュ キー末尾の版（`v1`）を上げてください**
-    （キーが同じままだと新しい SDK が毎回ダウンロードされます）。
-  - NuGet のキャッシュは目的別に分けています。**`build.yml` は共通の 1 つ**（全 13 プロジェクトをビルドするため約 1.9GB が必要）、
-    **`publish.yml` は UI ごと**（4 ジョブが同時に走るため共通キャッシュを 4 重に復元すると競合し、
-    不要な分まで復元することになる。MewUI は約 50MB、Avalonia UI は約 1.2GB）です。
-  - 参考実測（`build.yml`）: SDK 80 秒 → **48 秒**、全体 161 秒 → **116 秒**（キャッシュ ヒット時）。
-    内訳は NuGet キャッシュの復元 約 41 秒 / ビルド 45 秒 / その他 30 秒です。
+- .NET SDK のバージョンとテスト ランナーはリポジトリルートの `global.json` が単一所有します（ワークフローへ `dotnet-version` を書きません）。
+  - **.NET SDK はランナー イメージに含まれる最新版をそのまま使います**（`actions/setup-dotnet` は使いません）。
+    イメージの SDK は `C:\Program Files\dotnet` に入り PATH も通っているため、そのまま `dotnet` を実行できます。
+    `global.json` は `rollForward: latestFeature` のため、イメージの最新 10.0 SDK で要件を満たします。
+    `setup-dotnet` を使うと「10.0 の最新」を取得しようとして**イメージに無い版（例: 10.0.401）を毎回ダウンロード**します（約 10 秒）。
+  - キャッシュは NuGet の復元のみを対象にします（最も時間を使う工程）。**`build.yml` は共通の 1 つ**（全 13 プロジェクトをビルドするため約 1.9GB が必要）、
+    **`publish.yml` は UI ごと**（4 ジョブが同時に走るため共通キャッシュを 4 重に復元すると競合し、不要な分まで復元することになる。MewUI は約 50MB、Avalonia UI は約 1.2GB）です。
+  - 参考実測（`build.yml`）: 内訳は NuGet キャッシュの復元 約 41 秒 / ビルド 45 秒 / テスト・その他 30 秒です。
+    **支配的なのは NuGet キャッシュの復元**で、`Avalonia.Skia` が Linux / WebAssembly のネイティブ アセット（約 480MB）を
+    無条件に要求するため、build.yml ではこれ以上減らせません（`publish.yml` は UI ごとの分割で対応済み）。
 - リリースバージョン（`<Version>`）は `Directory.Build.props` が単一所有します。自動インクリメントは行わず、リリース時にワークフローが設定します（詳細は [`RELEASE.md`](RELEASE.md)）。
 - 復元結果は `project.assets.json`（`obj/` 配下）に記録されます。固定したい場合は `obj/` を削除するか `dotnet restore --force-evaluate` を実行します。
 
