@@ -44,6 +44,8 @@ jobs:
   # ────────────────────────────────────────────────────────────
   verify:
     runs-on: ubuntu-latest
+    # 検証と gh への問い合わせのみ（実測 28 秒）。停止した場合に 6 時間（既定）待たないための上限
+    timeout-minutes: 30
     permissions:
       contents: read
       # Build（ゲート）の実行結果の参照
@@ -202,6 +204,8 @@ jobs:
     # ドライラン（バージョン未入力）では publish しない
     if: needs.verify.outputs.dry_run != 'true'
     # 呼び出される publish.yml が必要とする権限をここで付与する（それ以上は与えない）
+    # 注意: 再利用ワークフローを呼ぶジョブには timeout-minutes を指定できない（指定できるキーが限られる）。
+    # タイムアウトは呼び先の publish.yml の各ジョブが持つ
     permissions:
       contents: read
     uses: ./.github/workflows/publish.yml
@@ -217,6 +221,8 @@ jobs:
     # ドライラン（バージョン未入力）ではコミット・タグ・Release を作成しない
     if: needs.verify.outputs.dry_run != 'true'
     runs-on: ubuntu-latest
+    # バージョンのコミット・push と Release 作成（実測 28 秒）。停止した場合に 6 時間（既定）待たないための上限
+    timeout-minutes: 30
     permissions:
       # ブランチ push、タグ作成、Release 作成
       contents: write

@@ -31,6 +31,8 @@ jobs:
   # ────────────────────────────────────────────────────────────
   config:
     runs-on: ubuntu-latest
+    # 設定の読み取りのみ（実測 10 秒）。停止した場合に 6 時間（既定）待たないための上限
+    timeout-minutes: 10
     outputs:
       uis: ${{ steps.read.outputs.uis }}
       version_file: ${{ steps.read.outputs.version_file }}
@@ -50,6 +52,9 @@ jobs:
   publish:
     needs: config
     runs-on: windows-latest
+    # Native AOT / 単一 exe を含む（実測 3.7 分。コールド キャッシュではさらに伸びる）。
+    # 停止した場合に 6 時間（既定）待たないための上限
+    timeout-minutes: 60
     strategy:
       # 1 つ失敗しても他の UI の結果を確認できるよう継続する
       fail-fast: false
