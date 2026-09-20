@@ -97,8 +97,7 @@ dotnet build ClipboardZenHanConverter.slnx
 - .NET SDK のバージョンとテスト ランナーはリポジトリルートの `global.json` が単一所有します（ワークフローへ `dotnet-version` を書きません）。
   - **.NET SDK はランナー イメージに含まれる最新版をそのまま使います**（`actions/setup-dotnet` は使いません）。
     イメージの SDK は `C:\Program Files\dotnet` に入り PATH も通っているため、そのまま `dotnet` を実行できます。
-    `global.json` は `rollForward: latestFeature` のため、イメージの最新 10.0 SDK で要件を満たします。
-    `setup-dotnet` を使うと「10.0 の最新」を取得しようとして**イメージに無い版（例: 10.0.401）を毎回ダウンロード**します（約 10 秒）。
+    `global.json` は `rollForward: latestFeature` のため、イメージの 10.0 SDK で要件を満たします。
   - キャッシュは NuGet の復元のみを対象にします（最も時間を使う工程）。**`build.yml` は共通の 1 つ**（全 13 プロジェクトをビルドするため約 1.9GB が必要）、
     **`publish.yml` は UI ごと**（4 ジョブが同時に走るため共通キャッシュを 4 重に復元すると競合し、不要な分まで復元することになる。MewUI は約 50MB、Avalonia UI は約 1.2GB）です。
   - 参考実測（`build.yml`）: 内訳は NuGet キャッシュの復元 約 41 秒 / ビルド 45 秒 / テスト・その他 30 秒です。

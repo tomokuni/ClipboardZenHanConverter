@@ -17,8 +17,7 @@
 # dotnet の対象（ソリューション ファイル）は release-config.json の solutionFile が単一所有する。
 # .NET SDK はランナー イメージに含まれる最新版をそのまま使う（actions/setup-dotnet は使わない）。
 # イメージの SDK は C:\Program Files\dotnet に入り PATH も通っているため、そのまま dotnet を実行できる。
-# global.json は rollForward: latestFeature のため、イメージの最新 10.0 SDK で要件を満たす。
-# setup-dotnet を使うと「10.0 の最新」を取得しようとしてイメージに無い版を毎回ダウンロードする。
+# global.json は rollForward: latestFeature のため、イメージの 10.0 SDK で要件を満たす。
 # キャッシュは NuGet の復元（最も時間を使う工程）だけを対象にする。
 #
 # WinUI 3 / Windows Forms のテストを含むため windows-latest で実行する。

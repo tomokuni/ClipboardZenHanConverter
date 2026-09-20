@@ -56,7 +56,8 @@ UI の追加・変更は **`release-config.json` の `uis[]` を編集します*
 - リリースバージョンは `Directory.Build.props` の `<Version>` に記載し、**各 `.csproj` には記載しないでください**。
   リリース時に `release.yml` がこの 1 行を入力値へ書き換えてコミットします。
 - **.NET SDK のバージョンは `global.json` に記載し、ワークフローには記載しないでください**
-  （`actions/setup-dotnet` が `global.json` を読むため、`dotnet-version` の指定は不要です）。
+  （ワークフローは `actions/setup-dotnet` を使わず、ランナー イメージの SDK をそのまま使います。
+  `rollForward: latestFeature` のため、イメージの 10.0 SDK で `global.json` の要件を満たします）。
 - **テスト ランナー（`test.runner`）も `global.json` が単一所有します。** xunit.v3 4 系は Microsoft.Testing.Platform（MTP）で
   実行するため、`test.runner` に `Microsoft.Testing.Platform` を指定します（未指定だと VSTest ターゲットが使われて失敗します）。
   MTP モードではテスト対象を `--solution` / `--project` で指定してください（位置引数はテスト アプリへの引数として扱われます）。
