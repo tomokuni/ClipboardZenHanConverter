@@ -17,7 +17,7 @@
 # GITHUB_TOKEN による push はワークフローを再トリガーしないため、Build が連鎖起動しない。
 #
 # .NET SDK のバージョンはリポジトリルートの global.json が単一所有する（ワークフローでは指定しない）。
-# verify ジョブの dotnet msbuild（PackageId の取得）は、ランナー イメージの SDK をそのまま使う（setup-dotnet は不要）。
+# 本ワークフローは dotnet を実行しない（検証と gh の操作のみ）。SDK を使うのは publish.yml の publish ジョブ。
 name: Release
 
 # 実行一覧にバージョンを表示する（未入力のドライランはその旨を表示する）
