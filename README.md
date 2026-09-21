@@ -1,8 +1,8 @@
 <!-- markdownlint-disable MD041 -- バッジを先頭に配置するため -->
 [![Release](https://img.shields.io/github/v/release/tomokuni/ClipboardZenHanConverter?label=Release)](https://github.com/tomokuni/ClipboardZenHanConverter/releases)
 [![Build](https://github.com/tomokuni/ClipboardZenHanConverter/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/tomokuni/ClipboardZenHanConverter/actions/workflows/build.yml)
-[![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D4?logo=windows)](https://www.microsoft.com/windows)
+[![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 ![Avalonia](https://img.shields.io/badge/UI-Avalonia-8D46D6)
 ![MewUI](https://img.shields.io/badge/UI-MewUI-00BFFF)
 ![WinUI 3](https://img.shields.io/badge/UI-WinUI_3-2563EB)
