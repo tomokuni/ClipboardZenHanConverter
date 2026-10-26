@@ -203,14 +203,14 @@ dotnet run --project src/app_WinForms/app_WinForms.csproj
 
 ## CI（ビルドとテスト）
 
-[`workflows/build.yml`](workflows/build.yml) が、`main` / `release/**` への push、`main` 向け Pull Request、手動実行のたびに次を実行します（`windows-latest`）。
+[`workflows/build.yml`](workflows/build.yml) が、`main` / `dev` / `release/**` への push、`main` 向け Pull Request、手動実行のたびに次を実行します（`windows-latest`）。
 
 1. 復元（`dotnet restore <solutionFile>`）
 2. Release ビルド（`dotnet build -c Release --no-restore`）
 3. 全テスト（`dotnet test --solution <solutionFile> -c Release --no-build`。7 テストプロジェクト）
 
 - 対象のソリューション ファイルは `release-config.json` の `solutionFile` が単一所有します（ワークフローには書きません）。
-- **`dev` への push では実行しません。** `dev` で検証する場合は Actions → Build → **Run workflow**（手動実行）を使用します。
+- **`dev` への push でも実行します**（作業ブランチの壊れを早く見つけるため）。 **`main` へは PR でのみ**反映します（ruleset `Protect main` が直接 push を拒否し、`build` の成功をマージ条件にします）。
 - **配布物は作成しません。** publish（Native AOT を含む重い処理）は、手動実行の [`workflows/release.yml`](workflows/release.yml) が
   [`workflows/publish.yml`](workflows/publish.yml) を通じて**リリース時に 1 度だけ**行います。
 - GitHub Release への**登録は行いません**。
@@ -223,7 +223,7 @@ dotnet run --project src/app_WinForms/app_WinForms.csproj
 | ワークフロー | 実行契機 | 責務 |
 | --- | --- | --- |
 | [`workflows/publish.yml`](workflows/publish.yml) | `workflow_call`（`release.yml` からのみ） | 全 UI の publish と保管。**UI の定義と publish 手順の単一実装** |
-| [`workflows/build.yml`](workflows/build.yml) | `main` / `release/**` への push、`main` 向け PR、手動 | ビルドとテスト（リリースのゲート） |
+| [`workflows/build.yml`](workflows/build.yml) | `main` / `dev` / `release/**` への push、`main` 向け PR、手動 | ビルドとテスト（リリースのゲート。 **PR では必須チェック `build`**） |
 | [`workflows/release.yml`](workflows/release.yml) | 手動のみ | リリース（検証 → 全 UI の publish → バージョンコミット → タグ + Release 作成） |
 
 UI を追加・変更する場合は、**`release-config.json` の `uis` を編集するだけ**です（ワークフローの変更は不要）。
