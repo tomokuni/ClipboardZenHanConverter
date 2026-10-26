@@ -25,11 +25,13 @@
 │   ├── workflows/release.yml      # 手動実行で検証・publish・タグ・Release 作成
 │   └── scripts/                   # version.ps1（バージョン規則） / set-version.ps1 / verify-release-version.ps1 / show-current-versions.ps1
 ├── buildScript/             # ビルド・実行スクリプト（リポジトリルートを基準に動作する）
-│   ├── publish_MewUI.bat / publish_MewUI.bat      # MewUI 版の単一 exe ビルド/実行（Native AOT）
-│   ├── publish_WinUI3.bat / publish_WinUI3.bat       # WinUI 3 版の単一 exe ビルド/実行（自己完結）
-│   ├── publish_AvaloniaUI.bat / publish_AvaloniaUI.bat  # Avalonia UI 版の AOT ビルド/実行（Native AOT + ネイティブ DLL）
-│   ├── publish_WinForms.bat / publish_WinForms.bat   # WinForms 版の単一 exe ビルド/実行（自己完結）
-│   └── *_run_release.bat        # 各版の Release ビルドと実行（publish を行わない軽量な確認用）
+│   ├── publish_ui.bat              # 発行の共通手順（UI ごとのスクリプトから呼ぶ）
+│   ├── publish_MewUI.bat           # MewUI 版（Native AOT）
+│   ├── publish_WinUI3.bat          # WinUI 3 版（自己完結・単一 exe）
+│   ├── publish_AvaloniaUI.bat      # Avalonia UI 版（Native AOT + ネイティブ DLL）
+│   ├── publish_WinForms.bat        # WinForms 版（自己完結・単一 exe）
+│   ├── verify.ps1                  # 検証の入口（合否 35 項目。 .github/検証手順.md が所有者）
+│   ├── verifyDocs.ps1 / VerifyCommon.ps1 / verifyPublish.ps1 / verifyInfoStyle.ps1
 ├── src/
 │   ├── app_MewUI/           # MewUI アプリ本体（MewUI 依存）
 │   │   ├── README.md / SPEC_ExtFunc.md / SPEC_System.md
@@ -171,10 +173,10 @@ dotnet run --project src/app_WinForms/app_WinForms.csproj
 
 | スクリプト（`buildScript/` 配下） | 対象 | 方式 | 出力先 | 出力物 |
 | --- | --- | --- | --- | --- |
-| `publish_MewUI.bat` / `publish_MewUI.bat` | MewUI 版 | Native AOT | `publish\mewui-<RID>-singleaot\` | exe 1 個（約 12.6 MB） |
-| `publish_WinUI3.bat` / `publish_WinUI3.bat` | WinUI 3 版 | 自己完結（.NET + Windows App SDK） | `publish\winui3-<RID>-single\` | exe 1 個（約 179 MB） |
-| `publish_AvaloniaUI.bat` / `publish_AvaloniaUI.bat` | Avalonia UI 版 | Native AOT | `publish\avaloniaui-<RID>-aot\` | exe 1 個 + ネイティブ DLL 3 個（約 43.8 MB） |
-| `publish_WinForms.bat` / `publish_WinForms.bat` | WinForms 版 | 自己完結（.NET + WinForms） | `publish\winforms-<RID>-single\` | exe 1 個（約 119 MB） |
+| `publish_MewUI.bat` | MewUI 版 | Native AOT（`aot`） | `publish\mewui-<RID>-aot\` | exe 1 個 |
+| `publish_WinUI3.bat` | WinUI 3 版 | 自己完結＋単一ファイル（`single`） | `publish\winui3-<RID>-single\` | exe 1 個 |
+| `publish_AvaloniaUI.bat` | Avalonia UI 版 | Native AOT（`aot`） | `publish\avaloniaui-<RID>-aot\` | exe 1 個 + ネイティブ DLL |
+| `publish_WinForms.bat` | WinForms 版 | 自己完結＋単一ファイル（`single`） | `publish\winforms-<RID>-single\` | exe 1 個 |
 
 - 第 1 引数に RID を渡すと対象を変更できます（既定: `win-x64`）。
 - MewUI 版は Native AOT のため完全な単一バイナリです。
@@ -199,15 +201,16 @@ dotnet run --project src/app_WinForms/app_WinForms.csproj
 - 生成物はフレームワーク依存のため、実行には .NET 10 ランタイム（WinUI 3 版は Windows App SDK を含む）が必要です。
   - ただし **WinUI 3 版は .NET と Windows App SDK の両方が自己完結**（`SelfContained` / `WindowsAppSDKSelfContained`）のため、
     Windows App Runtime のインストールは不要です（単一 exe 化は行わないため、実行には出力フォルダーごと必要です）。
-- 配布用の exe が必要な場合は上記の `*_publish_*.bat` を使用してください。
+- 配布用の exe が必要な場合は `buildScript/publish_<UI>.bat` を使用してください（発行の手順は `buildScript/publish_ui.bat` が単一所有します）。
 
 ## CI（ビルドとテスト）
 
 [`workflows/build.yml`](workflows/build.yml) が、`main` / `dev` / `release/**` への push、`main` 向け Pull Request、手動実行のたびに次を実行します（`windows-latest`）。
 
-1. 復元（`dotnet restore <solutionFile>`）
-2. Release ビルド（`dotnet build -c Release --no-restore`）
-3. 全テスト（`dotnet test --solution <solutionFile> -c Release --no-build`。7 テストプロジェクト）
+1. 復元（`dotnet restore <solutionFile> -p:RestoreLockedMode=true`）
+2. 検証（`pwsh -NoProfile -File buildScript/verify.ps1 -Solution <solutionFile> -Configuration Release -NoRestore`）
+   - ビルド（0 警告 / 0 エラー）、テスト全件、NuGet の健全性、文書とコードの走査（合計 35 項目）
+   - 配布物の作成は行いません（リリースの `publish.yml` が担当します）
 
 - 対象のソリューション ファイルは `release-config.json` の `solutionFile` が単一所有します（ワークフローには書きません）。
 - **`dev` への push でも実行します**（作業ブランチの壊れを早く見つけるため）。 **`main` へは PR でのみ**反映します（ruleset `Protect main` が直接 push を拒否し、`build` の成功をマージ条件にします）。
