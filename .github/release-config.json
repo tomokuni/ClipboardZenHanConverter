@@ -4,8 +4,11 @@
   "solutionFile": "ZenHanConverter.slnx",
   "gateWorkflow": "build.yml",
   "releaseBranches": [
+    "main"
+  ],
+  "dryRunBranches": [
     "main",
-    "release/**"
+    "dev"
   ],
   "settingsFiles": ["AppSetting.json", "Settings.json"],
   "requiredBuildProps": [],
