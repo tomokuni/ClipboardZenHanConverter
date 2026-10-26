@@ -1,12 +1,73 @@
 {
-    // IntelliSense を使用して利用可能な属性を学べます。
-    // 既存の属性の説明をホバーして表示します。
-    // 詳細情報は次を確認してください: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
-
-        
-
+        {
+            // **coreclr で起動する**: デバッガーの設定（logging / justMyCode）は coreclr の起動構成でだけ
+            // 確実に効く。 `dotnet` 種別はプロジェクトの起動を包むため、指定がデバッガーまで届かないことがある
+            // （「モジュールが読み込まれました…」「シンボルの読み込みをスキップしました…」が消えない。 実測 2026-10-25）
+            "name": "Avalonia: ZenHanConverter",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "ビルド（App.AvaloniaUI）",
+            "program": "${workspaceFolder}/src/App.AvaloniaUI/bin/Debug/net10.0/ZenHanConverter.App.AvaloniaUI.exe",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            // 「モジュールが読み込まれました。シンボルが読み込まれました。」は動作・例外・ログに
+            // 影響しない情報のため出さない（モジュールの読み込み通知）
+            "logging": {
+                "moduleLoad": false
+            },
+            // 「シンボルの読み込みをスキップしました。… [マイ コードのみ] 設定が有効になっています」は
+            // 最適化されたモジュールへ [マイ コードのみ] が効いたときに毎回出る。
+            // [マイ コードのみ] を無効にすると対象外になり、この行は出ない
+            "justMyCode": false
+        },
+        {
+            "name": "MewUI: ZenHanConverter",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "ビルド（App.MewUI）",
+            "program": "${workspaceFolder}/src/App.MewUI/bin/Debug/net10.0/ZenHanConverter.App.MewUI.exe",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "logging": {
+                "moduleLoad": false
+            },
+            "justMyCode": false
+        },
+        {
+            // アンパッケージの WinUI 3 アプリは .NET ホスト（dotnet exec）から起動できない
+            // （マニフェストによるアクティベーションと resources.pri の解決をアプリ ホストの exe が担うため、
+            //   Microsoft.UI.Xaml.dll の stowed exception 0xC000027B で即座に終了する。 実測 2026-10-17）。
+            // そのため exe を直接起動する。
+            "name": "WinUI3: ZenHanConverter",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "ビルド（App.WinUI3）",
+            "program": "${workspaceFolder}/src/App.WinUI3/bin/Debug/net10.0-windows10.0.26100.0/win-x64/ZenHanConverter.App.WinUI3.exe",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "logging": {
+                "moduleLoad": false
+            },
+            "justMyCode": false
+        },
+        {
+            "name": "WinForms: ZenHanConverter",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "ビルド（App.WinForms）",
+            "program": "${workspaceFolder}/src/App.WinForms/bin/Debug/net10.0-windows10.0.17763.0/ZenHanConverter.App.WinForms.exe",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "logging": {
+                "moduleLoad": false
+            },
+            "justMyCode": false
+        }
     ]
 }

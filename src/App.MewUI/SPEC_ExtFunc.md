@@ -55,11 +55,11 @@
 #### `SettingsView : UserControl`
 
 設定画面。変換カテゴリ（セグメント）、文字列の置換、プリセット管理、エクスポート/インポート。
-項目数が多い「記号の変換」はマルチカラム（`MultiColumnPanel`）で表示します。
+項目数が多い「記号の変換」はマルチカラム（`MultiColumnPanel`。 型は `EsUtil.ZenHanConverter.App.MewUI.Views.MultiColumnPanel`）で表示します。
 変換項目行のラベルは「名称　記号」形式を名称部と記号部に分けて表示し、記号部とセグメントコントロールが縦に揃うように配置します。
 セグメントの表示は設定値の変更を購読するため、プリセット読み込み・インポートで設定が変わると表示も追従します。
 
-#### `MultiColumnPanel : Panel`
+#### `MultiColumnPanel : Panel`（`EsUtil.ZenHanConverter.App.MewUI.Views`）
 
 子要素を縦方向の複数列へ配置するパネル。列ごとに子要素を積み、最大列高さを最小化します（計算は `EsUtil.Feature.ColumnPacking.Core` の `ColumnPacker` へ委譲）。
 列幅はエンジンが列ごとに算出します（列幅 = その列の最大アイテム幅）。子要素の幅が揃っていれば各列の幅も揃います。
