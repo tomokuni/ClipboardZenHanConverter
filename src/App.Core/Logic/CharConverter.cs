@@ -279,8 +279,7 @@ public partial class CharConverter : ITextConverter, IDisposable
     /// <remarks>正規表現エラーは無視して処理を続行します。<br/>
     /// 空の検索文字列を持つルールはスキップされます。<br/>
     /// 置換は定義順に逐次適用されます。<br/>
-    /// <b>正規表現はパターンごとに 1 回だけ組み立てて使い回す</b>（<see cref="Regex.Replace(string, string, string, RegexOptions, TimeSpan)"/> は
-    /// 呼び出しのたびにパターンを解析する。 クリップボードの変換は 1 文字ごとに走るため、規則の数だけ解析が積み上がる）。
+    /// 正規表現の規則は、パターンごとに組み立てた <see cref="Regex"/> を使い回します。
     /// </remarks>
     private string ApplyUserReplacements(string text)
     {
@@ -304,10 +303,7 @@ public partial class CharConverter : ITextConverter, IDisposable
     }
 
     /// <summary>正規表現のキャッシュ（パターン → 組み立て済みの <see cref="Regex"/>。 不正なパターンは null）。</summary>
-    /// <remarks>
-    /// パターンはユーザーの入力であり、同じ設定なら同じ結果になる。 上限を超えたら捨てる
-    /// （置換ルールは数十件の規模で、設定を変えても項目は増えない）。
-    /// </remarks>
+    /// <remarks>同じ設定なら同じ結果になる。 上限を超えたら捨てる。</remarks>
     private readonly Dictionary<string, Regex?> _regexCache = new(StringComparer.Ordinal);
 
     /// <summary>正規表現のキャッシュの上限。</summary>
