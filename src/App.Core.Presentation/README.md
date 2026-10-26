@@ -63,15 +63,7 @@ dotnet test --project test/App.Core.Presentation/App.Core.Presentation.Tests.csp
 
 詳細な設計は `SPEC_System.md`、公開 API は `SPEC_ExtFunc.md` を参照してください。
 
-## 7. テスト
-
-テストは `test/App.Core.Presentation` にあります。 リポジトリ ルートで次を実行します（合否基準は [.github/CONTRIBUTING.md](../../.github/CONTRIBUTING.md)）。
-
-`powershell
-dotnet test --solution ZenHanConverter.slnx -c Release
-`
-
-## 8. ドキュメント
+## 7. ドキュメント
 
 | ドキュメント | 内容 |
 | --- | --- |
@@ -81,6 +73,6 @@ dotnet test --solution ZenHanConverter.slnx -c Release
 | [.github/CONTRIBUTING.md](../../.github/CONTRIBUTING.md) | 開発者向け（ビルド・テスト・CI） |
 | [.github/RELEASE.md](../../.github/RELEASE.md) | リリース手順 |
 
-## 9. ライセンス
+## 8. ライセンス
 
 [MIT License](../../LICENSE)

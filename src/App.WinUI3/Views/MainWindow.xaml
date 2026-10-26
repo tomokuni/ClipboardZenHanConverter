@@ -24,7 +24,7 @@
         <!-- Title Bar -->
         <TitleBar Grid.Row="0"
                 x:Name="titleBar"
-                Title="clipboard text converter"
+                Title="ZenHanConverter"
                 IsBackButtonVisible="False"
                 IsPaneToggleButtonVisible="True"
                 PaneToggleRequested="TitleBar_PaneToggleRequested">

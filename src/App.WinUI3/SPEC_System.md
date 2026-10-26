@@ -1,4 +1,4 @@
-# ZenHanConverter.App.WinUI システム仕様書
+# ZenHanConverter.App.WinUI3 システム仕様書
 
 本ドキュメントは `src/App.WinUI3`（WinUI 3 アプリ）のシステム仕様（概要・技術スタック・アーキテクチャ・構成・動作仕様）を記載します。
 メソッド内部のコードは記載しません。
@@ -357,7 +357,7 @@ DI コンテナへのサービス登録拡張メソッド。
 - `NavigationView` (`NavigationView`)
 - `TitleBar` (`TitleBar`)
 
-**タイトルバーの内容**: アプリ名（`Title="clipboard text converter"`）、ペイン開閉ボタン、
+**タイトルバーの内容**: アプリ名（`Title="ZenHanConverter"`）、ペイン開閉ボタン、
 クリップボード変換スイッチ（`AppSetting.IsClipboardConvertEnabled` に双方向バインド）と、
 プリセット選択の `ComboBox`。プリセットは `SettingsViewModel.SelectedPresetName` を単一所有元とし、
 設定画面のドロップダウンと同じ値を双方向に同期します（`BindPresetSelector` / `SyncPresetSelection`）。

@@ -1,4 +1,4 @@
-# ZenHanConverter.App.WinUI 外部機能仕様書
+# ZenHanConverter.App.WinUI3 外部機能仕様書
 
 本ドキュメントは `src/App.WinUI3`（WinUI 3 アプリ）の公開 API 仕様（外部機能仕様）を記載します。
 メソッド内部のコードは記載しません。外部利用者に関係する情報のみを扱います。
