@@ -167,7 +167,7 @@ flowchart TD
 5. **同じコミットのまま**、**モード `release`** で実行する
    - **`release` 環境の承認待ち**で止まります（`Actions` → 実行 → **Review deployments** → `release` → **Approve**）
    - 承認後に**タグと GitHub Release** が作られ、配布物と SBOM が添付されます
-6. <https://github.com/tomokuni/ClipboardZenHanConverter/releases> に配布物が添付されていることを確認する
+6. <https://github.com/tomokuni/ZenHanConverter/releases> に配布物が添付されていることを確認する
 
 **注意事項**:
 

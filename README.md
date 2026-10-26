@@ -1,6 +1,6 @@
 <!-- markdownlint-disable MD041 -- バッジを先頭に配置するため -->
-[![Release](https://img.shields.io/github/v/release/tomokuni/ClipboardZenHanConverter?label=Release)](https://github.com/tomokuni/ClipboardZenHanConverter/releases)
-[![Build](https://github.com/tomokuni/ClipboardZenHanConverter/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/tomokuni/ClipboardZenHanConverter/actions/workflows/build.yml)
+[![Release](https://img.shields.io/github/v/release/tomokuni/ZenHanConverter?label=Release)](https://github.com/tomokuni/ZenHanConverter/releases)
+[![Build](https://github.com/tomokuni/ZenHanConverter/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/tomokuni/ZenHanConverter/actions/workflows/build.yml)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D4?logo=windows)](https://www.microsoft.com/windows)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 ![Avalonia](https://img.shields.io/badge/UI-Avalonia-8D46D6)
@@ -25,7 +25,7 @@
 
 ## 入手方法
 
-[GitHub Releases](https://github.com/tomokuni/ClipboardZenHanConverter/releases) から最新版をダウンロードします。
+[GitHub Releases](https://github.com/tomokuni/ZenHanConverter/releases) から最新版をダウンロードします。
 いずれも自己完結で、.NET ランタイムのインストールは不要です。
 
 | UI | ファイル | 内容 |
@@ -67,6 +67,8 @@
 - [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md) — リポジトリ構成、プロジェクト、ビルド、テスト、実行、配布用ビルド、CI
 - [`.github/RELEASE.md`](.github/RELEASE.md) — バージョンの単一所有、リリースワークフロー、手動実行、添付ファイル
 
-## 元リポジトリ
+## リポジトリ名
 
-WinUI 3 版の実装は `../ClipboardZenHanConverter` にありました。本リポジトリに統合済みです（`src/app_WinUI3`）。
+本リポジトリの名前は `ZenHanConverter` です（以前は `ClipboardZenHanConverter` でした。 旧 URL は GitHub が新しい URL へ転送します）。
+
+**製品名は `ClipboardZenHanConverter` のまま**です。 アセンブリ名・実行ファイル名・配布物のファイル名・設定の保存先（`%LOCALAPPDATA%\ClipboardZenHanConverter`）は、利用者の設定と配布物の互換性を保つため変更していません。 WinUI 3 版は隣の `../ClipboardZenHanConverter` にあったものを本リポジトリへ統合済みです（`src/app_WinUI3`）。
