@@ -37,7 +37,7 @@ dotnet run --project src/app_WinForms/app_WinForms.csproj
 
 ### 配布用ビルド（単一 exe）
 
-`buildScript/` の `WinForms_publish_single.bat`（ビルド）と `WinForms_run_publish.bat`（ビルドして起動）で、自己完結の単一 exe を
+`buildScript/` の `publish_WinForms.bat`（ビルド）と `publish_WinForms.bat`（ビルドして起動）で、自己完結の単一 exe を
 `publish\winforms-<RID>-single\ZenHanConverter.App.WinForms.exe` に出力します（既定 RID は `win-x64`、約 119 MB）。
 スクリプトはリポジトリルートを基準に動作します。
 
@@ -291,6 +291,22 @@ sequenceDiagram
 
 `test/parity` は WinForms 版の ViewModel をソースリンクで取り込み、MewUI 版・WinUI 版と同じ入力に対する
 変換結果と設定画面の項目構成が一致することを検証します。
+
+## 依存関係
+
+本プロジェクトが直接参照するプロジェクトとパッケージです（版は `Directory.Packages.props` が単一所有します）。
+
+| 種別 | 参照先 | 用途 |
+| --- | --- | --- |
+| プロジェクト | `ZenHanConverter.Core` | 変換ロジック・設定モデル・Win32 連携 |
+| プロジェクト | `ZenHanConverter.Presentation` | UI 非依存の ViewModel |
+| パッケージ | `EsUtil.Feature.ZenHan.Core` | 変換ペア・記号表（変換の定義） |
+| パッケージ | `EsUtil.Platform.Core` | 画面座標・ウィンドウ配置の共通実装 |
+| パッケージ | `CommunityToolkit.Mvvm` | 変更通知とコマンド |
+| パッケージ | `Microsoft.Extensions.Hosting` | DI コンテナ |
+| パッケージ | `EsUtil.Ui.<UI>.*` | マーキー・ルーペ・列パッキングのコントロール（UI ごと） |
+
+- 依存の版は `Directory.Packages.props` が単一所有し、復元は `packages.lock.json` で固定します（`.github/CONTRIBUTING.md`）。
 
 ## 例外処理ポリシー
 

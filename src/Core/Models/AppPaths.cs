@@ -12,7 +12,7 @@ public static class AppPaths
     public const string ProductName = "ZenHanConverter";
 
     /// <summary>旧製品名（移行元のフォルダー名）。</summary>
-    private const string LegacyProductName = "ClipboardZenHanConverter";
+    private const string OldProductName = "ClipboardZenHanConverter";
 
     /// <summary>設定とプリセットを置くルート フォルダーを取得します。</summary>
     /// <value><c>%LOCALAPPDATA%\ZenHanConverter</c></value>
@@ -21,9 +21,9 @@ public static class AppPaths
         ProductName);
 
     /// <summary>旧名のルート フォルダーを取得します（移行元）。</summary>
-    public static string LegacyRootFolder { get; } = Path.Combine(
+    public static string OldRootFolder { get; } = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        LegacyProductName);
+        OldProductName);
 
     /// <summary>ルート フォルダー配下のファイルのパスを組み立てます。</summary>
     /// <param name="fileName">ファイル名（サブ フォルダーを含めない）。</param>
@@ -39,15 +39,15 @@ public static class AppPaths
     {
         try
         {
-            if (Directory.Exists(RootFolder) || !Directory.Exists(LegacyRootFolder))
+            if (Directory.Exists(RootFolder) || !Directory.Exists(OldRootFolder))
             {
                 return 0;
             }
 
             var migrated = 0;
-            foreach (var source in Directory.GetFiles(LegacyRootFolder, "*", SearchOption.AllDirectories))
+            foreach (var source in Directory.GetFiles(OldRootFolder, "*", SearchOption.AllDirectories))
             {
-                var relative = Path.GetRelativePath(LegacyRootFolder, source);
+                var relative = Path.GetRelativePath(OldRootFolder, source);
                 var destination = Path.Combine(RootFolder, relative);
                 var directory = Path.GetDirectoryName(destination);
                 if (!string.IsNullOrEmpty(directory))

@@ -115,16 +115,16 @@ dotnet run --project src/app_AvaloniaUI/app_AvaloniaUI.csproj
 
 ## 7. 配布用ビルド（Native AOT）
 
-`buildScript/` の `AvaloniaUI_publish_aot.bat`（ビルド）と `AvaloniaUI_run_publish.bat`（ビルドして起動）で、Native AOT の配布用フォルダーを作成できます。
+`buildScript/` の `publish_AvaloniaUI.bat`（ビルド）と `publish_AvaloniaUI.bat`（ビルドして起動）で、Native AOT の配布用フォルダーを作成できます。
 スクリプトはリポジトリルートを基準に動作するため、どこから実行しても同じ結果になります。
 
 ```powershell
-.\buildScript\AvaloniaUI_publish_aot.bat             # publish\avaloniaui-win-x64-aot\
-.\buildScript\AvaloniaUI_run_publish.bat             # 上記をビルドして起動
-.\buildScript\AvaloniaUI_publish_aot.bat win-arm64
+.\buildScript\publish_AvaloniaUI.bat             # publish\avaloniaui-win-x64-aot\
+.\buildScript\publish_AvaloniaUI.bat             # 上記をビルドして起動
+.\buildScript\publish_AvaloniaUI.bat win-arm64
 ```
 
-発行を行わず、Release 構成のビルドと実行だけを行う場合は `buildScript\AvaloniaUI_run_release.bat` を使用します（`src\app_AvaloniaUI\bin\Release\net10.0\` の exe を起動します。Native AOT は適用されません）。
+発行を行わず、Release 構成のビルドと実行だけを行う場合は `buildScript\publish_AvaloniaUI.bat` を使用します（`src\app_AvaloniaUI\bin\Release\net10.0\` の exe を起動します。Native AOT は適用されません）。
 
 出力は **exe 1 個 + SkiaSharp のネイティブ DLL 3 個**（約 43.8 MB）です。
 
@@ -151,3 +151,25 @@ exe 単体で起動すると `DllNotFoundException: libSkiaSharp` で失敗し�
 
 Avalonia の Windows 既定は `AngleEgl`（GPU）→ `Software`（CPU）の順で試行します。
 `av_libglesv2.dll`（ANGLE）を削除すると約 5.4 MB 減りますが、描画は CPU のソフトウェアレンダリングへ切り替わります（起動は可能です）。
+
+## 8. テスト
+
+テストは `test/app_AvaloniaUI` にあります。 リポジトリ ルートで次を実行します（合否基準は [.github/CONTRIBUTING.md](../../.github/CONTRIBUTING.md)）。
+
+`powershell
+dotnet test --solution ZenHanConverter.slnx -c Release
+`
+
+## 9. ドキュメント
+
+| ドキュメント | 内容 |
+| --- | --- |
+| [README.md](README.md) | 本ドキュメント（機能・画面・使い方） |
+| [SPEC_ExtFunc.md](SPEC_ExtFunc.md) | 外部機能仕様書（公開 API） |
+| [SPEC_System.md](SPEC_System.md) | システム仕様書（構成・動作仕様） |
+| [.github/CONTRIBUTING.md](../../.github/CONTRIBUTING.md) | 開発者向け（ビルド・テスト・CI） |
+| [.github/RELEASE.md](../../.github/RELEASE.md) | リリース手順 |
+
+## 10. ライセンス
+
+[MIT License](../../LICENSE)

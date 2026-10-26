@@ -112,7 +112,7 @@ MTP モードではテスト対象を `--solution` / `--project` で指定しま
 | キー | 内容 |
 | --- | --- |
 | `name` | アーティファクト名（ジョブの表示にも使う） |
-| `script` | publish スクリプト（リポジトリルートからの相対パス。例: `buildScript/MewUI_publish_singleaot.bat`） |
+| `script` | publish スクリプト（リポジトリルートからの相対パス。例: `buildScript/publish_MewUI.bat`） |
 | `output` | publish の出力パス（複数ファイルの場合はフォルダ） |
 | `asset` | Release に添付するファイル名（zip する場合は作成後の名前。例: `ZenHanConverter.App.MewUI.zip`） |
 | `zip` | 配布前に zip 化する場合は `true`。`output` が単一ファイル（exe）でもフォルダ（exe + ネイティブ DLL）でも同じ指定で扱える |
@@ -148,9 +148,9 @@ UI ごとに `buildScript/<名前>_publish_*.bat` を作成します。仕様は
 - **スクリプトの場所（`buildScript/`）からリポジトリルートへ移動してから実行する**（`pushd "%~dp0.."`）。これにより、呼び出し元のカレントディレクトリに依存しません。
 - 成功時は終了コード 0、失敗時は非 0 で終了する
 - 出力先は `release-config.json` の `output` と一致させる
-- 他のスクリプトを呼ぶ場合は、カレントディレクトリではなく `%~dp0` を基準にする（例: `call "%~dp0MewUI_publish_singleaot.bat"`）
+- 他のスクリプトを呼ぶ場合は、カレントディレクトリではなく `%~dp0` を基準にする（例: `call "%~dp0publish_MewUI.bat"`）
 
-[buildScript/AvaloniaUI_publish_aot.bat](../buildScript/AvaloniaUI_publish_aot.bat) と [buildScript/MewUI_publish_singleaot.bat](../buildScript/MewUI_publish_singleaot.bat) が参考になります。
+[buildScript/publish_AvaloniaUI.bat](../buildScript/publish_AvaloniaUI.bat) と [buildScript/publish_MewUI.bat](../buildScript/publish_MewUI.bat) が参考になります。
 
 ### 5. `show-current-versions.ps1` を調整する
 

@@ -52,7 +52,7 @@ Windows App Runtime のインストールは不要で、同梱した DLL を reg
 
 ### 単一 exe
 
-`buildScript/` の `WinUI3_publish_single.bat`（ビルド）と `WinUI3_run_publish.bat`（ビルドして起動）で、自己完結の単一 exe を
+`buildScript/` の `publish_WinUI3.bat`（ビルド）と `publish_WinUI3.bat`（ビルドして起動）で、自己完結の単一 exe を
 `publish\winui3-<RID>-single\ZenHanConverter.App.WinUI3.exe` に出力します（既定 RID は `win-x64`）。
 スクリプトはリポジトリルートを基準に動作します。
 
@@ -91,7 +91,7 @@ Windows App Runtime のインストールは不要で、同梱した DLL を reg
 ### Native AOT の可否
 
 WinUI 3 は Native AOT に対応しません。`PublishAot=true` での発行は成功しますが（`CommunityToolkit.WinUI.UI.Controls.DataGrid` の `IL2104` トリム警告のみ）、生成された exe は起動時に `Microsoft.UI.Xaml.dll` でクラッシュします（例外コード `0xc000027b`）。
-そのため `WinUI3_publish_single.bat` では AOT を使用しません（MewUI 版は AOT を使用しています）。
+そのため `publish_WinUI3.bat` では AOT を使用しません（MewUI 版は AOT を使用しています）。
 
 ## src/app_WinUI3 プロジェクト
 
@@ -605,3 +605,49 @@ WinUI の `AppWindow.Position` / `Size` は物理ピクセルを扱うため、�
 - **型安全なモードアクセサ**: `ConvertConfig.Mode`（`ModePropDef`）でプロパティ名文字列・リフレクションを排除
 - **GeneratedRegex**: 連続スペース検出の正規表現をコンパイル時生成
 - **SettingsPage の事前生成**: NavigationService.Initialize で DispatcherQueue.Low 優先度で非同期にページインスタンスを事前生成
+
+## 依存関係
+
+本プロジェクトが直接参照するプロジェクトとパッケージです（版は `Directory.Packages.props` が単一所有します）。
+
+| 種別 | 参照先 | 用途 |
+| --- | --- | --- |
+| プロジェクト | `ZenHanConverter.Core` | 変換ロジック・設定モデル・Win32 連携 |
+| プロジェクト | `ZenHanConverter.Presentation` | UI 非依存の ViewModel |
+| パッケージ | `EsUtil.Feature.ZenHan.Core` | 変換ペア・記号表（変換の定義） |
+| パッケージ | `EsUtil.Platform.Core` | 画面座標・ウィンドウ配置の共通実装 |
+| パッケージ | `CommunityToolkit.Mvvm` | 変更通知とコマンド |
+| パッケージ | `Microsoft.Extensions.Hosting` | DI コンテナ |
+| パッケージ | `EsUtil.Ui.<UI>.*` | マーキー・ルーペ・列パッキングのコントロール（UI ごと） |
+
+- 依存の版は `Directory.Packages.props` が単一所有し、復元は `packages.lock.json` で固定します（`.github/CONTRIBUTING.md`）。
+
+## アーキテクチャ
+
+WinUI 3 版は、UI 非依存の 2 層（`ZenHanConverter.Core` / `ZenHanConverter.Presentation`）の上に、WinUI 3 のページとコードビハインドを重ねます。
+DI（`Microsoft.Extensions.Hosting`）が ViewModel・サービス・ページを解決し、ページは ViewModel だけを参照します。
+
+```mermaid
+flowchart TD
+    V["Views（MainWindow / HomePage / SettingsPage）"] --> VM["ViewModels（Presentation）"]
+    VM --> C["Core（変換ロジック・設定モデル）"]
+    S["Services（Clipboard / Navigation / UiDispatcher）"] --> VM
+    E["EsUtil.Ui.WinUI3.*（パッケージ）"] --> V
+```
+
+## コンポーネント
+
+| コンポーネント | 役割 |
+| --- | --- |
+| `MainWindow` | タイトルバー・ナビゲーション・ページのホスト |
+| `HomePage` / `HomeViewModel` | 変換前後のテキスト編集とクリップボード連携 |
+| `SettingsPage` / `SettingsViewModel` | 変換モード・置換ルール・プリセットの設定 |
+| `ClipboardService` | クリップボードの監視と書き戻し |
+| `NavigationService` | ページ遷移（ページ型の解決は `s_pageMap` が単一所有） |
+| `DispatcherQueueUiDispatcher` | UI スレッドへの委譲 |
+
+## 例外処理ポリシー
+
+- 集約ハンドラー（`App.UnhandledException`・`AppDomain.UnhandledException`・`TaskScheduler.UnobservedTaskException`）で未処理例外を受け止め、ログへ記録してダイアログで通知します。
+- 想定内の失敗（クリップボードが使用中・権限が無い）は捕捉し、理由をコメントで残して処理を継続します。
+- 捕捉した例外はログへ記録します（`.github/CONTRIBUTING.md` の「例外の扱い」）。

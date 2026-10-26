@@ -47,7 +47,7 @@ dotnet run --project src/app_AvaloniaUI/app_AvaloniaUI.csproj
 
 ### 配布用ビルド（Native AOT）
 
-`buildScript/` の `AvaloniaUI_publish_aot.bat`（ビルド）と `AvaloniaUI_run_publish.bat`（ビルドして起動）で、Native AOT の配布用フォルダーを
+`buildScript/` の `publish_AvaloniaUI.bat`（ビルド）と `publish_AvaloniaUI.bat`（ビルドして起動）で、Native AOT の配布用フォルダーを
 `publish\avaloniaui-<RID>-aot\` に出力します（既定 RID は `win-x64`、exe 1 個 + DLL 3 個 約 43.8 MB）。
 スクリプトはリポジトリルートを基準に動作します。
 
@@ -328,6 +328,22 @@ test/app_AvaloniaUI/
 
 - ファイルを書き込むテストは `AutoSaveFileName` と `ConvertConfig.PresetDirectory` を一時ディレクトリへ差し替え、実ユーザーの `%LOCALAPPDATA%` 配下を汚しません。
 - `ConvertConfig.PresetDirectory` はプロセス全体で共有される静的状態のため、このアセンブリでは並列実行を無効にしています。
+
+## 依存関係
+
+本プロジェクトが直接参照するプロジェクトとパッケージです（版は `Directory.Packages.props` が単一所有します）。
+
+| 種別 | 参照先 | 用途 |
+| --- | --- | --- |
+| プロジェクト | `ZenHanConverter.Core` | 変換ロジック・設定モデル・Win32 連携 |
+| プロジェクト | `ZenHanConverter.Presentation` | UI 非依存の ViewModel |
+| パッケージ | `EsUtil.Feature.ZenHan.Core` | 変換ペア・記号表（変換の定義） |
+| パッケージ | `EsUtil.Platform.Core` | 画面座標・ウィンドウ配置の共通実装 |
+| パッケージ | `CommunityToolkit.Mvvm` | 変更通知とコマンド |
+| パッケージ | `Microsoft.Extensions.Hosting` | DI コンテナ |
+| パッケージ | `EsUtil.Ui.<UI>.*` | マーキー・ルーペ・列パッキングのコントロール（UI ごと） |
+
+- 依存の版は `Directory.Packages.props` が単一所有し、復元は `packages.lock.json` で固定します（`.github/CONTRIBUTING.md`）。
 
 ## 例外処理ポリシー
 

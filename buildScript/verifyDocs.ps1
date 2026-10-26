@@ -24,6 +24,8 @@ $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 Set-Location $repoRoot
 $enc = [Text.UTF8Encoding]::new($false)
 . (Join-Path $PSScriptRoot 'VerifyCommon.ps1')
+# 製品名はリポジトリごとに違うため、release-config.json から取る
+$productName = (Get-RepoConfig $repoRoot).product
 
 # 以降のドキュメント検査で使う文書一覧（リポジトリ直下の文書も対象にする）
 $docs = @(
@@ -808,7 +810,8 @@ foreach ($f in @($docFiles | Where-Object { $_.FullName -notmatch '\\(obj|bin|ar
     $h1 = $null
     foreach ($l in (Get-Lines $f.FullName)) { if ($l.StartsWith('# ')) { $h1 = $l.Substring(2).Trim(); break } }
     $expected = $null
-    if ($rel -eq 'README.md') { $expected = 'SaveEvidence' }
+    # ルートの H1 は製品名（リポジトリごとに違うため release-config.json から取る）
+    if ($rel -eq 'README.md') { $expected = $productName }
     elseif ($rel -match '^src/(?<p>[^/]+)/docs/SPEC_(?<k>[A-Za-z]+)\.md$') {
         $kind = @{ 'API' = 'API リファレンス'; 'System' = 'システム仕様書'; 'ExtFunc' = '外部機能仕様書' }[$Matches['k']]
         if ($kind) { $expected = "$($Matches['p']) $kind" }
@@ -816,7 +819,12 @@ foreach ($f in @($docFiles | Where-Object { $_.FullName -notmatch '\\(obj|bin|ar
         continue
     }
     elseif ($rel -match '^src/(?<p>[^/]+)/sample/README\.md$') { $expected = "$($Matches['p']) サンプルアプリケーション" }
-    elseif ($rel -match '^src/(?<p>[^/]+)/README\.md$') { $expected = $Matches['p'] }
+    # UI の README の H1 は「プロジェクト フォルダ名」か「製品名（UI 名）」のどちらでもよい
+    # （プロジェクト名をそのまま見出しにするリポジトリと、製品名＋UI 名にするリポジトリがある）。
+    elseif ($rel -match '^src/(?<p>[^/]+)/README\.md$') {
+        if ($h1 -and ($h1 -eq $Matches['p'] -or $h1 -like "$productName*")) { continue }
+        $expected = $Matches['p']
+    }
     if ($null -eq $expected) { continue }
     if ($null -eq $h1) { $h1Issues.Add(("{0}  H1 がない" -f $rel)) }
     elseif ($h1 -ne $expected) { $h1Issues.Add(("{0}  H1 [{1}] / 期待 [{2}]" -f $rel, $h1, $expected)) }

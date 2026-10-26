@@ -25,10 +25,10 @@
 │   ├── workflows/release.yml      # 手動実行で検証・publish・タグ・Release 作成
 │   └── scripts/                   # version.ps1（バージョン規則） / set-version.ps1 / verify-release-version.ps1 / show-current-versions.ps1
 ├── buildScript/             # ビルド・実行スクリプト（リポジトリルートを基準に動作する）
-│   ├── MewUI_publish_singleaot.bat / MewUI_run_publish.bat      # MewUI 版の単一 exe ビルド/実行（Native AOT）
-│   ├── WinUI3_publish_single.bat / WinUI3_run_publish.bat       # WinUI 3 版の単一 exe ビルド/実行（自己完結）
-│   ├── AvaloniaUI_publish_aot.bat / AvaloniaUI_run_publish.bat  # Avalonia UI 版の AOT ビルド/実行（Native AOT + ネイティブ DLL）
-│   ├── WinForms_publish_single.bat / WinForms_run_publish.bat   # WinForms 版の単一 exe ビルド/実行（自己完結）
+│   ├── publish_MewUI.bat / publish_MewUI.bat      # MewUI 版の単一 exe ビルド/実行（Native AOT）
+│   ├── publish_WinUI3.bat / publish_WinUI3.bat       # WinUI 3 版の単一 exe ビルド/実行（自己完結）
+│   ├── publish_AvaloniaUI.bat / publish_AvaloniaUI.bat  # Avalonia UI 版の AOT ビルド/実行（Native AOT + ネイティブ DLL）
+│   ├── publish_WinForms.bat / publish_WinForms.bat   # WinForms 版の単一 exe ビルド/実行（自己完結）
 │   └── *_run_release.bat        # 各版の Release ビルドと実行（publish を行わない軽量な確認用）
 ├── src/
 │   ├── app_MewUI/           # MewUI アプリ本体（MewUI 依存）
@@ -171,10 +171,10 @@ dotnet run --project src/app_WinForms/app_WinForms.csproj
 
 | スクリプト（`buildScript/` 配下） | 対象 | 方式 | 出力先 | 出力物 |
 | --- | --- | --- | --- | --- |
-| `MewUI_publish_singleaot.bat` / `MewUI_run_publish.bat` | MewUI 版 | Native AOT | `publish\mewui-<RID>-singleaot\` | exe 1 個（約 12.6 MB） |
-| `WinUI3_publish_single.bat` / `WinUI3_run_publish.bat` | WinUI 3 版 | 自己完結（.NET + Windows App SDK） | `publish\winui3-<RID>-single\` | exe 1 個（約 179 MB） |
-| `AvaloniaUI_publish_aot.bat` / `AvaloniaUI_run_publish.bat` | Avalonia UI 版 | Native AOT | `publish\avaloniaui-<RID>-aot\` | exe 1 個 + ネイティブ DLL 3 個（約 43.8 MB） |
-| `WinForms_publish_single.bat` / `WinForms_run_publish.bat` | WinForms 版 | 自己完結（.NET + WinForms） | `publish\winforms-<RID>-single\` | exe 1 個（約 119 MB） |
+| `publish_MewUI.bat` / `publish_MewUI.bat` | MewUI 版 | Native AOT | `publish\mewui-<RID>-singleaot\` | exe 1 個（約 12.6 MB） |
+| `publish_WinUI3.bat` / `publish_WinUI3.bat` | WinUI 3 版 | 自己完結（.NET + Windows App SDK） | `publish\winui3-<RID>-single\` | exe 1 個（約 179 MB） |
+| `publish_AvaloniaUI.bat` / `publish_AvaloniaUI.bat` | Avalonia UI 版 | Native AOT | `publish\avaloniaui-<RID>-aot\` | exe 1 個 + ネイティブ DLL 3 個（約 43.8 MB） |
+| `publish_WinForms.bat` / `publish_WinForms.bat` | WinForms 版 | 自己完結（.NET + WinForms） | `publish\winforms-<RID>-single\` | exe 1 個（約 119 MB） |
 
 - 第 1 引数に RID を渡すと対象を変更できます（既定: `win-x64`）。
 - MewUI 版は Native AOT のため完全な単一バイナリです。
@@ -191,10 +191,10 @@ dotnet run --project src/app_WinForms/app_WinForms.csproj
 
 | スクリプト（`buildScript/` 配下） | 対象 | 出力先 |
 | --- | --- | --- |
-| `MewUI_run_release.bat` | MewUI 版 | `src\app_MewUI\bin\Release\net10.0\` |
-| `WinUI3_run_release.bat` | WinUI 3 版 | `src\app_WinUI3\bin\Release\net10.0-windows10.0.26100.0\win-x64\` |
-| `AvaloniaUI_run_release.bat` | Avalonia UI 版 | `src\app_AvaloniaUI\bin\Release\net10.0\` |
-| `WinForms_run_release.bat` | WinForms 版 | `src\app_WinForms\bin\Release\net10.0-windows\` |
+| `publish_MewUI.bat` | MewUI 版 | `src\app_MewUI\bin\Release\net10.0\` |
+| `publish_WinUI3.bat` | WinUI 3 版 | `src\app_WinUI3\bin\Release\net10.0-windows10.0.26100.0\win-x64\` |
+| `publish_AvaloniaUI.bat` | Avalonia UI 版 | `src\app_AvaloniaUI\bin\Release\net10.0\` |
+| `publish_WinForms.bat` | WinForms 版 | `src\app_WinForms\bin\Release\net10.0-windows\` |
 
 - 生成物はフレームワーク依存のため、実行には .NET 10 ランタイム（WinUI 3 版は Windows App SDK を含む）が必要です。
   - ただし **WinUI 3 版は .NET と Windows App SDK の両方が自己完結**（`SelfContained` / `WindowsAppSDKSelfContained`）のため、

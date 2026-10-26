@@ -245,8 +245,8 @@ public sealed class MainForm : Form
         // （操作系コントロールはそれぞれのマウスイベントを処理するため、ここには届かない）
         foreach (var surface in new Control[] { _titleBar, _appNameLabel, _clipboardToggleLabel })
         {
-            surface.MouseDown += OnTitleBarSurfaceMouseDown;
-            surface.MouseDoubleClick += OnTitleBarSurfaceMouseDoubleClick;
+            surface.MouseDown += OnTitleBarMouseDown;
+            surface.MouseDoubleClick += OnTitleBarMouseDoubleClick;
         }
     }
 
@@ -254,7 +254,7 @@ public sealed class MainForm : Form
     /// <param name="sender">イベントソース。</param>
     /// <param name="e">マウスイベントデータ。</param>
     /// <remarks>移動するのは左ボタンのみとし、最大化中は通常状態へ戻す操作を OS に委ねます。</remarks>
-    private void OnTitleBarSurfaceMouseDown(object? sender, MouseEventArgs e)
+    private void OnTitleBarMouseDown(object? sender, MouseEventArgs e)
     {
         if (e.Button != MouseButtons.Left) return;
 
@@ -264,7 +264,7 @@ public sealed class MainForm : Form
     /// <summary>タイトルバーの余白がダブルクリックされたときに、最大化と復元を切り替えます。</summary>
     /// <param name="sender">イベントソース。</param>
     /// <param name="e">マウスイベントデータ。</param>
-    private void OnTitleBarSurfaceMouseDoubleClick(object? sender, MouseEventArgs e)
+    private void OnTitleBarMouseDoubleClick(object? sender, MouseEventArgs e)
     {
         if (e.Button != MouseButtons.Left) return;
 

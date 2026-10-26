@@ -100,13 +100,13 @@
 
 ## 5. 配布用ビルド（単一 exe）
 
-`buildScript/` の `WinForms_publish_single.bat`（ビルド）と `WinForms_run_publish.bat`（ビルドして起動）で、自己完結の単一 exe を作成できます。
+`buildScript/` の `publish_WinForms.bat`（ビルド）と `publish_WinForms.bat`（ビルドして起動）で、自己完結の単一 exe を作成できます。
 スクリプトはリポジトリルートを基準に動作するため、どこから実行しても同じ結果になります。
 
 ```powershell
-.\buildScript\WinForms_publish_single.bat          # publish\winforms-win-x64-single\ZenHanConverter.App.WinForms.exe
-.\buildScript\WinForms_run_publish.bat             # 上記をビルドして起動
-.\buildScript\WinForms_publish_single.bat win-arm64
+.\buildScript\publish_WinForms.bat          # publish\winforms-win-x64-single\ZenHanConverter.App.WinForms.exe
+.\buildScript\publish_WinForms.bat             # 上記をビルドして起動
+.\buildScript\publish_WinForms.bat win-arm64
 ```
 
 - 出力は exe 1 ファイル（約 119 MB）です。初回起動時に依存ファイルを `%TEMP%\.net\ZenHanConverter.App.WinForms\` へ展開するため、初回のみ起動に時間がかかります。
@@ -115,7 +115,7 @@
 
 ## 6. Release ビルドと実行
 
-発行を行わず、Release 構成のビルドと実行だけを行う場合は `buildScript\WinForms_run_release.bat` を使用します（`src\app_WinForms\bin\Release\net10.0-windows\` の exe を起動します。AOT と単一ファイル化は適用されません）。
+発行を行わず、Release 構成のビルドと実行だけを行う場合は `buildScript\publish_WinForms.bat` を使用します（`src\app_WinForms\bin\Release\net10.0-windows\` の exe を起動します。AOT と単一ファイル化は適用されません）。
 
 ## 7. リポジトリ
 
@@ -125,3 +125,25 @@
 - src/app_AvaloniaUI — Avalonia UI 版
 
 詳細な設計は `SPEC_System.md`、公開 API は `SPEC_ExtFunc.md` を参照してください。
+
+## 8. テスト
+
+テストは `test/app_WinForms` にあります。 リポジトリ ルートで次を実行します（合否基準は [.github/CONTRIBUTING.md](../../.github/CONTRIBUTING.md)）。
+
+`powershell
+dotnet test --solution ZenHanConverter.slnx -c Release
+`
+
+## 9. ドキュメント
+
+| ドキュメント | 内容 |
+| --- | --- |
+| [README.md](README.md) | 本ドキュメント（機能・画面・使い方） |
+| [SPEC_ExtFunc.md](SPEC_ExtFunc.md) | 外部機能仕様書（公開 API） |
+| [SPEC_System.md](SPEC_System.md) | システム仕様書（構成・動作仕様） |
+| [.github/CONTRIBUTING.md](../../.github/CONTRIBUTING.md) | 開発者向け（ビルド・テスト・CI） |
+| [.github/RELEASE.md](../../.github/RELEASE.md) | リリース手順 |
+
+## 10. ライセンス
+
+[MIT License](../../LICENSE)
