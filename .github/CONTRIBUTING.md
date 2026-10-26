@@ -30,7 +30,7 @@
 │   ├── publish_WinUI3.bat          # WinUI 3 版（自己完結・単一 exe）
 │   ├── publish_AvaloniaUI.bat      # Avalonia UI 版（Native AOT + ネイティブ DLL）
 │   ├── publish_WinForms.bat        # WinForms 版（自己完結・単一 exe）
-│   ├── verify.ps1                  # 検証の入口（合否 35 項目。 .github/検証手順.md が所有者）
+│   ├── verify.ps1                  # 検証の入口（合否 36 項目。 .github/検証手順.md が所有者）
 │   ├── verifyDocs.ps1 / VerifyCommon.ps1 / verifyPublish.ps1 / verifyInfoStyle.ps1
 ├── src/
 │   ├── App.MewUI/           # MewUI アプリ本体（MewUI 依存）

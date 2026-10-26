@@ -143,11 +143,12 @@ flowchart TD
         S["sbom<br/>CycloneDX を作成"]
         G["publish<br/>publish.yml を呼ぶ<br/>全 UI を publish して保管"]
         H["release（environment: release）<br/>承認 → タグ + Release 作成（SBOM を添付）"]
-        F --> S --> G
+        F --> S
+        F --> G
         G --> H
     end
 
-    D -->|"mode=dry-run で実行"| D1["verify → sbom → publish<br/>（タグも Release も作らない）"]
+    D -->|"mode=dry-run で実行"| D1["verify → sbom と publish を並列<br/>（タグも Release も作らない）"]
     D1 -->|"確認後、同じコミットで mode=release"| F
     H -->|失敗| J["中断<br/>タグは作られない"]
     style D1 fill:#fff3cd
@@ -239,6 +240,7 @@ semver 形式で入力します。数値部分の**先頭 0 は使用できま�
 - 配布物（zip）からは「どの依存のどの版を使ったか」が分からない。SBOM があれば、**公開済みの配布物から依存を辿れる**。
 - **EsUtil の版も SBOM に載る**（`EsUtil.*` はパッケージ参照のため、exe のプロパティだけでは分からない）。
 - SBOM は **`dry-run` でも作る**（作れない状態をリリース前に検出する）。
+- **SBOM の作成は配布物の作成と並列に走ります**（配布物は SBOM を使わないため。 直列にすると SBOM の約 2 分を毎回待っていました。 実測 2026-10-26: dry-run 313 秒 → 190 秒）。 順序は `verify` →（`sbom` と `publish` が同時）→ `release` です。
 
 | UI | 添付ファイル | zip の中身 |
 | --- | --- | --- |
