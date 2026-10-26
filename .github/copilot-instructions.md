@@ -22,6 +22,15 @@
 - 提案が複数ある場合は、おすすめ順で並べて提示する。
 - コード変更は、Model、ViewModel、View の複数のレイヤーを修正する必要がある場合でも実施する。
 
+## 依存と復元（このリポジトリ固有）
+
+- **EsUtil は nuget.org の公開パッケージとして参照する**（`EsUtil.Feature.*` / `EsUtil.Platform.Core` / `EsUtil.Ui.*`）。版は [`Directory.Build.props`](../Directory.Build.props) の `EsUtilVersion` が単一所有する。ソースの `ProjectReference` は使わない（ソースの一致を保証できないため）。
+- **パッケージの版は [`Directory.Packages.props`](../Directory.Packages.props) が単一所有する**（Central Package Management。`.csproj` に `Version` を書かない）。**版は固定**し、`12.*` のような範囲を書かない（範囲を書くと、同じタグでも復元結果が変わる）。
+- **復元は `packages.lock.json` で固定する**（**コミットする**）。CI は `-p:RestoreLockedMode=true` で「lock と違う解決」を失敗させる。版を上げたら `dotnet restore` で lock を更新して一緒にコミットする。
+- **取得元は [`NuGet.config`](../NuGet.config) の `nuget.org` だけ**（`<clear />` でユーザー単位の取得元を打ち消す）。混ざると lock と同じ版でも別の中身を拾い得る。
+- **製品バージョンは `<Version>+esutil.<EsUtilVersion>`**（exe から使った EsUtil の版を辿れるようにする）。
+- **SBOM（CycloneDX）をリリースへ添付する**（[`buildScript/generateSbom.ps1`](../buildScript/generateSbom.ps1)。ツールの版は [`.config/dotnet-tools.json`](../.config/dotnet-tools.json)）。
+
 
 ## C# Coding Style
 

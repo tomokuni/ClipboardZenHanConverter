@@ -16,11 +16,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aprillz.MewUI.Windows" Version="0.*" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.*" />
+    <PackageReference Include="Aprillz.MewUI.Windows" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
     <!-- マルチカラム配置の計算は UI 非依存の EsUtil.Feature.ColumnPacking.Core へ委譲する -->
-    <PackageReference Include="EsUtil.Feature.ColumnPacking.Core" Version="0.1.*" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.*" />
+    <PackageReference Include="EsUtil.Feature.ColumnPacking.Core" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
   </ItemGroup>
 
 </Project>

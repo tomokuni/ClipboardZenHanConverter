@@ -11,10 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.*" />
-    <!-- 変換ペアと Win32 実装は EsUtil が単一所有する（公開前は Directory.Build.props のローカル フィードから解決する） -->
-    <PackageReference Include="EsUtil.Feature.ZenHan.Core" Version="0.1.*" />
-    <PackageReference Include="EsUtil.Platform.Core" Version="0.2.*" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <!-- 変換ペアと Win32 実装は EsUtil の公開パッケージが単一所有する（版は Directory.Packages.props） -->
+    <PackageReference Include="EsUtil.Feature.ZenHan.Core" />
+    <PackageReference Include="EsUtil.Platform.Core" />
   </ItemGroup>
 
   <ItemGroup>

@@ -31,17 +31,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="12.*" />
-    <PackageReference Include="Avalonia.Desktop" Version="12.*" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.*" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.*" />
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="Avalonia.Fonts.Inter" />
     <!-- 開発者ツールは Avalonia.Diagnostics（廃止）ではなく AvaloniaUI.DiagnosticsSupport を使用する。Release へは含めない -->
-    <PackageReference Include="AvaloniaUI.DiagnosticsSupport" Version="2.*">
+    <PackageReference Include="AvaloniaUI.DiagnosticsSupport">
       <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.*" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.*" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
   </ItemGroup>
 
 </Project>

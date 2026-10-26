@@ -1,0 +1,39 @@
+<Project>
+
+  <PropertyGroup>
+    <!-- パッケージの版は本ファイルが単一所有する（各 .csproj では指定しない）。
+         版は**固定**する（12.* のような範囲を書かない。 範囲を書くと、同じタグでも復元結果が変わる）。
+         規則は .github/ビルド設定規約.md §1「パッケージの版と復元」。 -->
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <!-- 推移依存の版は固定しない（直接参照だけを管理する。 推移依存は packages.lock.json が固定する）。 -->
+    <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <ItemGroup Label="EsUtil（公開パッケージ）">
+    <PackageVersion Include="EsUtil.Feature.ColumnPacking.Core" Version="$(EsUtilVersion)" />
+    <PackageVersion Include="EsUtil.Feature.ZenHan.Core" Version="$(EsUtilVersion)" />
+    <PackageVersion Include="EsUtil.Platform.Core" Version="$(EsUtilVersion)" />
+    <PackageVersion Include="EsUtil.Ui.WinUI3.ColumnPacking" Version="$(EsUtilVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Label="サードパーティ">
+    <PackageVersion Include="Aprillz.MewUI.Windows" Version="0.22.1" />
+    <PackageVersion Include="Avalonia" Version="12.1.4" />
+    <PackageVersion Include="Avalonia.Desktop" Version="12.1.4" />
+    <PackageVersion Include="Avalonia.Fonts.Inter" Version="12.1.4" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.1.4" />
+    <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageVersion Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.2.251219" />
+    <PackageVersion Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.2.251219" />
+    <PackageVersion Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.251219" />
+    <PackageVersion Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2705" />
+    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="2.5.1" />
+    <PackageVersion Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
+    <PackageVersion Include="xunit.analyzers" Version="2.2.0" />
+    <PackageVersion Include="xunit.v3" Version="4.0.2" />
+  </ItemGroup>
+
+</Project>

@@ -9,17 +9,23 @@
 
   <PropertyGroup>
     <!-- リリースバージョン。全プロジェクトで単一所有し、各 .csproj では指定しない。 -->
-    <!-- 自動インクリメントは行わない。リリース時に .github/workflows/release.yml が入力値へ更新する。 -->
+    <!-- 自動インクリメントは行わない。リリース前に人が上げてコミットする（.github/RELEASE.md）。 -->
     <Version>0.1.7</Version>
+
+    <!-- 本リポジトリが使う EsUtil の版（公開済みのパッケージ）。 版の値はここが単一所有し、
+         Directory.Packages.props の PackageVersion と InformationalVersion が参照する
+         （Directory.Packages.props は本ファイルより後に読み込まれるため、値はここで定義する）。 -->
+    <!-- アプリの版から「使った EsUtil の版」を辿れるようにする（`+esutil.0.1.0`）。
+         SourceLink のコミット（`+<sha>`）は SDK が後ろへ足す。 -->
+    <EsUtilVersion>0.1.0</EsUtilVersion>
+    <InformationalVersion Condition="'$(EsUtilVersion)' != ''">$(Version)+esutil.$(EsUtilVersion)</InformationalVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="Exists('$(MSBuildThisFileDirectory)..\EsUtil\.nupkg')">
-    <!--
-      EsUtil のパッケージ（変換ペア・Win32 実装・配置計算・WinUI 3 のパネル）は、nuget.org へ公開するまでの間、
-      隣のリポジトリが作るローカル フィード（`.nupkg/`）から解決する。
-      隣のリポジトリが無い環境（GitHub 上のビルド）ではこの指定が付かず、nuget.org から解決する。
-    -->
-    <RestoreAdditionalProjectSources>$(RestoreAdditionalProjectSources);$(MSBuildThisFileDirectory)..\EsUtil\.nupkg</RestoreAdditionalProjectSources>
+  <PropertyGroup>
+    <!-- 復元の再現性: 依存の版を packages.lock.json へ固定する（**コミットする**）。
+         CI は `-p:RestoreLockedMode=true` で「lock と違う解決」を失敗させる。
+         規則は .github/ビルド設定規約.md §1「パッケージの版と復元」。 -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
 </Project>

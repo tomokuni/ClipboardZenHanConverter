@@ -50,17 +50,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.*" />
-    <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.*" />
-    <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.*" />
-    <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.*" />
-    <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.*" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" />
+    <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" />
     <!-- マルチカラム配置パネル。配置の計算は EsUtil.Feature.ColumnPacking.Core が単一所有する -->
-    <PackageReference Include="EsUtil.Ui.WinUI3.ColumnPacking" Version="0.1.*" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.*" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.*" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.*" />
-    <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.*" />
+    <PackageReference Include="EsUtil.Ui.WinUI3.ColumnPacking" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" />
   </ItemGroup>
 
   <!--
