@@ -16,7 +16,7 @@ rem ============================================================
 
 rem Move from the script folder (buildScript) to the repository root.
 pushd "%~dp0.."
-call "%~dp0publish_ui.bat" winforms "src\app_WinForms\app_WinForms.csproj" %*
+call "%~dp0publish_ui.bat" winforms "src\App.WinForms\App.WinForms.csproj" %*
 set "RESULT=%ERRORLEVEL%"
 popd
 exit /b %RESULT%

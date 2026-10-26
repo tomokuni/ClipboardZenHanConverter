@@ -12,14 +12,14 @@
 # ZenHanConverter
 
 クリップボードのテキストを監視し、全角/半角の自動変換を行う Windows 向けデスクトップアプリケーションです。
-`src/core`（モデル・変換ロジック）と `src/core_presentation`（UI 非依存の ViewModel）を共有し、**4 つの UI 実装**から利用します。
+`src/App.Core`（モデル・変換ロジック）と `src/App.Core.Presentation`（UI 非依存の ViewModel）を共有し、**4 つの UI 実装**から利用します。
 
 | UI | プロジェクト | フレームワーク | 利用仕様書 |
 | --- | --- | --- | --- |
-| MewUI 版 | `src/app_MewUI` | MewUI（コードファースト・Native AOT 対応） | [`README.md`](src/app_MewUI/README.md) |
-| WinUI 3 版 | `src/app_WinUI3` | WinUI 3（Windows App SDK） | [`README.md`](src/app_WinUI3/README.md) |
-| Avalonia UI 版 | `src/app_AvaloniaUI` | Avalonia UI（クロスプラットフォーム・XAML） | [`README.md`](src/app_AvaloniaUI/README.md) |
-| WinForms 版 | `src/app_WinForms` | Windows Forms（コードで画面を構築） | [`README.md`](src/app_WinForms/README.md) |
+| MewUI 版 | `src/App.MewUI` | MewUI（コードファースト・Native AOT 対応） | [`README.md`](src/App.MewUI/README.md) |
+| WinUI 3 版 | `src/App.WinUI3` | WinUI 3（Windows App SDK） | [`README.md`](src/App.WinUI3/README.md) |
+| Avalonia UI 版 | `src/App.AvaloniaUI` | Avalonia UI（クロスプラットフォーム・XAML） | [`README.md`](src/App.AvaloniaUI/README.md) |
+| WinForms 版 | `src/App.WinForms` | Windows Forms（コードで画面を構築） | [`README.md`](src/App.WinForms/README.md) |
 
 4 つは同一のコアロジック・変換仕様・設定画面の設定仕様を共有し、**同じ設定ファイル**を使います。
 
@@ -58,7 +58,7 @@
 | `src/app_*/README.md` | 各 UI の利用仕様書（機能・画面構成・使い方） |
 | `src/app_*/SPEC_ExtFunc.md` | 各 UI の外部機能仕様書（公開 API） |
 | `src/app_*/SPEC_System.md` | 各 UI のシステム仕様書（構成・動作仕様） |
-| `src/core/` / `src/core_presentation/` の README・SPEC | 共有コア（変換ロジック・モデル）と共有プレゼンテーション層（設定画面 ViewModel）の仕様 |
+| `src/App.Core/` / `src/App.Core.Presentation/` の README・SPEC | 共有コア（変換ロジック・モデル）と共有プレゼンテーション層（設定画面 ViewModel）の仕様 |
 
 ## 4. 開発者向け情報
 
@@ -72,4 +72,4 @@
 **旧名は `ClipboardZenHanConverter`** です。 リポジトリ名・製品名・アセンブリ名・実行ファイル名・配布物のファイル名・設定の保存先を、すべて `ZenHanConverter` へ変更しました（旧 URL は GitHub が新しい URL へ転送します）。
 
 - 設定の保存先は `%LOCALAPPDATA%\ClipboardZenHanConverter` から `%LOCALAPPDATA%\ZenHanConverter` へ変わります。 **初回起動時に旧フォルダーの内容を新しいフォルダーへ移行**します（移行後も旧フォルダーは残ります。 不要なら削除してください）。
-- WinUI 3 版は、かつて隣の `ClipboardZenHanConverter` リポジトリにあったものを本リポジトリへ統合済みです（`src/app_WinUI3`）。
+- WinUI 3 版は、かつて隣の `ClipboardZenHanConverter` リポジトリにあったものを本リポジトリへ統合済みです（`src/App.WinUI3`）。

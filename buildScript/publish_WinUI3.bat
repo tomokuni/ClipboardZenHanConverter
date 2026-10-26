@@ -14,7 +14,7 @@ rem  The mode is restricted to `single`: Native AOT is not supported by WinUI 3 
 rem  (the publish succeeds but the XAML initialization fails at startup; measured).
 rem
 rem  Single file publishing is gated by `ZenHanConverterPublishSingleFile` in
-rem  src\app_WinUI3\app_WinUI3.csproj.  Passing `-p:PublishSingleFile=true` on the command
+rem  src\App.WinUI3\App.WinUI3.csproj.  Passing `-p:PublishSingleFile=true` on the command
 rem  line flows to the referenced projects and fails there (measured), so the per-UI switch is
 rem  used instead.
 rem
@@ -26,7 +26,7 @@ pushd "%~dp0.."
 set "SE_MODES=single"
 set "SE_SINGLE_ARGS=-p:PublishSingleFile=true -p:EnableMsixTooling=true -p:IncludeAllContentForSelfExtract=true"
 
-call "%~dp0publish_ui.bat" winui3 "src\app_WinUI3\app_WinUI3.csproj" %*
+call "%~dp0publish_ui.bat" winui3 "src\App.WinUI3\App.WinUI3.csproj" %*
 set "RESULT=%ERRORLEVEL%"
 popd
 exit /b %RESULT%

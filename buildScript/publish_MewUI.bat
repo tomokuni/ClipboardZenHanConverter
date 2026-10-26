@@ -23,7 +23,7 @@ rem ============================================================
 
 rem Move from the script folder (buildScript) to the repository root.
 pushd "%~dp0.."
-call "%~dp0publish_ui.bat" mewui "src\app_MewUI\app_MewUI.csproj" %*
+call "%~dp0publish_ui.bat" mewui "src\App.MewUI\App.MewUI.csproj" %*
 set "RESULT=%ERRORLEVEL%"
 popd
 exit /b %RESULT%

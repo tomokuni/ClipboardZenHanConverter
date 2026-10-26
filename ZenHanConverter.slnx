@@ -1,19 +1,19 @@
 <Solution>
   <Folder Name="/src/">
-    <Project Path="src/app_AvaloniaUI/app_AvaloniaUI.csproj" />
-    <Project Path="src/app_MewUI/app_MewUI.csproj" />
-    <Project Path="src/app_WinForms/app_WinForms.csproj" />
-    <Project Path="src/app_WinUI3/app_WinUI3.csproj" />
-    <Project Path="src/core/core.csproj" />
-    <Project Path="src/core_presentation/core_presentation.csproj" />
+    <Project Path="src/App.AvaloniaUI/App.AvaloniaUI.csproj" />
+    <Project Path="src/App.MewUI/App.MewUI.csproj" />
+    <Project Path="src/App.WinForms/App.WinForms.csproj" />
+    <Project Path="src/App.WinUI3/App.WinUI3.csproj" />
+    <Project Path="src/App.Core/App.Core.csproj" />
+    <Project Path="src/App.Core.Presentation/App.Core.Presentation.csproj" />
   </Folder>
   <Folder Name="/test/">
-    <Project Path="test/app_AvaloniaUI/tests_app_AvaloniaUI.csproj" />
-    <Project Path="test/app_MewUI/tests_app_MewUI.csproj" />
-    <Project Path="test/app_WinForms/tests_app_WinForms.csproj" />
-    <Project Path="test/app_WinUI3/tests_app_WinUI3.csproj" />
-    <Project Path="test/core/tests_core.csproj" />
-    <Project Path="test/core_presentation/tests_core_presentation.csproj" />
+    <Project Path="test/App.AvaloniaUI/App.AvaloniaUI.Tests.csproj" />
+    <Project Path="test/App.MewUI/App.MewUI.Tests.csproj" />
+    <Project Path="test/App.WinForms/App.WinForms.Tests.csproj" />
+    <Project Path="test/App.WinUI3/App.WinUI3.Tests.csproj" />
+    <Project Path="test/App.Core/App.Core.Tests.csproj" />
+    <Project Path="test/App.Core.Presentation/App.Core.Presentation.Tests.csproj" />
     <Project Path="test/parity/tests_parity.csproj">
       <Platform Project="x64" />
     </Project>

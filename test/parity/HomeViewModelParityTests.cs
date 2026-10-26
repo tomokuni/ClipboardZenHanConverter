@@ -1,11 +1,11 @@
-using EsUtil.ZenHanConverter.Core.Enums;
-using EsUtil.ZenHanConverter.Core.Logic;
-using EsUtil.ZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.App.Core.Enums;
+using EsUtil.ZenHanConverter.App.Core.Logic;
+using EsUtil.ZenHanConverter.App.Core.Models;
 using System;
 using System.Threading.Tasks;
 using Xunit;
 using MewUIHomeViewModel = EsUtil.ZenHanConverter.App.MewUI.ViewModels.HomeViewModel;
-using WinUIHomeViewModel = EsUtil.ZenHanConverter.App.WinUI.ViewModels.HomeViewModel;
+using WinUIHomeViewModel = EsUtil.ZenHanConverter.App.WinUI3.ViewModels.HomeViewModel;
 
 namespace EsUtil.ZenHanConverter.Tests.Parity;
 
