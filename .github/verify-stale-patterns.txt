@@ -6,3 +6,9 @@
 # README の改名の説明が意図的に旧名を持つため、残骸と区別できない（実測 2026-10-26）。
 #
 # 例: 消えた型・改名した名前空間・廃止したスクリプト名を 1 行ずつ足す。
+# フォルダー改名（2026-10-26 に src/ と test/ を App.* へ揃えた）の残骸
+app_MewUI
+app_WinUI3
+app_AvaloniaUI
+app_WinForms
+core_presentation
