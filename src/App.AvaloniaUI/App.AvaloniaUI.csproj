@@ -17,7 +17,7 @@
     <RootNamespace>EsUtil.ZenHanConverter.App.AvaloniaUI</RootNamespace>
     <AssemblyName>ZenHanConverter.App.AvaloniaUI</AssemblyName>
     <Product>ZenHanConverter</Product>
-    <Description>ZenHanConverter (Avalonia UI) - clipboard text converter</Description>
+    <Description>ZenHanConverter (Avalonia UI) - full-width / half-width text converter</Description>
   </PropertyGroup>
 
   <ItemGroup>
