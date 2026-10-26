@@ -71,7 +71,7 @@ public sealed class MainForm : Form
 
     /// <summary>折り返しの基準となる設計時のフォント寸法。</summary>
     /// <remarks><see cref="Form.AutoScaleDimensions"/> と名前が衝突しないよう別名にしています。</remarks>
-    private static readonly SizeF DesignAutoScaleDimensions = new(7F, 15F);
+    private static readonly SizeF s_designAutoScaleDimensions = new(7F, 15F);
 
     /// <summary>ウィンドウプロパティを設定するためのメッセージ。</summary>
     private const int WmNcHitTest = 0x0084;
@@ -145,7 +145,7 @@ public sealed class MainForm : Form
             ? FormStartPosition.CenterScreen
             : FormStartPosition.Manual;
         AutoScaleMode = AutoScaleMode.Font;
-        AutoScaleDimensions = DesignAutoScaleDimensions;
+        AutoScaleDimensions = s_designAutoScaleDimensions;
         BackColor = AppTheme.TitleBarBackground;
 
         BuildLayout();

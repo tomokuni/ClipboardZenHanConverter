@@ -55,7 +55,7 @@ public partial class HomeViewModel : ObservableObject, IDisposable
     private bool _disposed;
 
     /// <summary>テスト用: true に設定すると同期実行します。</summary>
-    public bool TestMode { get; set; }
+    public bool IsTestMode { get; set; }
 
     /// <summary>変換前のテキストを取得または設定します。</summary>
     [ObservableProperty]
@@ -117,7 +117,7 @@ public partial class HomeViewModel : ObservableObject, IDisposable
     /// <remarks>バインド済みプロパティを更新するため、UI スレッド以外から発火された場合は UI スレッドへ委譲します。</remarks>
     private void Clipboard_ContentChanged(object? sender, object e)
     {
-        if (TestMode || _uiContext is null || _uiContext == SynchronizationContext.Current)
+        if (IsTestMode || _uiContext is null || _uiContext == SynchronizationContext.Current)
         {
             _ = HandleClipboardChangeAsync();
             return;

@@ -14,12 +14,12 @@ namespace EsUtil.ZenHanConverter.App.WinUI.Services;
 /// <remarks>ページの事前生成とキャッシュにより、遷移時の生成コストを削減します。<br/>
 /// INavigationService インターフェースを実装し、DIP による依存性注入に対応します。<br/>
 /// 最適化手法: <br/>
-/// - _pageMap を FrozenDictionary で静的初期化(読み取り専用の高速ルックアップ)<br/>
+/// - s_pageMap を FrozenDictionary で静的初期化(読み取り専用の高速ルックアップ)<br/>
 /// - _pageCache でページインスタンスをキャッシュ(再生成コスト削減)</remarks>
 public class NavigationService(IServiceProvider services) : INavigationService
 {
     /// <summary>ページ名と型のマッピング。FrozenDictionary による高速・不変なルックアップ。</summary>
-    private static readonly FrozenDictionary<string, Type> _pageMap = new Dictionary<string, Type>
+    private static readonly FrozenDictionary<string, Type> s_pageMap = new Dictionary<string, Type>
     {
         ["Home"] = typeof(HomePage),
         ["Settings"] = typeof(SettingsPage),
@@ -112,7 +112,7 @@ public class NavigationService(IServiceProvider services) : INavigationService
     /// プログラムで遷移した場合でも選択状態が同期されるようにします。</remarks>
     private void NavigateToPage(string tag)
     {
-        if (!_pageMap.TryGetValue(tag, out var pageType)) return;
+        if (!s_pageMap.TryGetValue(tag, out var pageType)) return;
         if (_currentPageType == pageType) return;
 
         var mainWindow = GetMainWindow();

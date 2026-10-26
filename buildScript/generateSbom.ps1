@@ -8,20 +8,22 @@
 #
 # 使い方:
 #   pwsh -NoProfile -File buildScript/generateSbom.ps1
-#   pwsh -NoProfile -File buildScript/generateSbom.ps1 -Output sbom -Version 0.2.0
+#   pwsh -NoProfile -File buildScript/generateSbom.ps1 -Output sbom -Version 0.2.0 -Product SaveEvidence
 
 [CmdletBinding()]
 param(
-    [string]$Solution = 'ZenHanConverter.slnx',
+    [string]$Solution = 'SaveEvidence.slnx',
     [string]$Output = 'artifacts/sbom',
     [string]$Version = '',
-    [string]$Product = 'ZenHanConverter'
+    [string]$Product = 'SaveEvidence'
 )
 
 $ErrorActionPreference = 'Stop'
 $enc = [Text.UTF8Encoding]::new($false)
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 Set-Location $repoRoot
+
+. (Join-Path $PSScriptRoot 'VerifyCommon.ps1')
 
 if (-not $Version) {
     # 版は Directory.Build.props が単一所有する（引数は CI からの上書き用）
@@ -35,8 +37,11 @@ if (-not (Test-Path -LiteralPath $Solution)) { throw "ソリューションが�
 [void](New-Item -ItemType Directory -Path $Output -Force)
 
 # ツールはリポジトリのマニフェスト（.config/dotnet-tools.json）から復元する
-dotnet tool restore | Out-Host
-if ($LASTEXITCODE -ne 0) { throw "dotnet tool restore に失敗しました（終了コード $LASTEXITCODE）" }
+$restore = Invoke-NativeText 'dotnet' @('tool', 'restore')
+if ($restore.ExitCode -ne 0) {
+    Write-Output ($restore.Text + $restore.ErrorText)
+    throw "dotnet tool restore に失敗しました（終了コード $($restore.ExitCode)）"
+}
 
 $name = "$Product.$Version.sbom.cdx.json"
 $work = Join-Path ([IO.Path]::GetTempPath()) ("sbom-" + [guid]::NewGuid().ToString('N'))
@@ -44,8 +49,12 @@ $work = Join-Path ([IO.Path]::GetTempPath()) ("sbom-" + [guid]::NewGuid().ToStri
 
 try {
     # ツールは出力ファイル名を固定で受けるため、一時フォルダへ作ってから目的の名前へ移す
-    dotnet cyclonedx $Solution -o $work -fn $name | Out-Host
-    if ($LASTEXITCODE -ne 0) { throw "SBOM の作成に失敗しました（終了コード $LASTEXITCODE）" }
+    $run = Invoke-NativeText 'dotnet' @('cyclonedx', $Solution, '-o', $work, '-fn', $name)
+    $text = $run.Text + $run.ErrorText
+    if ($run.ExitCode -ne 0) {
+        Write-Output $text
+        throw "SBOM の作成に失敗しました（終了コード $($run.ExitCode)）"
+    }
 
     $source = Join-Path $work $name
     if (-not (Test-Path -LiteralPath $source)) { throw "SBOM が作られませんでした: $source" }

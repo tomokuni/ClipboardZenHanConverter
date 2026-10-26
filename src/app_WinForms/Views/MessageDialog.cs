@@ -12,7 +12,7 @@ namespace EsUtil.ZenHanConverter.App.WinForms.Views;
 internal sealed class MessageDialog : Form
 {
     /// <summary>ダイアログの余白（論理ピクセル）。</summary>
-    private static readonly Padding DialogPadding = new(20);
+    private static readonly Padding s_dialogPadding = new(20);
 
     /// <summary>ダイアログの幅（論理ピクセル）。</summary>
     private const int DialogWidth = 420;
@@ -40,7 +40,7 @@ internal sealed class MessageDialog : Form
             AutoSizeMode = AutoSizeMode.GrowAndShrink,
             FlowDirection = FlowDirection.TopDown,
             WrapContents = false,
-            Padding = DialogPadding,
+            Padding = s_dialogPadding,
             Margin = new Padding(0),
         };
 

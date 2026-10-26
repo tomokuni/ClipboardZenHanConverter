@@ -20,7 +20,7 @@ namespace EsUtil.ZenHanConverter.App.WinForms.Views;
 public sealed class HomeView : UserControl
 {
     /// <summary>画面の余白（論理ピクセル）。</summary>
-    private static readonly Padding ContentPadding = new(40, 20, 40, 40);
+    private static readonly Padding s_contentPadding = new(40, 20, 40, 40);
 
     /// <summary>分割バーの高さ（論理ピクセル）。</summary>
     private const int SplitterHeight = 6;
@@ -55,7 +55,7 @@ public sealed class HomeView : UserControl
     {
         ViewModel = viewModel;
         Dock = DockStyle.Fill;
-        Padding = ContentPadding;
+        Padding = s_contentPadding;
 
         _splitter = CreateSplitter();
 

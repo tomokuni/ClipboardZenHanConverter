@@ -58,7 +58,7 @@ public sealed class HomeViewModelTests
         var clipboard = new StubClipboardService { Text = "ＡＢＣ" };
         ConvertConfig config = new() { ConvertModeAlphabet = ZenHanMode.ToHan };
 
-        using var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting()) { TestMode = true };
+        using var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting()) { IsTestMode = true };
         clipboard.SimulateContentChange();
 
         Assert.Equal("ABC", clipboard.SetTextArg);
@@ -71,7 +71,7 @@ public sealed class HomeViewModelTests
         var clipboard = new StubClipboardService { Text = "ABC" };
         ConvertConfig config = new() { ConvertModeAlphabet = ZenHanMode.ToHan };
 
-        using var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting()) { TestMode = true };
+        using var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting()) { IsTestMode = true };
         clipboard.SimulateContentChange();
 
         Assert.Null(clipboard.SetTextArg);
@@ -84,7 +84,7 @@ public sealed class HomeViewModelTests
         var clipboard = new StubClipboardService { Text = "ＡＢＣ" };
         ConvertConfig config = new() { IsEnabledZenHan = false, ConvertModeAlphabet = ZenHanMode.ToHan };
 
-        using var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting()) { TestMode = true };
+        using var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting()) { IsTestMode = true };
         clipboard.SimulateContentChange();
 
         Assert.Equal("ABC", clipboard.SetTextArg);
@@ -100,7 +100,7 @@ public sealed class HomeViewModelTests
         var vm = new HomeViewModel(new CharConverter(config), clipboard,
             new AppSetting { IsClipboardConvertEnabled = false })
         {
-            TestMode = true,
+            IsTestMode = true,
         };
         clipboard.SimulateContentChange();
 
@@ -165,7 +165,7 @@ public sealed class HomeViewModelTests
         ConvertConfig config = new();
         config.LoadPreset(presetName);
 
-        using var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting()) { TestMode = true };
+        using var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting()) { IsTestMode = true };
         clipboard.SimulateContentChange();
 
         Assert.Equal(expected, clipboard.SetTextArg);
@@ -197,7 +197,7 @@ public sealed class HomeViewModelTests
             await Task.Run(clipboard.SimulateContentChange, TestContext.Current.CancellationToken);
         }
 
-        // TestMode が false のため、UI スレッド外からの通知は Post される
+        // IsTestMode が false のため、UI スレッド外からの通知は Post される
         Assert.Equal(1, recorder.PostCount);
         Assert.Equal(0, recorder.SendCount);
     }
@@ -208,7 +208,7 @@ public sealed class HomeViewModelTests
         var clipboard = new StubClipboardService { Text = "ＡＢＣ" };
         ConvertConfig config = new() { ConvertModeAlphabet = ZenHanMode.ToHan };
 
-        var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting()) { TestMode = true };
+        var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting()) { IsTestMode = true };
         vm.Dispose();
         vm.Dispose();
 

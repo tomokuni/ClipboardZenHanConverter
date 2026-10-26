@@ -44,12 +44,12 @@ public sealed class WinFormsParityTests : IDisposable
         _winViewModel = new WinUIHomeViewModel(
             new CharConverter(_config), _winClipboard, new AppSetting { IsClipboardConvertEnabled = true })
         {
-            TestMode = true,
+            IsTestMode = true,
         };
         _formsViewModel = new WinFormsHomeViewModel(
             new CharConverter(_config), _formsClipboard, new AppSetting { IsClipboardConvertEnabled = true })
         {
-            TestMode = true,
+            IsTestMode = true,
         };
     }
 

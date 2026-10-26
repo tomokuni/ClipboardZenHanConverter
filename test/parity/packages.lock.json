@@ -533,8 +533,6 @@
       "ZenHanConverter.App.WinUI3": {
         "type": "Project",
         "dependencies": {
-          "ZenHanConverter.Core": "[0.1.7, )",
-          "ZenHanConverter.Presentation": "[0.1.7, )",
           "CommunityToolkit.Mvvm": "[8.4.2, )",
           "CommunityToolkit.WinUI.Controls.Primitives": "[8.2.251219, )",
           "CommunityToolkit.WinUI.Controls.Segmented": "[8.2.251219, )",
@@ -544,7 +542,9 @@
           "Microsoft.Extensions.Hosting": "[10.0.14, )",
           "Microsoft.Windows.SDK.BuildTools": "[10.0.28000.2705, )",
           "Microsoft.WindowsAppSDK": "[2.5.1, )",
-          "Microsoft.Xaml.Behaviors.WinUI.Managed": "[3.0.1, )"
+          "Microsoft.Xaml.Behaviors.WinUI.Managed": "[3.0.1, )",
+          "ZenHanConverter.Core": "[0.1.8, )",
+          "ZenHanConverter.Presentation": "[0.1.8, )"
         }
       },
       "ZenHanConverter.Core": {
@@ -558,8 +558,8 @@
       "ZenHanConverter.Presentation": {
         "type": "Project",
         "dependencies": {
-          "ZenHanConverter.Core": "[0.1.7, )",
-          "CommunityToolkit.Mvvm": "[8.4.2, )"
+          "CommunityToolkit.Mvvm": "[8.4.2, )",
+          "ZenHanConverter.Core": "[0.1.8, )"
         }
       },
       "CommunityToolkit.Mvvm": {

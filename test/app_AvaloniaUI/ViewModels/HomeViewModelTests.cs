@@ -59,7 +59,7 @@ public sealed class HomeViewModelTests
 
         CharConverter converter = new(config);
         var vm = new HomeViewModel(converter, clipboard, CreateAppSetting());
-        vm.TestMode = true;
+        vm.IsTestMode = true;
         clipboard.SimulateContentChange();
 
         Assert.Equal("ABC", clipboard.SetTextArg);
@@ -73,7 +73,7 @@ public sealed class HomeViewModelTests
         ConvertConfig config = new() { ConvertModeAlphabet = ZenHanMode.ToHan };
 
         var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting());
-        vm.TestMode = true;
+        vm.IsTestMode = true;
         clipboard.SimulateContentChange();
 
         Assert.Null(clipboard.SetTextArg);
@@ -87,7 +87,7 @@ public sealed class HomeViewModelTests
         ConvertConfig config = new() { IsEnabledZenHan = false, ConvertModeAlphabet = ZenHanMode.ToHan };
 
         var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting());
-        vm.TestMode = true;
+        vm.IsTestMode = true;
         clipboard.SimulateContentChange();
 
         Assert.Equal("ABC", clipboard.SetTextArg);
@@ -103,7 +103,7 @@ public sealed class HomeViewModelTests
         var vm = new HomeViewModel(new CharConverter(config), clipboard,
             new AppSetting { IsClipboardConvertEnabled = false })
         {
-            TestMode = true,
+            IsTestMode = true,
         };
         clipboard.SimulateContentChange();
 
@@ -169,7 +169,7 @@ public sealed class HomeViewModelTests
         config.LoadPreset(presetName);
 
         var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting());
-        vm.TestMode = true;
+        vm.IsTestMode = true;
         clipboard.SimulateContentChange();
 
         Assert.Equal(expected, clipboard.SetTextArg);

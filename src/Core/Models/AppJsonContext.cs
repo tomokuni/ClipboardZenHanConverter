@@ -14,4 +14,4 @@ namespace EsUtil.ZenHanConverter.Core.Models;
 [JsonSerializable(typeof(AppSetting))]
 [JsonSerializable(typeof(ConvertConfig))]
 [JsonSerializable(typeof(ReplacePair))]
-internal partial class AppJsonContext : JsonSerializerContext;
+internal sealed partial class AppJsonContext : JsonSerializerContext;

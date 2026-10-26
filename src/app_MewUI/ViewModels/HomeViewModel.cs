@@ -76,7 +76,13 @@ public partial class HomeViewModel : ObservableObject, IDisposable
     /// <summary>クリップボードの内容変更時に呼び出され、変換処理を開始します。</summary>
     /// <param name="sender">イベントソース。</param>
     /// <param name="e">イベントデータ。</param>
-    private async void Clipboard_ContentChanged(object? sender, object e)
+    /// <remarks>イベント ハンドラーから非同期の処理を開始します（`async void` は使いません。
+    /// 失敗は <see cref="RunClipboardChangeAsync"/> が受け止めます）。</remarks>
+    private void Clipboard_ContentChanged(object? sender, object e) => _ = RunClipboardChangeAsync();
+
+    /// <summary>クリップボード変更の処理を実行し、想定内の失敗を握ります。</summary>
+    /// <returns>処理の完了を表すタスク。</returns>
+    private async Task RunClipboardChangeAsync()
     {
         try
         {
