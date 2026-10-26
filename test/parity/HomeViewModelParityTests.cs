@@ -45,7 +45,7 @@ public sealed class HomeViewModelParityTests : IDisposable
         _mewViewModel = new MewUIHomeViewModel(new CharConverter(_config), _mewClipboard, _mewAppSetting);
         _winViewModel = new WinUIHomeViewModel(new CharConverter(_config), _winClipboard, _winAppSetting)
         {
-            TestMode = true,
+            IsTestMode = true,
         };
     }
 

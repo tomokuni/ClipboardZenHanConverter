@@ -48,7 +48,7 @@ public partial class HomeViewModel : ObservableObject, IDisposable
     private bool _disposed;
 
     /// <summary>テスト用: true に設定すると同期実行します。</summary>
-    public bool TestMode { get; set; }
+    public bool IsTestMode { get; set; }
 
     /// <summary>変換前のテキストを取得または設定します。</summary>
     [ObservableProperty]
@@ -113,7 +113,7 @@ public partial class HomeViewModel : ObservableObject, IDisposable
     /// <summary>クリップボードの内容変更時に呼び出されます。UIスレッドまたはバックグラウンドで変換処理を開始します。</summary>
     private void Clipboard_ContentChanged(object? sender, object e)
     {
-        if (TestMode)
+        if (IsTestMode)
         {
             _ = HandleClipboardChangeAsync();
             return;

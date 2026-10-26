@@ -456,7 +456,7 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
         c.ReplacePairs = [];
     }
 
-    /// <summary>組み込みプリセット「全力会計」を適用します。
+    /// <summary>組み込みプリセット「全力会計」を適用します。</summary>
     /// <param name="c">設定を適用する ConvertConfig インスタンス。</param>
     /// <remarks>数字/英字/一部記号を半角、その他記号/かなを全角にする会計帳票向け設定です。</remarks>
     private static void ApplyAccountingPowerPreset(ConvertConfig c)

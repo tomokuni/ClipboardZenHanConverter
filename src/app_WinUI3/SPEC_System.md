@@ -259,7 +259,7 @@ DI コンテナへのサービス登録拡張メソッド。
 
 ---
 
-### src/app_WinUI3/ViewModels/SettingsViewModel.cs
+### src/core_presentation/ViewModels/SettingsViewModel.cs
 
 #### `SettingsViewModel` partial class
 
@@ -298,7 +298,7 @@ DI コンテナへのサービス登録拡張メソッド。
 
 ---
 
-### src/app_WinUI3/ViewModels/ZenHanConvertItem.cs
+### src/core_presentation/ViewModels/ZenHanConvertItem.cs
 
 #### `ZenHanConvertItem` partial class
 
@@ -321,7 +321,7 @@ DI コンテナへのサービス登録拡張メソッド。
 
 ---
 
-### src/app_WinUI3/ViewModels/ReplacePairItem.cs
+### src/core_presentation/ViewModels/ReplacePairItem.cs
 
 #### `ReplacePairItem` partial class
 
@@ -536,26 +536,18 @@ WinUI の `AppWindow.Position` / `Size` は物理ピクセルを扱うため、�
 
 ### フォルダ構成
 
-```text
-test/
-├── TestHelper.cs                        # テスト用共通ヘルパー（全テストプロジェクトで共有）
-├── core/                                # 共有コアのテスト（UI 非依存）
-│   └── ...                              # 内容は ../core/SPEC_System.md を参照
-└── app_WinUI3/
-    ├── Converters/
-    │   ├── BoolToCheckMarkConverterTests.cs
-    │   └── StringNotEmptyToVisibilityConverterTests.cs
-    ├── ViewModels/
-    │   ├── HomeViewModelTests.cs
-    │   ├── MainWindowViewModelTests.cs
-    │   ├── ReplacePairItemTests.cs
-    │   ├── SettingsInitPerformanceTests.cs
-    │   └── SettingsViewModelTests.cs
-    └── Views/
-        ├── SettingsPagePresetValidationTests.cs
-        └── Controls/
-            └── (パネルは EsUtil.Ui.WinUI3.ColumnPacking を使うため、同梱のテストは持たない)
-```
+テストは UI ごとのプロジェクト（`test/app_WinUI3`）に置き、共有部分（`TestHelper.cs`）は `test/TestHelper.cs` が持ちます。
+
+| テスト | 対象 |
+| --- | --- |
+| `test/app_WinUI3/Converters/BoolToCheckMarkConverterTests.cs` | チェック マークへの変換 |
+| `test/app_WinUI3/Converters/StringNotEmptyToVisibilityConverterTests.cs` | 空文字の可視性への変換 |
+| `test/app_WinUI3/ViewModels/HomeViewModelTests.cs` | ホーム画面の表示用変換・クリップボード連携 |
+| `test/app_WinUI3/ViewModels/MainWindowViewModelTests.cs` | ページ遷移 |
+| `test/app_WinUI3/Views/SettingsPagePresetValidationTests.cs` | 設定画面のプリセット検証 |
+
+- パネルは `EsUtil.Ui.WinUI3.ColumnPacking` を使うため、同梱のテストは持ちません。
+- 共有コアのテストは `test/core`（内容は `src/core/SPEC_System.md` を参照）、共有プレゼンテーション層のテストは `test/core_presentation` にあります。
 
 ---
 

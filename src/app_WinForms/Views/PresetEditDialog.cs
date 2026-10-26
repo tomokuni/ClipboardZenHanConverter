@@ -17,7 +17,7 @@ namespace EsUtil.ZenHanConverter.App.WinForms.Views;
 public sealed class PresetEditDialog : Form
 {
     /// <summary>ダイアログの余白（論理ピクセル）。</summary>
-    private static readonly Padding DialogPadding = new(20);
+    private static readonly Padding s_dialogPadding = new(20);
 
     /// <summary>要素間の余白（論理ピクセル）。</summary>
     private const int ElementSpacing = 12;
@@ -58,7 +58,7 @@ public sealed class PresetEditDialog : Form
             AutoSizeMode = AutoSizeMode.GrowAndShrink,
             FlowDirection = FlowDirection.TopDown,
             WrapContents = false,
-            Padding = DialogPadding,
+            Padding = s_dialogPadding,
             Margin = new Padding(0),
         };
 
@@ -89,7 +89,7 @@ public sealed class PresetEditDialog : Form
     {
         var textBox = new TextBox
         {
-            Width = DialogWidth - DialogPadding.Horizontal,
+            Width = DialogWidth - s_dialogPadding.Horizontal,
             PlaceholderText = PresetNamePlaceholder,
             Margin = new Padding(0, 0, 0, ElementSpacing),
         };

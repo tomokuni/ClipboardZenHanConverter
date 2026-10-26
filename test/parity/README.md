@@ -2,19 +2,19 @@
 
 `src/app_MewUI`・`src/app_WinUI3`・`src/app_WinForms` の**挙動が一致すること**を検証するテストプロジェクトです。
 
-## 目的
+## 1. 目的
 
 共有コア（`src/core`）と設定画面の ViewModel（`src/core_presentation`）は 4 つの UI で共通です。
 一方で `HomeViewModel` は UI スレッドへの委譲方法がフレームワークごとに異なるため、各アプリが個別に実装しています。
 本プロジェクトは、同じ入力に対するそれらの出力を直接比較し、共有コアの変更にどれかが追随し忘れる状態を検出します。
 
-## 実行
+## 2. 実行
 
 ```powershell
 dotnet test --project test\parity\tests_parity.csproj
 ```
 
-## 構成
+## 3. 構成
 
 | ファイル | 検証内容 |
 | --- | --- |
@@ -24,7 +24,7 @@ dotnet test --project test\parity\tests_parity.csproj
 
 設定画面の ViewModel は共通化済みのため、ここで比較する対象はありません（`test/core_presentation` が検証します）。
 
-### 実装方式（ソースリンク）
+### 3.1 実装方式（ソースリンク）
 
 `app_MewUI` / `app_WinForms` は非自己完結型 exe、`app_WinUI3` は自己完結型 exe のため、1 つのプロジェクトから
 これらを同時に `ProjectReference` すると `NETSDK1150` / `NETSDK1151` で失敗します。
@@ -39,7 +39,7 @@ dotnet test --project test\parity\tests_parity.csproj
 > リンク先のソースは共有プレゼンテーション層の型を `using EsUtil.ZenHanConverter.Presentation.ViewModels;` で参照するため、
 > 本プロジェクトにも同じ名前空間の参照が必要です。
 
-## 検証済みの一致（自動テストで保証）
+## 4. 検証済みの一致（自動テストで保証）
 
 - プリセット別の変換結果（全力会計 / 英数記号半角、かな全角 の代表例）
 - 変化しない入力・空文字の扱い（`変換不要 (変更なし)` を含む）
@@ -48,7 +48,7 @@ dotnet test --project test\parity\tests_parity.csproj
 - クリップボード変更時の書き戻し内容
 - クリップボード変換トグルが無効な場合に読み書きしないこと
 
-## 意図的な差分（プラットフォーム都合による実装差）
+## 5. 意図的な差分（プラットフォーム都合による実装差）
 
 挙動は同じで、実装手段だけが異なる項目です。
 
@@ -73,7 +73,7 @@ dotnet test --project test\parity\tests_parity.csproj
 > OS のドラッグ操作を開始し、リサイズはフォームが `Padding` で確保した外周で `WM_NCHITTEST` に応答します。
 > 子コントロールが覆う領域には `WM_NCHITTEST` が届かないため、このように役割を分けています。
 
-## 実装済みの一致（旧・意図的な差分）
+## 6. 実装済みの一致（旧・意図的な差分）
 
 以下は MewUI 版にのみ存在した機能で、他の UI へ移植して挙動を揃えました。
 

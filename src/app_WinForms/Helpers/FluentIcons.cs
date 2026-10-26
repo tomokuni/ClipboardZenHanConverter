@@ -23,7 +23,7 @@ public static class FluentIcons
     private const float ViewBoxSize = 24f;
 
     /// <summary>アイコンの描画色（Fluent の TextFillColorPrimary 相当）。</summary>
-    private static readonly Color IconColor = Color.FromArgb(0x1B, 0x1B, 0x1B);
+    private static readonly Color s_iconColor = Color.FromArgb(0x1B, 0x1B, 0x1B);
 
     /// <summary>Convert Range アイコンの画像（初回アクセス時に生成）。</summary>
     private static Image? s_convertRange;
@@ -67,7 +67,7 @@ public static class FluentIcons
         transform.Scale(IconSize / ViewBoxSize, IconSize / ViewBoxSize);
         path.Transform(transform);
 
-        using var brush = new SolidBrush(IconColor);
+        using var brush = new SolidBrush(s_iconColor);
         graphics.FillPath(brush, path);
 
         return bitmap;

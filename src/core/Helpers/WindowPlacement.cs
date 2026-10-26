@@ -14,7 +14,7 @@ namespace EsUtil.ZenHanConverter.Core.Helpers;
 public static class WindowPlacement
 {
     /// <summary>ウィンドウを移動させる原点（プライマリモニタの左上）。</summary>
-    private static readonly EsPoint Origin = new(0, 0);
+    private static readonly EsPoint s_origin = new(0, 0);
 
     /// <summary>保存された位置を表示領域内へ補正します。</summary>
     /// <param name="saved">保存されたウィンドウ左上の位置（画面座標・DIP）。</param>
@@ -30,7 +30,7 @@ public static class WindowPlacement
     public static EsPoint ClampToVisibleArea(EsPoint saved, EsSize windowSize, EsRect visibleArea)
     {
         if (!Intersects(saved, windowSize, visibleArea))
-            return Origin;
+            return s_origin;
 
         return new EsPoint(
             ClampAxis(saved.X, visibleArea.X, visibleArea.Right, windowSize.Width),

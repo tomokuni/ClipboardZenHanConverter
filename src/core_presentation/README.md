@@ -2,7 +2,7 @@
 
 4 つの UI 実装（MewUI 版 / WinUI 3 版 / Avalonia UI 版 / WinForms 版）が共有する**UI フレームワーク非依存のプレゼンテーション層**です。
 
-## 目的
+## 1. 目的
 
 設定画面の ViewModel は、共有コア（`src/core`）と `CommunityToolkit.Mvvm` だけに依存し、
 UI フレームワークの型を一切参照しません。それにもかかわらず、共通化前は 4 つのアプリが
@@ -13,7 +13,7 @@ UI フレームワークの型を一切参照しません。それにもかか�
 - 同じコードを 4 か所で保守する負担（合計 2132 行 → 677 行）
 - 片方だけを修正して**変換結果や設定仕様がアプリごとにずれる**リスク
 
-## 収録する ViewModel
+## 2. 収録する ViewModel
 
 | 型 | 責務 |
 | --- | --- |
@@ -26,7 +26,7 @@ UI フレームワークの型を一切参照しません。それにもかか�
 
 `HomeViewModel` は UI スレッドへの委譲方法がフレームワークごとに異なるため、各アプリに残しています。
 
-## 排他選択の 2 通りの使い方
+## 3. 排他選択の 2 通りの使い方
 
 `ZenHanConvertItem` は、UI フレームワークごとに異なる排他選択の表現に対応するため、次の 2 つの窓口を持ちます。
 
@@ -37,7 +37,7 @@ UI フレームワークの型を一切参照しません。それにもかか�
 
 どちらの経路から変更しても設定へ反映され、設定側からの変更は双方へ再同期されます。
 
-## 依存方向
+## 4. 依存方向
 
 ```text
 App（app_MewUI / app_WinUI3 / app_AvaloniaUI / app_WinForms）
@@ -47,13 +47,13 @@ App（app_MewUI / app_WinUI3 / app_AvaloniaUI / app_WinForms）
 
 本プロジェクトが UI フレームワークへ依存することはありません。逆方向の依存もありません。
 
-## ビルド
+## 5. ビルド
 
 ```powershell
 dotnet build src/core_presentation/core_presentation.csproj
 ```
 
-## テスト
+## 6. テスト
 
 `test/core_presentation` が本プロジェクトの単体テストを持ちます。
 

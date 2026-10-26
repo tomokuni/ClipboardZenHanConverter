@@ -444,11 +444,11 @@
         "type": "Project",
         "dependencies": {
           "Aprillz.MewUI.Windows": "[0.22.1, )",
-          "ZenHanConverter.Core": "[0.1.7, )",
-          "ZenHanConverter.Presentation": "[0.1.7, )",
           "CommunityToolkit.Mvvm": "[8.4.2, )",
           "EsUtil.Feature.ColumnPacking.Core": "[0.1.0, )",
-          "Microsoft.Extensions.Hosting": "[10.0.14, )"
+          "Microsoft.Extensions.Hosting": "[10.0.14, )",
+          "ZenHanConverter.Core": "[0.1.8, )",
+          "ZenHanConverter.Presentation": "[0.1.8, )"
         }
       },
       "ZenHanConverter.Core": {
@@ -462,8 +462,8 @@
       "ZenHanConverter.Presentation": {
         "type": "Project",
         "dependencies": {
-          "ZenHanConverter.Core": "[0.1.7, )",
-          "CommunityToolkit.Mvvm": "[8.4.2, )"
+          "CommunityToolkit.Mvvm": "[8.4.2, )",
+          "ZenHanConverter.Core": "[0.1.8, )"
         }
       },
       "Aprillz.MewUI.Windows": {

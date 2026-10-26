@@ -24,7 +24,7 @@ public static class Program
 {
     /// <summary>DI コンテナのサービスプロバイダーを取得します。</summary>
     /// <value>ビルド済みの IServiceProvider インスタンス。</value>
-    private static IServiceProvider Services { get; set; } = null!;
+    private static IServiceProvider s_services { get; set; } = null!;
 
     /// <summary>アプリケーションのエントリポイントです。</summary>
     [STAThread]
@@ -37,7 +37,7 @@ public static class Program
         builder.Services.AddZenHanConverterServices();
         var host = builder.Build();
 
-        Services = host.Services;
+        s_services = host.Services;
         // 旧名のフォルダー（%LOCALAPPDATA%\ClipboardZenHanConverter）から初回だけ移行する
         AppPaths.Migrate();
         GetService<AppSetting>().Initialize();
@@ -51,7 +51,7 @@ public static class Program
     /// <returns>登録されたサービスインスタンス。</returns>
     /// <exception cref="InvalidOperationException">指定された型が DI コンテナに登録されていない場合。</exception>
     private static T GetService<T>() where T : class
-        => Services.GetService(typeof(T)) as T
+        => s_services.GetService(typeof(T)) as T
             ?? throw new InvalidOperationException($"{typeof(T)} is not registered in DI container.");
 
     /// <summary>集約エラーハンドラーを購読します。UI/バックグラウンド/非同期タスクの未処理例外を補足します。</summary>

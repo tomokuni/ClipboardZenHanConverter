@@ -4,7 +4,7 @@
 **MewUI にも WinUI3 にも依存しない**ため、両方の UI 実装から共有できます。
 `src/app_MewUI`（MewUI アプリ）から参照されます。
 
-## 構成
+## 1. 構成
 
 - `Enums/` — 変換モード列挙型（`ZenHanMode` ほか）
 - `Models/` — `ConvertConfig`, `ReplacePair`, `SegmentItem`, `SegmentDefinitions`, `AppSetting`, `SettingsPersistenceBase`
@@ -14,7 +14,7 @@
 - `Native/` — 仮想画面と DIP ⇔ 物理ピクセルの換算（`ScreenVisibleArea`）
 - `Icons/` — Fluent Icons の SVG アセットとパスデータ提供（`FluentIconData`）
 
-## 依存
+## 2. 依存
 
 - `CommunityToolkit.Mvvm` — ObservableProperty 生成・変更通知
 - `EsUtil.Feature.ZenHan.Core`（0.1.* のパッケージ参照）— 全角/半角変換ペア
@@ -22,7 +22,7 @@
 
 UI フレームワークには依存しません。 Win32 API の呼び出しは `EsUtil.Platform.Core` の `Native.Win` が単一所有します。
 
-## 主なクラス
+## 3. 主なクラス
 
 - `ConvertConfig` — 変換設定（自動永続化・プリセット管理）
 - `SegmentDefinitions` — 設定画面の変換カテゴリ定義（ラベル・セグメント項目・バインド先）

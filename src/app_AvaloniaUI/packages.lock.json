@@ -515,8 +515,8 @@
       "ZenHanConverter.Presentation": {
         "type": "Project",
         "dependencies": {
-          "ZenHanConverter.Core": "[0.1.7, )",
-          "CommunityToolkit.Mvvm": "[8.4.2, )"
+          "CommunityToolkit.Mvvm": "[8.4.2, )",
+          "ZenHanConverter.Core": "[0.1.8, )"
         }
       },
       "EsUtil.Feature.ZenHan.Core": {

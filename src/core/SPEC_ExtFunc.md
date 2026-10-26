@@ -190,6 +190,7 @@ UI フレームワークに依存しないため Core に配置しています�
 （型は `EsUtil.Platform.Core.Geometry` の `EsPoint` / `EsSize` / `EsRect` を使います）。
 
 #### `WindowPlacement`
+
 | メンバー | 型 | 説明 |
 | --- | --- | --- |
 | `ClampToVisibleArea(EsPoint saved, EsSize windowSize, EsRect visibleArea)` | `EsPoint` | 保存されたウィンドウ位置を表示領域内へ補正して返す |

@@ -61,10 +61,10 @@ public sealed class MainWindow : Window
     private const string CloseButtonStyleName = "TitleBarCloseButton";
 
     /// <summary>閉じるボタンのホバー背景色。</summary>
-    private static readonly Color CloseButtonHotBackground = Color.FromRgb(232, 17, 35);
+    private static readonly Color s_closeButtonHotBackground = Color.FromRgb(232, 17, 35);
 
     /// <summary>閉じるボタンの押下背景色。</summary>
-    private static readonly Color CloseButtonPressedBackground = Color.FromRgb(200, 12, 28);
+    private static readonly Color s_closeButtonPressedBackground = Color.FromRgb(200, 12, 28);
 
     /// <summary>ナビゲーション項目（タグと表示テキスト）。</summary>
     /// <param name="Tag">コンテンツ解決に使用するタグ（"Home" / "Settings"）。</param>
@@ -376,7 +376,7 @@ public sealed class MainWindow : Window
                     Match = VisualStateFlags.Hot,
                     Setters =
                     [
-                        Setter.Create(Control.BackgroundProperty, CloseButtonHotBackground),
+                        Setter.Create(Control.BackgroundProperty, s_closeButtonHotBackground),
                         Setter.Create(TextElement.ForegroundProperty, Color.White),
                     ],
                 },
@@ -385,7 +385,7 @@ public sealed class MainWindow : Window
                     Match = VisualStateFlags.Pressed,
                     Setters =
                     [
-                        Setter.Create(Control.BackgroundProperty, CloseButtonPressedBackground),
+                        Setter.Create(Control.BackgroundProperty, s_closeButtonPressedBackground),
                         Setter.Create(TextElement.ForegroundProperty, Color.White),
                     ],
                 },

@@ -23,7 +23,7 @@ public sealed class SegmentDefinitionsTests
     ];
 
     /// <summary>全カテゴリの定義を平坦化した配列。</summary>
-    private static readonly SegmentDefine[] AllDefinitions = [.. CategoryDefinitions.SelectMany(d => d)];
+    private static readonly SegmentDefine[] s_allDefinitions = [.. CategoryDefinitions.SelectMany(d => d)];
 
     /// <summary>全カテゴリの定義配列をテストデータとして提供します。</summary>
     /// <returns>カテゴリ名と定義配列の組。</returns>
@@ -50,8 +50,8 @@ public sealed class SegmentDefinitionsTests
     [Fact]
     public void 全カテゴリでMode定義が設定され一意である()
     {
-        Assert.All(AllDefinitions, d => Assert.NotNull(d.Mode));
-        Assert.Equal(AllDefinitions.Length, AllDefinitions.Select(d => d.Mode).Distinct().Count());
+        Assert.All(s_allDefinitions, d => Assert.NotNull(d.Mode));
+        Assert.Equal(s_allDefinitions.Length, s_allDefinitions.Select(d => d.Mode).Distinct().Count());
     }
 
     [Fact]
@@ -103,7 +103,7 @@ public sealed class SegmentDefinitionsTests
     public void セグメントを持つ定義はModeで設定を往復できる()
     {
         var config = TestHelper.CreateDefaultConfig();
-        var defs = AllDefinitions.Where(d => d.Segments is { Length: > 0 });
+        var defs = s_allDefinitions.Where(d => d.Segments is { Length: > 0 });
 
         foreach (var def in defs)
         {

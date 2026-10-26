@@ -26,7 +26,7 @@ internal sealed class SegmentButton : RadioButton
     private const int ButtonHeight = 24;
 
     /// <summary>左右の余白（論理ピクセル）。</summary>
-    private static readonly Padding ButtonPadding = new(10, 0, 10, 0);
+    private static readonly Padding s_buttonPadding = new(10, 0, 10, 0);
 
     /// <summary>SegmentButton の新しいインスタンスを初期化します。</summary>
     /// <param name="option">表示する選択肢。</param>
@@ -45,7 +45,7 @@ internal sealed class SegmentButton : RadioButton
         FlatAppearance.MouseOverBackColor = AppTheme.HoverBackground;
         AutoSize = true;
         MinimumSize = new Size(MinButtonWidth, ButtonHeight);
-        Padding = ButtonPadding;
+        Padding = s_buttonPadding;
         Margin = new Padding(0, 0, 4, 0);
         UpdateForeColor();
     }

@@ -16,7 +16,7 @@ namespace EsUtil.ZenHanConverter.App.WinForms.Views;
 internal sealed class ToggleSwitch : CheckBox
 {
     /// <summary>ノブの色。</summary>
-    private static readonly Color KnobColor = Color.White;
+    private static readonly Color s_knobColor = Color.White;
 
     /// <summary>ToggleSwitch の新しいインスタンスを初期化します。</summary>
     public ToggleSwitch()
@@ -73,7 +73,7 @@ internal sealed class ToggleSwitch : CheckBox
         var knobX = Checked ? track.Right - inset - knobSize : track.Left + inset;
         var knob = new Rectangle(knobX, track.Top + inset, knobSize, knobSize);
 
-        using var knobBrush = new SolidBrush(KnobColor);
+        using var knobBrush = new SolidBrush(s_knobColor);
         graphics.FillEllipse(knobBrush, knob);
     }
 

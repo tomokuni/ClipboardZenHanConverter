@@ -284,11 +284,10 @@ sequenceDiagram
 
 `test/app_WinForms` が `src/app_WinForms` の単体テストを持ちます。
 
-```text
-test/app_WinForms
-├── Helpers/SvgPathParserTests.cs     SVG パス解釈（アイコンが解釈できることの保証を含む）
-└── ViewModels/HomeViewModelTests.cs  表示用変換・書き戻し・UI スレッド委譲・破棄
-```
+| テスト | 対象 |
+| --- | --- |
+| `test/app_WinForms/Helpers/SvgPathParserTests.cs` | SVG パス解釈（アイコンが解釈できることの保証を含む） |
+| `test/app_WinForms/ViewModels/HomeViewModelTests.cs` | 表示用変換・書き戻し・UI スレッド委譲・破棄 |
 
 `test/parity` は WinForms 版の ViewModel をソースリンクで取り込み、MewUI 版・WinUI 版と同じ入力に対する
 変換結果と設定画面の項目構成が一致することを検証します。

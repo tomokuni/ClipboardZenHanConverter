@@ -8,7 +8,7 @@
 ## リポジトリ構成
 
 ```text
-ZenHanConverter/
+.
 ├── Directory.Build.props           # 共通プロパティ（LangVersion / Nullable / ImplicitUsings / リリースバージョン）
 ├── global.json                     # .NET SDK のバージョンとテスト ランナー（ワークフローでは指定しない）
 ├── ZenHanConverter.slnx
@@ -79,7 +79,7 @@ dotnet build ZenHanConverter.slnx
 
 ### 名前空間と using
 
-- 名前空間のルートは `EsUtil.ZenHanConverter` です（例: `EsUtil.ZenHanConverter.Core.Models`）。
+- 名前空間のルートは `EsUtil` 配下の製品名フォルダーです（例: `AppSetting` は `EsUtil.ZenHanConverter.Core.Models` にあります）。
 - アセンブリ名・exe 名・設定ファイルの保存先（`%LOCALAPPDATA%\ZenHanConverter`）は `ZenHanConverter` のままです（**リポジトリ名 `ZenHanConverter` とは別**。 利用者の設定と配布物の互換性を保つため）。
 - 暗黙の global using（`ImplicitUsings`）は無効です。各ソースファイルが使用する名前空間を `using` で明示し、プロジェクト共通の `GlobalUsings.cs` は置きません。
 
