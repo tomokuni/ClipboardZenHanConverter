@@ -1,6 +1,6 @@
 # 開発者向け情報（ビルド・テスト・CI）
 
-本ドキュメントは ClipboardZenHanConverter を**ビルド・テストする開発者**向けの情報です。
+本ドキュメントは ClipboardZenHanConverter（リポジトリ名は `ZenHanConverter`）を**ビルド・テストする開発者**向けの情報です。
 アプリの利用方法は [`../README.md`](../README.md)、各 UI の利用仕様は `../src/app_*/README.md` を参照してください。
 
 - リリース手順は [`RELEASE.md`](RELEASE.md)、他のリポジトリへの流用方法は [`REUSING.md`](REUSING.md) に分離しています。
@@ -8,7 +8,7 @@
 ## リポジトリ構成
 
 ```text
-ClipboardZenHanConverter/
+ZenHanConverter/
 ├── Directory.Build.props           # 共通プロパティ（LangVersion / Nullable / ImplicitUsings / リリースバージョン）
 ├── global.json                     # .NET SDK のバージョンとテスト ランナー（ワークフローでは指定しない）
 ├── ZenHanConverter.slnx
@@ -80,7 +80,7 @@ dotnet build ZenHanConverter.slnx
 ### 名前空間と using
 
 - 名前空間のルートは `EsUtil.ClipboardZenHanConverter` です（例: `EsUtil.ClipboardZenHanConverter.Core.Models`）。
-- アセンブリ名・exe 名・設定ファイルの保存先（`%LOCALAPPDATA%\ClipboardZenHanConverter`）は `ClipboardZenHanConverter` のままです。
+- アセンブリ名・exe 名・設定ファイルの保存先（`%LOCALAPPDATA%\ClipboardZenHanConverter`）は `ClipboardZenHanConverter` のままです（**リポジトリ名 `ZenHanConverter` とは別**。 利用者の設定と配布物の互換性を保つため）。
 - 暗黙の global using（`ImplicitUsings`）は無効です。各ソースファイルが使用する名前空間を `using` で明示し、プロジェクト共通の `GlobalUsings.cs` は置きません。
 
 ### 依存パッケージ
