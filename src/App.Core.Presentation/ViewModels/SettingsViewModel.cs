@@ -193,10 +193,22 @@ public partial class SettingsViewModel : ObservableObject
     }
 
     /// <summary>プリセット一覧を更新します。</summary>
+    /// <remarks>
+    /// <b>1 件ずつ足さない</b>: <see cref="ObservableCollection{T}"/> は 1 件ごとに変更通知を出すため、
+    /// 一覧の再読み込みのたびに UI が件数分だけ作り直しを要求される（MewUI は通知ごとに全件を複製し、
+    /// WinForms は毎回配列へ写して比較する）。 差分が無ければ何もせず、あれば 1 回だけ差し替える。
+    /// </remarks>
     public void RefreshPresets()
     {
+        var names = ConvertConfig.GetPresetNames();
+
+        if (PresetNames.SequenceEqual(names, StringComparer.Ordinal))
+        {
+            return;
+        }
+
         PresetNames.Clear();
-        foreach (var name in ConvertConfig.GetPresetNames())
+        foreach (var name in names)
         {
             PresetNames.Add(name);
         }

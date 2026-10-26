@@ -278,7 +278,10 @@ public partial class CharConverter : ITextConverter, IDisposable
     /// <returns>置換結果のテキスト</returns>
     /// <remarks>正規表現エラーは無視して処理を続行します。<br/>
     /// 空の検索文字列を持つルールはスキップされます。<br/>
-    /// 置換は定義順に逐次適用されます。</remarks>
+    /// 置換は定義順に逐次適用されます。<br/>
+    /// <b>正規表現はパターンごとに 1 回だけ組み立てて使い回す</b>（<see cref="Regex.Replace(string, string, string, RegexOptions, TimeSpan)"/> は
+    /// 呼び出しのたびにパターンを解析する。 クリップボードの変換は 1 文字ごとに走るため、規則の数だけ解析が積み上がる）。
+    /// </remarks>
     private string ApplyUserReplacements(string text)
     {
         foreach (var pair in Config.ReplacePairs)
@@ -286,18 +289,54 @@ public partial class CharConverter : ITextConverter, IDisposable
             if (string.IsNullOrEmpty(pair.Search))
                 continue;
 
-            try
+            if (!pair.IsRegex)
             {
-                text = pair.IsRegex
-                    ? Regex.Replace(text, pair.Search, pair.Replace, RegexOptions.None, RegexSettings.MatchTimeout)
-                    : text.Replace(pair.Search, pair.Replace, StringComparison.Ordinal);
+                text = text.Replace(pair.Search, pair.Replace, StringComparison.Ordinal);
+                continue;
             }
-            catch (ArgumentException) when (pair.IsRegex)
-            {
-                // ユーザー入力の正規表現が不正な場合も処理を続行
-            }
+
+            // 不正なパターンは初回に分かり、以降も「置換しない」で安定する（毎回例外を投げ直さない）
+            var regex = GetOrAddRegex(pair.Search);
+            if (regex is not null)
+                text = regex.Replace(text, pair.Replace);
         }
         return text;
+    }
+
+    /// <summary>正規表現のキャッシュ（パターン → 組み立て済みの <see cref="Regex"/>。 不正なパターンは null）。</summary>
+    /// <remarks>
+    /// パターンはユーザーの入力であり、同じ設定なら同じ結果になる。 上限を超えたら捨てる
+    /// （置換ルールは数十件の規模で、設定を変えても項目は増えない）。
+    /// </remarks>
+    private readonly Dictionary<string, Regex?> _regexCache = new(StringComparer.Ordinal);
+
+    /// <summary>正規表現のキャッシュの上限。</summary>
+    private const int MaxCachedRegexes = 256;
+
+    /// <summary>パターンに対応する <see cref="Regex"/> を取得します（無ければ組み立てます）。</summary>
+    /// <param name="pattern">正規表現のパターン。</param>
+    /// <returns>組み立てた正規表現。 パターンが不正な場合は null。</returns>
+    private Regex? GetOrAddRegex(string pattern)
+    {
+        if (_regexCache.TryGetValue(pattern, out var cached))
+            return cached;
+
+        Regex? regex = null;
+        try
+        {
+            // タイムアウトは RegexSettings が単一所有する（壊れたパターンで固まらないようにする）
+            regex = new Regex(pattern, RegexOptions.None, RegexSettings.MatchTimeout);
+        }
+        catch (ArgumentException)
+        {
+            // ユーザー入力の正規表現が不正な場合も処理を続行
+        }
+
+        if (_regexCache.Count >= MaxCachedRegexes)
+            _regexCache.Clear();
+
+        _regexCache[pattern] = regex;
+        return regex;
     }
 
     /// <summary>連続するスペース（半角/全角混在）を検出する正規表現。</summary>
