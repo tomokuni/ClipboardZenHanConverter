@@ -11,4 +11,5 @@ app_MewUI
 app_WinUI3
 app_AvaloniaUI
 app_WinForms
+app_\*
 core_presentation
