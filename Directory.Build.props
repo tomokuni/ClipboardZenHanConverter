@@ -28,4 +28,36 @@
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- コード スタイルとドキュメントコメントの検証（全プロジェクト共通。 各 .csproj では指定しない）。 -->
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- XML は検証だけに使う（bin へも publish へも出さない）。 CopyDocumentationFileToOutputDirectory だけでは
+         publish が MSB3030（XML が見つからない）で失敗するため、PublishDocumentationFiles も false にする。 -->
+    <CopyDocumentationFileToOutputDirectory>false</CopyDocumentationFileToOutputDirectory>
+    <PublishDocumentationFiles>false</PublishDocumentationFiles>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- アナライザーの解析モード（全プロジェクト共通。 各 .csproj では指定しない）。
+         無効にする規則だけを .editorconfig に `severity = none` で明示する（opt-out 方式）。 -->
+    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisMode>Recommended</AnalysisMode>
+    <!-- 警告をエラーにする（「dotnet build が通れば規約に準拠している」を終了コードで判定できる）。 -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 使用を禁止する API（buildScript/BannedSymbols.txt）をコンパイラで検出する。
+         規則の所有者は .github/コーディング規約.md（例: フラグ enum は HasFlag ではなくビット演算を使う）。 -->
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" PrivateAssets="all" />
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)buildScript\BannedSymbols.txt" />
+    <!-- 規約のうち、SDK のアナライザー（AnalysisMode=Recommended）が検出しない項目を補うアナライザー。 -->
+    <!-- 非同期の書き方（`async void` の禁止・`Async` 接尾辞）。 -->
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" PrivateAssets="all" />
+    <!-- ファイル名と型名の一致（MA0048）/ 名前空間セグメントと型名の一致の禁止（MA0049）。 -->
+    <PackageReference Include="Meziantou.Analyzer" PrivateAssets="all" />
+  </ItemGroup>
+
 </Project>
+

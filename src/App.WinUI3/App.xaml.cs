@@ -102,6 +102,6 @@ public partial class App : Application
 
         // SettingsPage をバックグラウンドで事前生成: UIスレッドがアイドルになったタイミングで
         // XAML解析とページ生成を実行し、初回設定画面遷移を高速化する
-        navigation.PreloadSettingsAsync();
+        navigation.PreloadSettings();
     }
 }

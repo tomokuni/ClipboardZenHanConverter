@@ -16,7 +16,9 @@ namespace EsUtil.ZenHanConverter.App.MewUI.Views;
 /// - コードファースト（C# Markup）で構築<br/>
 /// - 設定の管理バーはヘッダー直下に固定、カテゴリ部分はスクロール
 /// </remarks>
-public sealed class SettingsView : UserControl
+/// <remarks>SettingsView の新しいインスタンスを初期化します。</remarks>
+/// <param name="viewModel">設定画面の ViewModel。</param>
+public sealed class SettingsView(SettingsViewModel viewModel) : UserControl
 {
     /// <summary>セグメント1個あたりの左右パディング合計値。</summary>
     private const double PaddingForSegment = 32;
@@ -40,14 +42,7 @@ public sealed class SettingsView : UserControl
     private const int SymbolColumnLimit = 10;
 
     /// <summary>設定画面の ViewModel。</summary>
-    private readonly SettingsViewModel _viewModel;
-
-    /// <summary>SettingsView の新しいインスタンスを初期化します。</summary>
-    /// <param name="viewModel">設定画面の ViewModel。</param>
-    public SettingsView(SettingsViewModel viewModel)
-    {
-        _viewModel = viewModel;
-    }
+    private readonly SettingsViewModel _viewModel = viewModel;
 
     /// <summary>ビューの内容を構築します。</summary>
     /// <returns>設定画面のルート要素。</returns>
@@ -63,7 +58,7 @@ public sealed class SettingsView : UserControl
     /// <summary>ヘッダー（画面見出し）を構築します。</summary>
     /// <returns>ヘッダーの要素。</returns>
     /// <remarks>全角/半角変換の有効/無効スイッチはタイトルバー（MainWindow）が所有するため、ここには配置しません。</remarks>
-    private Element BuildHeader() =>
+    private static Element BuildHeader() =>
         new StackPanel()
             .Horizontal()
             .Spacing(16)
@@ -139,7 +134,7 @@ public sealed class SettingsView : UserControl
     /// <param name="items">カテゴリ内の変換項目。</param>
     /// <returns>カテゴリセクションの要素。</returns>
     /// <remarks>変換項目は単一列（縦並び）で表示します。</remarks>
-    private Element BuildCategorySection(string header, string description, IList<ZenHanConvertItem> items)
+    private static Element BuildCategorySection(string header, string description, IList<ZenHanConvertItem> items)
     {
         var panel = new StackPanel().Vertical().Spacing(SegmentRowSpace);
         AddSegmentRows(panel, items);
@@ -167,7 +162,7 @@ public sealed class SettingsView : UserControl
     /// 2. 行を MultiColumnPanel へ列数上限付きで配置し、最大列高さを最小化<br/><br/>
     /// 注意点: <br/>
     /// - 行は列幅へ広がるため、記号部とセグメントコントロールは各列の右端で縦に揃います</remarks>
-    private Element BuildMultiColumnCategorySection(string header, string description, IList<ZenHanConvertItem> items)
+    private static Element BuildMultiColumnCategorySection(string header, string description, IList<ZenHanConvertItem> items)
     {
         var rows = BuildSegmentRows(items, SegmentRowAlignment.ColumnEdge);
 
@@ -214,7 +209,7 @@ public sealed class SettingsView : UserControl
             );
 
     /// <summary>指定された変換項目群をグループとして縦に並べた要素を構築します。</summary>
-    private Element BuildRows(IList<ZenHanConvertItem> items)
+    private static Element BuildRows(IList<ZenHanConvertItem> items)
     {
         var panel = new StackPanel().Vertical().Spacing(SegmentRowSpace);
         AddSegmentRows(panel, items);
@@ -224,7 +219,7 @@ public sealed class SettingsView : UserControl
     /// <summary>グループ内の全変換項目行を生成し、パネルへ追加します。</summary>
     /// <param name="panel">行を追加するパネル。</param>
     /// <param name="items">グループ内の変換項目。</param>
-    private void AddSegmentRows(Panel panel, IList<ZenHanConvertItem> items)
+    private static void AddSegmentRows(Panel panel, IList<ZenHanConvertItem> items)
     {
         foreach (var row in BuildSegmentRows(items, SegmentRowAlignment.FixedLabelWidth))
             panel.Add(row);
@@ -250,7 +245,7 @@ public sealed class SettingsView : UserControl
     /// 注意点: <br/>
     /// - ColumnEdge では名称部が自然幅のため行幅が名称の長さに応じて変わり、MultiColumnPanel が
     ///   列ごとの最大行幅として列幅を算出します。</remarks>
-    private List<Element> BuildSegmentRows(IList<ZenHanConvertItem> items, SegmentRowAlignment alignment)
+    private static List<Element> BuildSegmentRows(IList<ZenHanConvertItem> items, SegmentRowAlignment alignment)
     {
         var nameWidth = alignment == SegmentRowAlignment.FixedLabelWidth
             ? SegmentItems.GetMaxNameWidth(items)
@@ -329,7 +324,7 @@ public sealed class SettingsView : UserControl
     /// 3. ColumnEdge では名称部を自然幅のまま、記号部の枠を行の右端へ寄せる<br/><br/>
     /// 注意点: <br/>
     /// - ColumnEdge の行は、MultiColumnPanel が列幅（列ごとの最大行幅）で配置することを前提とします</remarks>
-    private Element BuildSegmentRow(ZenHanConvertItem item, double nameWidth, double symbolWidth, double segmentWidth, SegmentRowAlignment alignment)
+    private static Element BuildSegmentRow(ZenHanConvertItem item, double nameWidth, double symbolWidth, double segmentWidth, SegmentRowAlignment alignment)
     {
         var segmented = new SegmentedControl { ItemsSource = SegmentItems.Create(item.Options) };
 
@@ -452,7 +447,7 @@ public sealed class SettingsView : UserControl
 
         var mainWindow = Global.MainWindow;
         if (mainWindow is null) dialog.Show();
-        else dialog.ShowDialogAsync(mainWindow);
+        else _ = dialog.ShowDialogAsync(mainWindow);
     }
 
     /// <summary>設定をJSONファイルとしてエクスポートします。</summary>
@@ -489,7 +484,7 @@ public sealed class SettingsView : UserControl
 
     /// <summary>エラーメッセージを表示します。オーナーウィンドウが利用可能な場合はメッセージボックスを使用します。</summary>
     /// <param name="message">表示するメッセージ。</param>
-    private void ShowError(string message)
+    private static void ShowError(string message)
     {
         var mainWindow = Global.MainWindow;
         if (mainWindow is not null)

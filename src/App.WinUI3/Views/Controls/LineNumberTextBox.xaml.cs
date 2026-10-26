@@ -2,6 +2,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System.Linq;
+using System.Globalization;
+using System;
 
 namespace EsUtil.ZenHanConverter.App.WinUI3.Views.Controls;
 
@@ -48,9 +50,9 @@ public sealed partial class LineNumberTextBox : UserControl
         }
 
         // 改行コードを正規化: CRLF -> LF, CR -> LF
-        var normalized = Text.Replace("\r\n", "\n").Replace('\r', '\n');
+        var normalized = Text.Replace("\r\n", "\n", StringComparison.Ordinal).Replace('\r', '\n');
         var lineCount = normalized.Split('\n').Length;
-        GutterText.Text = string.Join("\n", Enumerable.Range(1, lineCount).Select(i => i.ToString()));
+        GutterText.Text = string.Join("\n", Enumerable.Range(1, lineCount).Select(i => i.ToString(CultureInfo.InvariantCulture)));
     }
 
     /// <summary>TextBox のスクロール位置変更時にガターのスクロール位置を同期します。</summary>
@@ -97,7 +99,7 @@ public sealed partial class LineNumberTextBox : UserControl
     /// <summary>Text プロパティ変更時にガターの行番号を更新します。</summary>
     private static void OnTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        if (d is LineNumberTextBox control && e.NewValue is string newText)
+        if (d is LineNumberTextBox control)
         {
             // XAML の x:Bind で既に ContentTextBox.Text が更新されるが、
             // コードからの Text プロパティ変更時にも行番号を更新する

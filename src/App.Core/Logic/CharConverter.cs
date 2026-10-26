@@ -289,7 +289,7 @@ public partial class CharConverter : ITextConverter, IDisposable
             try
             {
                 text = pair.IsRegex
-                    ? Regex.Replace(text, pair.Search, pair.Replace)
+                    ? Regex.Replace(text, pair.Search, pair.Replace, RegexOptions.None, RegexSettings.MatchTimeout)
                     : text.Replace(pair.Search, pair.Replace, StringComparison.Ordinal);
             }
             catch (ArgumentException) when (pair.IsRegex)
@@ -301,6 +301,6 @@ public partial class CharConverter : ITextConverter, IDisposable
     }
 
     /// <summary>連続するスペース（半角/全角混在）を検出する正規表現。</summary>
-    [GeneratedRegex("[ 　]{2,}")]
+    [GeneratedRegex("[ 　]{2,}", RegexOptions.None, 1000)]
     private static partial Regex SingleSpaceRegex();
 }

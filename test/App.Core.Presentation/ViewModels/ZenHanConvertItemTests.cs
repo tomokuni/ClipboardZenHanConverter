@@ -31,14 +31,14 @@ public sealed class ZenHanConvertItemTests : IDisposable
     }
 
     [Fact]
-    public void Disposeは複数回呼び出しても例外を送出しない()
+    internal void Disposeは複数回呼び出しても例外を送出しない()
     {
         _item.Dispose();
         _item.Dispose();
     }
 
     [Fact]
-    public void Dispose後はConfig変更の通知を受け取らない()
+    internal void Dispose後はConfig変更の通知を受け取らない()
     {
         _item.Dispose();
 
@@ -50,24 +50,24 @@ public sealed class ZenHanConvertItemTests : IDisposable
     }
 
     [Fact]
-    public void Config変更でSelectedLabelの変更通知が発行される()
+    internal void Config変更でSelectedLabelの変更通知が発行される()
     {
         var changed = new List<string?>();
         _item.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
 
         _config.ConvertModeNumber = ZenHanMode.ToZen;
 
-        Assert.Contains(nameof(ZenHanConvertItem.SelectedLabel), changed);
+        Assert.Contains(nameof(ZenHanConvertItem.SelectedLabel), changed, StringComparer.Ordinal);
     }
 
     [Fact]
-    public void Labelは定義のラベルを返す()
+    internal void Labelは定義のラベルを返す()
     {
         Assert.Equal(SegmentDefinitions.NumberDefs[0].Label, _item.Label);
     }
 
     [Fact]
-    public void Segments未指定の定義では既定の3つの選択肢を持つ()
+    internal void Segments未指定の定義では既定の3つの選択肢を持つ()
     {
         Assert.Equal(3, _item.Options.Count);
         Assert.Equal("なし", _item.Options[0].Content);
@@ -76,38 +76,38 @@ public sealed class ZenHanConvertItemTests : IDisposable
     }
 
     [Fact]
-    public void Optionsは定義のセグメントと同じ表示テキストを順序を保って持つ()
+    internal void Optionsは定義のセグメントと同じ表示テキストを順序を保って持つ()
     {
         var expected = SegmentDefinitions.NumberDefs[0].Segments is { Length: > 0 } segments
             ? segments.Select(s => s.Content)
             : ["なし", "半角", "全角"];
 
-        Assert.Equal(expected, _item.Options.Select(o => o.Content));
+        Assert.Equal(expected, _item.Options.Select(o => o.Content), StringComparer.Ordinal);
     }
 
     [Fact]
-    public void OptionsのGroupNameは同一項目内で同じ()
+    internal void OptionsのGroupNameは同一項目内で同じ()
     {
         Assert.All(_item.Options, o => Assert.Equal(_item.Options[0].GroupName, o.GroupName));
     }
 
     [Fact]
-    public void OptionsのGroupNameは項目間で異なる()
+    internal void OptionsのGroupNameは項目間で異なる()
     {
         using var other = new ZenHanConvertItem(_config, SegmentDefinitions.AlphabetDefs[0]);
 
-        Assert.NotEqual(_item.Options[0].GroupName, other.Options[0].GroupName);
+        Assert.NotEqual(_item.Options[0].GroupName, other.Options[0].GroupName, StringComparer.Ordinal);
     }
 
     [Fact]
-    public void IsEnabledはForceEnableState未指定では有効()
+    internal void IsEnabledはForceEnableState未指定では有効()
     {
         Assert.True(_item.IsEnabled);
         Assert.Null(_item.ForceEnableState);
     }
 
     [Fact]
-    public void IsEnabledはForceEnableStateに従う()
+    internal void IsEnabledはForceEnableStateに従う()
     {
         var def = new SegmentDefine("テスト", ConvertConfig.Mode.Number, ForceEnableState: false);
         using var item = new ZenHanConvertItem(_config, def);
@@ -116,7 +116,7 @@ public sealed class ZenHanConvertItemTests : IDisposable
     }
 
     [Fact]
-    public void SelectedLabelは現在の設定値に対応するラベルを返す()
+    internal void SelectedLabelは現在の設定値に対応するラベルを返す()
     {
         _config.ConvertModeNumber = ZenHanMode.ToZen;
 
@@ -124,7 +124,7 @@ public sealed class ZenHanConvertItemTests : IDisposable
     }
 
     [Fact]
-    public void SelectedLabelの設定は設定へ反映される()
+    internal void SelectedLabelの設定は設定へ反映される()
     {
         _item.SelectedLabel = "全角";
 
@@ -132,7 +132,7 @@ public sealed class ZenHanConvertItemTests : IDisposable
     }
 
     [Fact]
-    public void Optionsの選択状態は現在の設定値を反映する()
+    internal void Optionsの選択状態は現在の設定値を反映する()
     {
         _config.ConvertModeNumber = ZenHanMode.ToHan;
 
@@ -142,7 +142,7 @@ public sealed class ZenHanConvertItemTests : IDisposable
     }
 
     [Fact]
-    public void Optionsの選択変更は設定へ反映される()
+    internal void Optionsの選択変更は設定へ反映される()
     {
         // XAML では RadioButton の IsChecked が IsSelected へ双方向バインドされる
         _item.Options[2].IsSelected = true;
@@ -151,7 +151,7 @@ public sealed class ZenHanConvertItemTests : IDisposable
     }
 
     [Fact]
-    public void 外部から設定が変わるとOptionsの選択状態が追従する()
+    internal void 外部から設定が変わるとOptionsの選択状態が追従する()
     {
         _config.ConvertModeNumber = ZenHanMode.ToZen;
 
@@ -161,7 +161,7 @@ public sealed class ZenHanConvertItemTests : IDisposable
     }
 
     [Fact]
-    public void 無効な選択肢が選択されても設定は変わらない()
+    internal void 無効な選択肢が選択されても設定は変わらない()
     {
         var def = new SegmentDefine("テスト", ConvertConfig.Mode.Number, ForceEnableState: false);
         using var item = new ZenHanConvertItem(_config, def);

@@ -73,7 +73,7 @@ public partial class App : Application
     }
 
     /// <summary>集約エラーハンドラーを購読します。UI/バックグラウンド/非同期タスクの未処理例外を補足します。</summary>
-    private void SubscribeExceptionHandlers()
+    private static void SubscribeExceptionHandlers()
     {
         Dispatcher.UIThread.UnhandledException += (_, e) =>
         {

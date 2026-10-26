@@ -40,7 +40,7 @@ public sealed partial class SplitterRegion : Grid
 
     /// <summary>ドラッグによる垂直方向の移動量を通知するイベントです。</summary>
     /// <remarks>前回の通知からの差分（下方が正）を通知します。</remarks>
-    public event Action<double>? DeltaChanged;
+    public event EventHandler<SplitterDeltaChangedEventArgs>? DeltaChanged;
 
     /// <summary>ポインターが押されたときにドラッグを開始します。</summary>
     /// <param name="sender">イベントソース。</param>
@@ -74,7 +74,7 @@ public sealed partial class SplitterRegion : Grid
             return;
         }
 
-        DeltaChanged?.Invoke(delta);
+        DeltaChanged?.Invoke(this, new SplitterDeltaChangedEventArgs(delta));
     }
 
     /// <summary>ポインターが離されたときにドラッグを終了します。</summary>

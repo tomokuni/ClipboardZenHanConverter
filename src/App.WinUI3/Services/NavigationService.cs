@@ -19,7 +19,7 @@ namespace EsUtil.ZenHanConverter.App.WinUI3.Services;
 public class NavigationService(IServiceProvider services) : INavigationService
 {
     /// <summary>ページ名と型のマッピング。FrozenDictionary による高速・不変なルックアップ。</summary>
-    private static readonly FrozenDictionary<string, Type> s_pageMap = new Dictionary<string, Type>
+    private static readonly FrozenDictionary<string, Type> s_pageMap = new Dictionary<string, Type>(StringComparer.Ordinal)
     {
         ["Home"] = typeof(HomePage),
         ["Settings"] = typeof(SettingsPage),
@@ -45,7 +45,7 @@ public class NavigationService(IServiceProvider services) : INavigationService
     /// ページは Opacity=0 &amp; IsHitTestVisible=False で非表示にするためレイアウト状態が維持され、<br/>
     /// 初回遷移時に Visibility 変更に伴う再レイアウトが発生しません。<br/>
     /// 2回目以降と同等の切替速度を実現します。<br/></remarks>
-    public virtual void PreloadSettingsAsync()
+    public virtual void PreloadSettings()
     {
         var settingsType = typeof(SettingsPage);
         if (_pageCache.ContainsKey(settingsType))
@@ -79,13 +79,13 @@ public class NavigationService(IServiceProvider services) : INavigationService
     }
 
     /// <summary>指定されたページへ遷移します。</summary>
-    /// <param name="selectedPage">遷移先を示すオブジェクト。<br/>
+    /// <param name="page">遷移先を示すオブジェクト。<br/>
     /// NavigationViewItem(Tag プロパティ使用)、文字列("Home" / "Settings")、null のいずれか。</param>
     /// <remarks>遷移先が現在のページと同じ場合は処理をスキップします。<br/>
     /// null が渡された場合は何も行いません。</remarks>
-    public virtual void NavigateTo(object? selectedPage)
+    public virtual void NavigateTo(object? page)
     {
-        var tag = selectedPage switch
+        var tag = page switch
         {
             NavigationViewItem { Tag: string t } => t,
             NavigationViewItem item when ReferenceEquals(item, GetMainWindow().NavigationView.SettingsItem) => "Settings",
@@ -106,7 +106,7 @@ public class NavigationService(IServiceProvider services) : INavigationService
     /// <param name="tag">遷移先ページのタグ名("Home" または "Settings")</param>
     /// <remarks>同じページへの連続遷移はスキップされます(_currentPageType による比較)。<br/>
     /// 前回表示されていたページは Visibility.Collapsed または Opacity=0 で非表示になります。<br/>
-    /// プリロード済みのページ(PreloadSettingsAsync)は Opacity=0 でレイアウト状態を維持したまま非表示にし、<br/>
+    /// プリロード済みのページ(PreloadSettings)は Opacity=0 でレイアウト状態を維持したまま非表示にし、<br/>
     /// 再表示時のレイアウト再計算を回避します。通常生成のページは Visibility.Collapsed で非表示にします。<br/>
     /// ページ遷移と同時に NavigationView の選択状態も更新し、ホーム画面の歯車ボタンなどから<br/>
     /// プログラムで遷移した場合でも選択状態が同期されるようにします。</remarks>
@@ -158,7 +158,7 @@ public class NavigationService(IServiceProvider services) : INavigationService
         var navView = mainWindow.NavigationView;
         navView.SelectedItem = tag switch
         {
-            "Home" => navView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault(i => i.Tag as string == "Home"),
+            "Home" => navView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault(i => string.Equals(i.Tag as string, "Home", StringComparison.Ordinal)),
             "Settings" => navView.SettingsItem,
             _ => null,
         };

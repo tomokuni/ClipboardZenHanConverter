@@ -324,8 +324,8 @@ public sealed partial class SettingsPage : Page
     /// <remarks>NFKC 正規化で全角英数字を半角に変換し、ToLowerInvariant で小文字化した上で判定します。</remarks>
     internal static bool ContainsBuiltInKeyword(string name)
     {
-        var normalized = name.Normalize(NormalizationForm.FormKC).ToLowerInvariant();
-        return normalized.Contains("built-in") || normalized.Contains("builtin");
+        var normalized = name.Normalize(NormalizationForm.FormKC).ToUpperInvariant();
+        return normalized.Contains("BUILT-IN", StringComparison.Ordinal) || normalized.Contains("BUILTIN", StringComparison.Ordinal);
     }
 
     /// <summary>ComboBox のコントロールテンプレート内部にある TextBox を検索します。</summary>

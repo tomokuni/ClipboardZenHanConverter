@@ -49,7 +49,7 @@ public sealed class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public void Constructor_各カテゴリの項目数が定義と一致する()
+    internal void Constructor_各カテゴリの項目数が定義と一致する()
     {
         Assert.Equal(SegmentDefinitions.NumberDefs.Length, _viewModel.NumberItems.Count);
         Assert.Equal(SegmentDefinitions.AlphabetDefs.Length, _viewModel.AlphabetItems.Count);
@@ -62,7 +62,7 @@ public sealed class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public void Constructor_全カテゴリの項目ラベルと選択肢が定義順と一致する()
+    internal void Constructor_全カテゴリの項目ラベルと選択肢が定義順と一致する()
     {
         // カテゴリごとに、生成された項目がセグメント定義と同順・同内容であることを確認します。
         AssertGroup(_viewModel.NumberItems, SegmentDefinitions.NumberDefs);
@@ -91,12 +91,12 @@ public sealed class SettingsViewModelTests : IDisposable
                 ? segments.Select(s => s.Content)
                 : ["なし", "半角", "全角"];
 
-            Assert.Equal(expected, items[i].Options.Select(o => o.Content));
+            Assert.Equal(expected, items[i].Options.Select(o => o.Content), StringComparer.Ordinal);
         }
     }
 
     [Fact]
-    public void Constructor_置換ルールを読み込む()
+    internal void Constructor_置換ルールを読み込む()
     {
         var config = TestHelper.CreateDefaultConfig();
         config.AutoSaveFileName = Path.Combine(_tempDirectory, "Settings.json");
@@ -110,7 +110,7 @@ public sealed class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public void Item_SelectedLabel変更でConfigが更新される()
+    internal void Item_SelectedLabel変更でConfigが更新される()
     {
         _viewModel.NumberItems[0].SelectedLabel = "半角";
 
@@ -118,7 +118,7 @@ public sealed class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public void Item_Config変更がSelectedLabelに反映される()
+    internal void Item_Config変更がSelectedLabelに反映される()
     {
         _config.ConvertModeNumber = ZenHanMode.ToZen;
 
@@ -126,7 +126,7 @@ public sealed class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public void SavePreset_空文字は何もしない()
+    internal void SavePreset_空文字は何もしない()
     {
         var before = _viewModel.PresetNames.Count;
 
@@ -136,7 +136,7 @@ public sealed class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public void DeletePreset_空文字は何もしない()
+    internal void DeletePreset_空文字は何もしない()
     {
         _viewModel.SavePreset("残すプリセット");
         var before = _viewModel.PresetNames.Count;
@@ -145,22 +145,22 @@ public sealed class SettingsViewModelTests : IDisposable
         _viewModel.DeletePreset(null);
 
         Assert.Equal(before, _viewModel.PresetNames.Count);
-        Assert.Contains("残すプリセット", _viewModel.PresetNames);
+        Assert.Contains("残すプリセット", _viewModel.PresetNames, StringComparer.Ordinal);
     }
 
     [Theory]
     [InlineData(ConvertConfig.BuiltInPresetAccountingPower)]
     [InlineData(ConvertConfig.BuiltInPresetAlphanumericHanKanaZen)]
-    public void DeletePreset_組み込みプリセットは削除されない(string presetName)
+    internal void DeletePreset_組み込みプリセットは削除されない(string presetName)
     {
         // 組込みプリセットはユーザーデータではないため、削除操作でも消しません。
         _viewModel.DeletePreset(presetName);
 
-        Assert.Contains(presetName, _viewModel.PresetNames);
+        Assert.Contains(presetName, _viewModel.PresetNames, StringComparer.Ordinal);
     }
 
     [Fact]
-    public void 置換行の編集は設定へ即時反映される()
+    internal void 置換行の編集は設定へ即時反映される()
     {
         _viewModel.AddReplaceRowCommand.Execute(null);
         var item = _viewModel.ReplaceItems[0];
@@ -174,7 +174,7 @@ public sealed class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public void 置換行のバリデーションエラーはErrorMessageに反映される()
+    internal void 置換行のバリデーションエラーはErrorMessageに反映される()
     {
         _viewModel.AddReplaceRowCommand.Execute(null);
         var item = _viewModel.ReplaceItems[0];
@@ -187,7 +187,7 @@ public sealed class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public void ValidateAllAndSyncToConfig_有効な行のみを反映する()
+    internal void ValidateAllAndSyncToConfig_有効な行のみを反映する()
     {
         _viewModel.AddReplaceRowCommand.Execute(null);
         _viewModel.ReplaceItems[0].Search = "abc";
@@ -201,7 +201,7 @@ public sealed class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public void AddReplaceRowCommand_空行を追加し無効行は反映しない()
+    internal void AddReplaceRowCommand_空行を追加し無効行は反映しない()
     {
         _viewModel.AddReplaceRowCommand.Execute(null);
 
@@ -210,7 +210,7 @@ public sealed class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public void DeleteReplaceRowCommand_行を削除して同期する()
+    internal void DeleteReplaceRowCommand_行を削除して同期する()
     {
         _viewModel.AddReplaceRowCommand.Execute(null);
         _viewModel.ReplaceItems[0].Search = "abc";
@@ -224,7 +224,7 @@ public sealed class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public void DeleteReplaceRowCommand_nullを指定しても何もしない()
+    internal void DeleteReplaceRowCommand_nullを指定しても何もしない()
     {
         var ex = Record.Exception(() => _viewModel.DeleteReplaceRowCommand.Execute(null));
 
@@ -232,7 +232,7 @@ public sealed class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public void ReloadReplaceItemsFromConfig_設定から再構築する()
+    internal void ReloadReplaceItemsFromConfig_設定から再構築する()
     {
         _config.ReplacePairs = [new ReplacePair("abc", "xyz", IsRegex: true)];
 
@@ -244,7 +244,7 @@ public sealed class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public void ReloadReplaceItemsFromConfig_再構築後も編集が設定へ反映される()
+    internal void ReloadReplaceItemsFromConfig_再構築後も編集が設定へ反映される()
     {
         _config.ReplacePairs = [new ReplacePair("abc", "xyz")];
         _viewModel.ReloadReplaceItemsFromConfig();
@@ -255,16 +255,16 @@ public sealed class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public void RefreshPresets_組み込みプリセットを含む()
+    internal void RefreshPresets_組み込みプリセットを含む()
     {
         _viewModel.RefreshPresets();
 
-        Assert.Contains(ConvertConfig.BuiltInPresetAccountingPower, _viewModel.PresetNames);
-        Assert.Contains(ConvertConfig.BuiltInPresetAlphanumericHanKanaZen, _viewModel.PresetNames);
+        Assert.Contains(ConvertConfig.BuiltInPresetAccountingPower, _viewModel.PresetNames, StringComparer.Ordinal);
+        Assert.Contains(ConvertConfig.BuiltInPresetAlphanumericHanKanaZen, _viewModel.PresetNames, StringComparer.Ordinal);
     }
 
     [Fact]
-    public void SelectedPresetName_組み込みプリセットを選択すると設定が読み込まれる()
+    internal void SelectedPresetName_組み込みプリセットを選択すると設定が読み込まれる()
     {
         _viewModel.SelectedPresetName = ConvertConfig.BuiltInPresetAlphanumericHanKanaZen;
 
@@ -275,7 +275,7 @@ public sealed class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public void 設定変更時に一致するプリセット名が自動設定される()
+    internal void 設定変更時に一致するプリセット名が自動設定される()
     {
         _viewModel.SelectedPresetName = ConvertConfig.BuiltInPresetAccountingPower;
 
@@ -283,7 +283,7 @@ public sealed class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public void 一致しない設定ではプリセット名が未選択になる()
+    internal void 一致しない設定ではプリセット名が未選択になる()
     {
         _viewModel.SelectedPresetName = ConvertConfig.BuiltInPresetAccountingPower;
         _config.ConvertModeNumber = ZenHanMode.None;
@@ -293,7 +293,7 @@ public sealed class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public void LoadPreset_組み込みプリセットを読み込む()
+    internal void LoadPreset_組み込みプリセットを読み込む()
     {
         _viewModel.LoadPreset(ConvertConfig.BuiltInPresetAccountingPower);
 
@@ -303,7 +303,7 @@ public sealed class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public void LoadPreset_空文字は何もしない()
+    internal void LoadPreset_空文字は何もしない()
     {
         _config.ConvertModeNumber = ZenHanMode.ToZen;
 
@@ -314,20 +314,20 @@ public sealed class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public void SavePreset_保存後にプリセット一覧へ現れる()
+    internal void SavePreset_保存後にプリセット一覧へ現れる()
     {
         _config.ConvertModeNumber = ZenHanMode.ToZen;
 
         _viewModel.SavePreset("テスト用プリセット");
 
-        Assert.Contains("テスト用プリセット", _viewModel.PresetNames);
+        Assert.Contains("テスト用プリセット", _viewModel.PresetNames, StringComparer.Ordinal);
         Assert.Equal("テスト用プリセット", _viewModel.SelectedPresetName);
 
         _viewModel.DeletePreset("テスト用プリセット");
     }
 
     [Fact]
-    public void ExportSettings_ファイルを書き出す()
+    internal void ExportSettings_ファイルを書き出す()
     {
         _config.ConvertModeNumber = ZenHanMode.ToHan;
         var file = Path.Combine(_tempDirectory, "export.json");
@@ -335,11 +335,11 @@ public sealed class SettingsViewModelTests : IDisposable
         _viewModel.ExportSettings(file);
 
         Assert.True(File.Exists(file));
-        Assert.Contains("ConvertModeNumber", File.ReadAllText(file));
+        Assert.Contains("ConvertModeNumber", File.ReadAllText(file), StringComparison.Ordinal);
     }
 
     [Fact]
-    public void ImportSettings_成功時はnullを返し設定を反映する()
+    internal void ImportSettings_成功時はnullを返し設定を反映する()
     {
         var source = TestHelper.CreateDefaultConfig();
         source.ConvertModeNumber = ZenHanMode.ToZen;
@@ -355,7 +355,7 @@ public sealed class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public void ImportSettings_失敗時はエラーメッセージを返す()
+    internal void ImportSettings_失敗時はエラーメッセージを返す()
     {
         var file = Path.Combine(_tempDirectory, "broken.json");
         File.WriteAllText(file, "これはJSONではありません");

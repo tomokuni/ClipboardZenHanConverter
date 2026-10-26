@@ -84,71 +84,71 @@ internal static class SvgPathParser
 
                 case 'C':
                 case 'c':
-                {
-                    var relative = command == 'c';
-                    var c1X = reader.ReadNumber() + (relative ? originX : 0);
-                    var c1Y = reader.ReadNumber() + (relative ? originY : 0);
-                    var c2X = reader.ReadNumber() + (relative ? originX : 0);
-                    var c2Y = reader.ReadNumber() + (relative ? originY : 0);
-                    x = reader.ReadNumber() + (relative ? originX : 0);
-                    y = reader.ReadNumber() + (relative ? originY : 0);
-                    path.AddBezier(originX, originY, c1X, c1Y, c2X, c2Y, x, y);
-                    cubicX = c2X;
-                    cubicY = c2Y;
-                    break;
-                }
+                    {
+                        var relative = command == 'c';
+                        var c1X = reader.ReadNumber() + (relative ? originX : 0);
+                        var c1Y = reader.ReadNumber() + (relative ? originY : 0);
+                        var c2X = reader.ReadNumber() + (relative ? originX : 0);
+                        var c2Y = reader.ReadNumber() + (relative ? originY : 0);
+                        x = reader.ReadNumber() + (relative ? originX : 0);
+                        y = reader.ReadNumber() + (relative ? originY : 0);
+                        path.AddBezier(originX, originY, c1X, c1Y, c2X, c2Y, x, y);
+                        cubicX = c2X;
+                        cubicY = c2Y;
+                        break;
+                    }
 
                 case 'S':
                 case 's':
-                {
-                    var relative = command == 's';
+                    {
+                        var relative = command == 's';
 
-                    // 直前が 3 次ベジエでない場合は、制御点を現在点と同一とみなす（SVG の仕様）
-                    var isPreviousCubic = lastCommand is 'C' or 'c' or 'S' or 's';
-                    var c1X = isPreviousCubic ? (2 * originX) - cubicX : originX;
-                    var c1Y = isPreviousCubic ? (2 * originY) - cubicY : originY;
+                        // 直前が 3 次ベジエでない場合は、制御点を現在点と同一とみなす（SVG の仕様）
+                        var isPreviousCubic = lastCommand is 'C' or 'c' or 'S' or 's';
+                        var c1X = isPreviousCubic ? (2 * originX) - cubicX : originX;
+                        var c1Y = isPreviousCubic ? (2 * originY) - cubicY : originY;
 
-                    var c2X = reader.ReadNumber() + (relative ? originX : 0);
-                    var c2Y = reader.ReadNumber() + (relative ? originY : 0);
-                    x = reader.ReadNumber() + (relative ? originX : 0);
-                    y = reader.ReadNumber() + (relative ? originY : 0);
-                    path.AddBezier(originX, originY, c1X, c1Y, c2X, c2Y, x, y);
-                    cubicX = c2X;
-                    cubicY = c2Y;
-                    break;
-                }
+                        var c2X = reader.ReadNumber() + (relative ? originX : 0);
+                        var c2Y = reader.ReadNumber() + (relative ? originY : 0);
+                        x = reader.ReadNumber() + (relative ? originX : 0);
+                        y = reader.ReadNumber() + (relative ? originY : 0);
+                        path.AddBezier(originX, originY, c1X, c1Y, c2X, c2Y, x, y);
+                        cubicX = c2X;
+                        cubicY = c2Y;
+                        break;
+                    }
 
                 case 'Q':
                 case 'q':
-                {
-                    var relative = command == 'q';
-                    var cX = reader.ReadNumber() + (relative ? originX : 0);
-                    var cY = reader.ReadNumber() + (relative ? originY : 0);
-                    x = reader.ReadNumber() + (relative ? originX : 0);
-                    y = reader.ReadNumber() + (relative ? originY : 0);
-                    path.AddBezier(originX, originY, cX, cY, cX, cY, x, y);
-                    quadraticX = cX;
-                    quadraticY = cY;
-                    break;
-                }
+                    {
+                        var relative = command == 'q';
+                        var cX = reader.ReadNumber() + (relative ? originX : 0);
+                        var cY = reader.ReadNumber() + (relative ? originY : 0);
+                        x = reader.ReadNumber() + (relative ? originX : 0);
+                        y = reader.ReadNumber() + (relative ? originY : 0);
+                        path.AddBezier(originX, originY, cX, cY, cX, cY, x, y);
+                        quadraticX = cX;
+                        quadraticY = cY;
+                        break;
+                    }
 
                 case 'T':
                 case 't':
-                {
-                    var relative = command == 't';
+                    {
+                        var relative = command == 't';
 
-                    // 直前が 2 次ベジエでない場合は、制御点を現在点と同一とみなす（SVG の仕様）
-                    var isPreviousQuadratic = lastCommand is 'Q' or 'q' or 'T' or 't';
-                    var cX = isPreviousQuadratic ? (2 * originX) - quadraticX : originX;
-                    var cY = isPreviousQuadratic ? (2 * originY) - quadraticY : originY;
+                        // 直前が 2 次ベジエでない場合は、制御点を現在点と同一とみなす（SVG の仕様）
+                        var isPreviousQuadratic = lastCommand is 'Q' or 'q' or 'T' or 't';
+                        var cX = isPreviousQuadratic ? (2 * originX) - quadraticX : originX;
+                        var cY = isPreviousQuadratic ? (2 * originY) - quadraticY : originY;
 
-                    x = reader.ReadNumber() + (relative ? originX : 0);
-                    y = reader.ReadNumber() + (relative ? originY : 0);
-                    path.AddBezier(originX, originY, cX, cY, cX, cY, x, y);
-                    quadraticX = cX;
-                    quadraticY = cY;
-                    break;
-                }
+                        x = reader.ReadNumber() + (relative ? originX : 0);
+                        y = reader.ReadNumber() + (relative ? originY : 0);
+                        path.AddBezier(originX, originY, cX, cY, cX, cY, x, y);
+                        quadraticX = cX;
+                        quadraticY = cY;
+                        break;
+                    }
 
                 case 'Z':
                 case 'z':

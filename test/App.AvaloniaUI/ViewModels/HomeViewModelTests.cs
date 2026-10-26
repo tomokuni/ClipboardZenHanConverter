@@ -22,7 +22,7 @@ file sealed class StubClipboardService : IClipboardService
     public bool FlushCalled { get; private set; }
 
     /// <summary>クリップボード内容変更イベント。</summary>
-    public event EventHandler<object>? ContentChanged;
+    public event EventHandler<EventArgs>? ContentChanged;
 
     /// <summary>クリップボードからテキストを取得します。</summary>
     /// <returns>設定されたテキスト。</returns>
@@ -41,7 +41,7 @@ file sealed class StubClipboardService : IClipboardService
     }
 
     /// <summary>ContentChanged イベントを発行します。</summary>
-    public void SimulateContentChange() => ContentChanged?.Invoke(this, EventArgs.Empty);
+    internal void SimulateContentChange() => ContentChanged?.Invoke(this, EventArgs.Empty);
 }
 
 /// <summary><see cref="HomeViewModel"/> の表示用変換とクリップボード連携を検証します。</summary>
@@ -52,14 +52,16 @@ public sealed class HomeViewModelTests
     private static AppSetting CreateAppSetting() => new() { IsClipboardConvertEnabled = true };
 
     [Fact]
-    public void Clipboard_ContentChanged_ConvertsAndSetsText()
+    internal void Clipboard_ContentChanged_ConvertsAndSetsText()
     {
         var clipboard = new StubClipboardService { Text = "ＡＢＣ" };
         ConvertConfig config = new() { ConvertModeAlphabet = ZenHanMode.ToHan };
 
         CharConverter converter = new(config);
-        var vm = new HomeViewModel(converter, clipboard, CreateAppSetting());
-        vm.IsTestMode = true;
+        using var vm = new HomeViewModel(converter, clipboard, CreateAppSetting())
+        {
+            IsTestMode = true
+        };
         clipboard.SimulateContentChange();
 
         Assert.Equal("ABC", clipboard.SetTextArg);
@@ -67,40 +69,44 @@ public sealed class HomeViewModelTests
     }
 
     [Fact]
-    public void Clipboard_ContentChanged_DoesNotSetText_IfNoChange()
+    internal void Clipboard_ContentChanged_DoesNotSetText_IfNoChange()
     {
         var clipboard = new StubClipboardService { Text = "ABC" };
         ConvertConfig config = new() { ConvertModeAlphabet = ZenHanMode.ToHan };
 
-        var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting());
-        vm.IsTestMode = true;
+        using var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting())
+        {
+            IsTestMode = true
+        };
         clipboard.SimulateContentChange();
 
         Assert.Null(clipboard.SetTextArg);
     }
 
     [Fact]
-    public void Clipboard_ContentChanged_ConvertsEvenIfZenHanFlagDisabled()
+    internal void Clipboard_ContentChanged_ConvertsEvenIfZenHanFlagDisabled()
     {
         // 全角/半角変換は常に有効です（IsEnabledZenHan は画面側で参照しません。他 UI と同一）。
         var clipboard = new StubClipboardService { Text = "ＡＢＣ" };
         ConvertConfig config = new() { IsEnabledZenHan = false, ConvertModeAlphabet = ZenHanMode.ToHan };
 
-        var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting());
-        vm.IsTestMode = true;
+        using var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting())
+        {
+            IsTestMode = true
+        };
         clipboard.SimulateContentChange();
 
         Assert.Equal("ABC", clipboard.SetTextArg);
     }
 
     [Fact]
-    public void Clipboard_ContentChanged_DoesNothing_IfClipboardConvertDisabled()
+    internal void Clipboard_ContentChanged_DoesNothing_IfClipboardConvertDisabled()
     {
         // クリップボード変換トグルが無効な場合は、読み取りも書き戻しも行いません（他 UI と同一）。
         var clipboard = new StubClipboardService { Text = "ＡＢＣ" };
         ConvertConfig config = new() { ConvertModeAlphabet = ZenHanMode.ToHan };
 
-        var vm = new HomeViewModel(new CharConverter(config), clipboard,
+        using var vm = new HomeViewModel(new CharConverter(config), clipboard,
             new AppSetting { IsClipboardConvertEnabled = false })
         {
             IsTestMode = true,
@@ -114,12 +120,12 @@ public sealed class HomeViewModelTests
     }
 
     [Fact]
-    public void BeforeText_変更時は変換後テキストを更新しクリップボードへ書き戻さない()
+    internal void BeforeText_変更時は変換後テキストを更新しクリップボードへ書き戻さない()
     {
         var clipboard = new StubClipboardService();
         ConvertConfig config = new() { ConvertModeAlphabet = ZenHanMode.ToHan };
 
-        var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting())
+        using var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting())
         {
             BeforeText = "ＡＢＣ",
         };
@@ -129,12 +135,12 @@ public sealed class HomeViewModelTests
     }
 
     [Fact]
-    public void BeforeText_変化がない場合は変換不要を表示する()
+    internal void BeforeText_変化がない場合は変換不要を表示する()
     {
         var clipboard = new StubClipboardService();
         ConvertConfig config = new() { ConvertModeAlphabet = ZenHanMode.ToHan };
 
-        var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting())
+        using var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting())
         {
             BeforeText = "ABC",
         };
@@ -143,12 +149,12 @@ public sealed class HomeViewModelTests
     }
 
     [Fact]
-    public void BeforeText_空文字の場合は空文字を表示する()
+    internal void BeforeText_空文字の場合は空文字を表示する()
     {
         var clipboard = new StubClipboardService();
         ConvertConfig config = new();
 
-        var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting())
+        using var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting())
         {
             BeforeText = "",
         };
@@ -161,15 +167,17 @@ public sealed class HomeViewModelTests
     [InlineData(ConvertConfig.BuiltInPresetAccountingPower, "（株）ＡＢＣ商事 １，２３４，５６７円", "(株)ABC商事 1,234,567円")]
     [InlineData(ConvertConfig.BuiltInPresetAlphanumericHanKanaZen, "ＴＥＬ：０３−１２３４−５６７８（代表）", "TEL:03-1234-5678(代表)")]
     [InlineData(ConvertConfig.BuiltInPresetAlphanumericHanKanaZen, "ﾀﾞｲｽｷﾅﾗｰﾒﾝ! ﾏｲｳｪｲ!", "ダイスキナラーメン! マイウェイ!")]
-    public void Clipboard_組み込みプリセットの変換結果がcoreと一致する(string presetName, string input, string expected)
+    internal void Clipboard_組み込みプリセットの変換結果がcoreと一致する(string presetName, string input, string expected)
     {
         // 画面側の経路（クリップボード変更 → 自動変換 → 書き戻し）でも、共有 Core と同じ変換結果になることを確認します。
         var clipboard = new StubClipboardService { Text = input };
         ConvertConfig config = new();
         config.LoadPreset(presetName);
 
-        var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting());
-        vm.IsTestMode = true;
+        using var vm = new HomeViewModel(new CharConverter(config), clipboard, CreateAppSetting())
+        {
+            IsTestMode = true
+        };
         clipboard.SimulateContentChange();
 
         Assert.Equal(expected, clipboard.SetTextArg);

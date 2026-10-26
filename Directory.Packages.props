@@ -16,6 +16,11 @@
     <PackageVersion Include="EsUtil.Ui.WinUI3.ColumnPacking" Version="$(EsUtilVersion)" />
   </ItemGroup>
 
+  <ItemGroup Label="アナライザー">
+    <PackageVersion Include="Meziantou.Analyzer" Version="3.0.317" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="5.6.0" />
+    <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.14.15" />
+  </ItemGroup>
   <ItemGroup Label="サードパーティ">
     <PackageVersion Include="Aprillz.MewUI.Windows" Version="0.22.1" />
     <PackageVersion Include="Avalonia" Version="12.1.4" />

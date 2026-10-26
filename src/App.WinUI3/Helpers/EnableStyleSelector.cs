@@ -18,9 +18,9 @@ public partial class EnableStyleSelector : StyleSelector
 
     /// <summary>アイテムの状態に応じてスタイルを選択します。</summary>
     /// <param name="item">スタイルを選択する対象アイテム</param>
-    /// <param name="_">未使用の依存関係オブジェクト</param>
+    /// <param name="container">依存関係オブジェクト（本実装では使わない）</param>
     /// <returns>選択されたスタイル</returns>
-    protected override Style SelectStyleCore(object item, DependencyObject _)
+    protected override Style SelectStyleCore(object item, DependencyObject container)
     {
         ArgumentNullException.ThrowIfNull(item);
         ArgumentNullException.ThrowIfNull(EnabledStyle);

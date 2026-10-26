@@ -78,7 +78,7 @@ public partial class HomeViewModel : ObservableObject, IDisposable
     /// <param name="e">イベントデータ。</param>
     /// <remarks>イベント ハンドラーから非同期の処理を開始します（`async void` は使いません。
     /// 失敗は <see cref="RunClipboardChangeAsync"/> が受け止めます）。</remarks>
-    private void Clipboard_ContentChanged(object? sender, object e) => _ = RunClipboardChangeAsync();
+    private void Clipboard_ContentChanged(object? sender, EventArgs e) => _ = RunClipboardChangeAsync();
 
     /// <summary>クリップボード変更の処理を実行し、想定内の失敗を握ります。</summary>
     /// <returns>処理の完了を表すタスク。</returns>
@@ -111,7 +111,7 @@ public partial class HomeViewModel : ObservableObject, IDisposable
             return;
 
         var text = await _clipboardService.GetTextAsync();
-        if (string.IsNullOrEmpty(text) || ConvertedText == text)
+        if (string.IsNullOrEmpty(text) || string.Equals(ConvertedText, text, StringComparison.Ordinal))
             return;
 
         // await 中に無効化された場合は、読み取り結果を破棄してクリップボードに触れない。
@@ -119,7 +119,7 @@ public partial class HomeViewModel : ObservableObject, IDisposable
             return;
 
         BeforeText = text;
-        if (ConvertedText == HomeDisplayText.NoChange)
+        if (string.Equals(ConvertedText, HomeDisplayText.NoChange, StringComparison.Ordinal))
             return;
 
         try
@@ -143,6 +143,6 @@ public partial class HomeViewModel : ObservableObject, IDisposable
             return "";
 
         var converted = _converter.Convert(text);
-        return text == converted ? HomeDisplayText.NoChange : converted;
+        return string.Equals(text, converted, StringComparison.Ordinal) ? HomeDisplayText.NoChange : converted;
     }
 }

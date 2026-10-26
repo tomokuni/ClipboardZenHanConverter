@@ -51,7 +51,7 @@ public sealed class PresetEditDialogViewModelTests : IDisposable
         => new(_settings) { PresetName = name };
 
     [Fact]
-    public void 空文字は保存も削除もできない()
+    internal void 空文字は保存も削除もできない()
     {
         var vm = Create("");
 
@@ -61,7 +61,7 @@ public sealed class PresetEditDialogViewModelTests : IDisposable
     }
 
     [Fact]
-    public void 空白のみは保存も削除もできない()
+    internal void 空白のみは保存も削除もできない()
     {
         var vm = Create("   ");
 
@@ -71,7 +71,7 @@ public sealed class PresetEditDialogViewModelTests : IDisposable
     }
 
     [Fact]
-    public void 新規の有効な名前は保存のみ可能()
+    internal void 新規の有効な名前は保存のみ可能()
     {
         var vm = Create("新しいプリセット");
 
@@ -81,7 +81,7 @@ public sealed class PresetEditDialogViewModelTests : IDisposable
     }
 
     [Fact]
-    public void 組込みプリセットは保存も削除もできない()
+    internal void 組込みプリセットは保存も削除もできない()
     {
         var vm = Create(ConvertConfig.BuiltInPresetAccountingPower);
 
@@ -94,7 +94,7 @@ public sealed class PresetEditDialogViewModelTests : IDisposable
     [InlineData("テスト:名前")]
     [InlineData("テスト/名前")]
     [InlineData("テスト\\名前")]
-    public void 使用できない文字を含む名前は保存できない(string name)
+    internal void 使用できない文字を含む名前は保存できない(string name)
     {
         var vm = Create(name);
 
@@ -107,7 +107,7 @@ public sealed class PresetEditDialogViewModelTests : IDisposable
     [InlineData("builtinテスト")]
     [InlineData("ＢＵＩＬＴ－ＩＮテスト")]
     [InlineData("BuiltInテスト")]
-    public void builtinキーワードを含む名前は保存できない(string name)
+    internal void builtinキーワードを含む名前は保存できない(string name)
     {
         var vm = Create(name);
 
@@ -116,7 +116,7 @@ public sealed class PresetEditDialogViewModelTests : IDisposable
     }
 
     [Fact]
-    public void 既存ユーザープリセットは保存も削除も可能()
+    internal void 既存ユーザープリセットは保存も削除も可能()
     {
         _settings.SavePreset("既存プリセット");
         var vm = Create("既存プリセット");
@@ -129,7 +129,7 @@ public sealed class PresetEditDialogViewModelTests : IDisposable
     }
 
     [Fact]
-    public void 使用できない文字を含む名前は削除もできない()
+    internal void 使用できない文字を含む名前は削除もできない()
     {
         // 使用不可文字を含む名前はプリセットとして保存できない（ファイル名にできない）ため、
         // 削除対象として存在し得ません。したがって削除も無効です。
@@ -141,7 +141,7 @@ public sealed class PresetEditDialogViewModelTests : IDisposable
     }
 
     [Fact]
-    public void 名前を変更すると検証結果が更新される()
+    internal void 名前を変更すると検証結果が更新される()
     {
         var vm = Create("新しいプリセット");
         Assert.True(vm.CanSave);
@@ -153,7 +153,7 @@ public sealed class PresetEditDialogViewModelTests : IDisposable
     }
 
     [Fact]
-    public void SaveCommand_プリセットを保存して閉じる()
+    internal void SaveCommand_プリセットを保存して閉じる()
     {
         var closed = false;
         var vm = Create("保存テスト");
@@ -162,13 +162,13 @@ public sealed class PresetEditDialogViewModelTests : IDisposable
         vm.SaveCommand.Execute(null);
 
         Assert.True(closed);
-        Assert.Contains("保存テスト", _settings.PresetNames);
+        Assert.Contains("保存テスト", _settings.PresetNames, StringComparer.Ordinal);
 
         _settings.DeletePreset("保存テスト");
     }
 
     [Fact]
-    public void SaveCommand_保存できない場合は何もしない()
+    internal void SaveCommand_保存できない場合は何もしない()
     {
         var closed = false;
         var vm = Create(ConvertConfig.BuiltInPresetAccountingPower);
@@ -180,7 +180,7 @@ public sealed class PresetEditDialogViewModelTests : IDisposable
     }
 
     [Fact]
-    public void DeleteCommand_プリセットを削除して閉じる()
+    internal void DeleteCommand_プリセットを削除して閉じる()
     {
         _settings.SavePreset("削除テスト");
         var closed = false;
@@ -190,11 +190,11 @@ public sealed class PresetEditDialogViewModelTests : IDisposable
         vm.DeleteCommand.Execute(null);
 
         Assert.True(closed);
-        Assert.DoesNotContain("削除テスト", _settings.PresetNames);
+        Assert.DoesNotContain("削除テスト", _settings.PresetNames, StringComparer.Ordinal);
     }
 
     [Fact]
-    public void DeleteCommand_削除できない場合は何もしない()
+    internal void DeleteCommand_削除できない場合は何もしない()
     {
         var closed = false;
         var vm = Create("新規プリセット");
@@ -206,7 +206,7 @@ public sealed class PresetEditDialogViewModelTests : IDisposable
     }
 
     [Fact]
-    public void CloseCommand_何もせず閉じる()
+    internal void CloseCommand_何もせず閉じる()
     {
         var closed = false;
         var vm = Create("プリセット");
@@ -221,7 +221,7 @@ public sealed class PresetEditDialogViewModelTests : IDisposable
     [InlineData("abc", false)]
     [InlineData("a:b", true)]
     [InlineData("a/b", true)]
-    public void ContainsInvalidFileNameChars_使用不可文字を判定する(string name, bool expected)
+    internal void ContainsInvalidFileNameChars_使用不可文字を判定する(string name, bool expected)
         => Assert.Equal(expected, PresetEditDialogViewModel.ContainsInvalidFileNameChars(name));
 
     [Theory]
@@ -231,6 +231,6 @@ public sealed class PresetEditDialogViewModelTests : IDisposable
     [InlineData("builtin", true)]
     [InlineData("ＢＵＩＬＴＩＮ", true)]
     [InlineData("プリセット", false)]
-    public void ContainsBuiltInKeyword_正規化して判定する(string name, bool expected)
+    internal void ContainsBuiltInKeyword_正規化して判定する(string name, bool expected)
         => Assert.Equal(expected, PresetEditDialogViewModel.ContainsBuiltInKeyword(name));
 }

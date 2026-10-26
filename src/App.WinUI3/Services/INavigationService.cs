@@ -14,5 +14,5 @@ public interface INavigationService
 
     /// <summary>SettingsPage をバックグラウンドで事前生成します。</summary>
     /// <remarks>UIスレッドがアイドルになったタイミングで設定画面のXAML解析と生成を実行します。</remarks>
-    void PreloadSettingsAsync();
+    void PreloadSettings();
 }

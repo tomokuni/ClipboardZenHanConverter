@@ -79,7 +79,7 @@ internal sealed class CategorySection : TableLayoutPanel
 
     /// <summary>行を追加して、その行番号を返します。</summary>
     /// <returns>追加した行の番号。</returns>
-    /// <remarks><see cref="RowStyles"/> と <see cref="TableLayoutPanel.RowCount"/> を常に一致させます。</remarks>
+    /// <remarks><c>RowStyles</c> と <see cref="TableLayoutPanel.RowCount"/> を常に一致させます。</remarks>
     private int AddRow()
     {
         RowStyles.Add(new RowStyle(SizeType.AutoSize));

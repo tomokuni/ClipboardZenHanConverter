@@ -108,14 +108,14 @@ public partial class HomeViewModel : ObservableObject, IDisposable
             return "";
 
         var converted = _converter.Convert(text);
-        return text == converted ? HomeDisplayText.NoChange : converted;
+        return string.Equals(text, converted, StringComparison.Ordinal) ? HomeDisplayText.NoChange : converted;
     }
 
     /// <summary>クリップボードの内容変更時に呼び出されます。UI スレッドまたはバックグラウンドで変換処理を開始します。</summary>
     /// <param name="sender">イベントソース。</param>
     /// <param name="e">イベントデータ。</param>
     /// <remarks>バインド済みプロパティを更新するため、UI スレッド以外から発火された場合は UI スレッドへ委譲します。</remarks>
-    private void Clipboard_ContentChanged(object? sender, object e)
+    private void Clipboard_ContentChanged(object? sender, EventArgs e)
     {
         if (IsTestMode || _uiContext is null || _uiContext == SynchronizationContext.Current)
         {
@@ -123,7 +123,8 @@ public partial class HomeViewModel : ObservableObject, IDisposable
             return;
         }
 
-        _uiContext.Post(static state => _ = ((HomeViewModel)state!).HandleClipboardChangeAsync(), this);
+        // 待たない（イベント ハンドラーは同期のため）。 失敗は HandleClipboardChangeAsync が記録する。
+        _uiContext.Post(static state => ((HomeViewModel)state!).HandleClipboardChangeAsync().GetAwaiter(), this);
     }
 
     /// <summary>クリップボード変更を非同期に処理します。</summary>
@@ -152,7 +153,7 @@ public partial class HomeViewModel : ObservableObject, IDisposable
             if (string.IsNullOrEmpty(text))
                 return;
 
-            if (ConvertedText == text)
+            if (string.Equals(ConvertedText, text, StringComparison.Ordinal))
                 return;
 
             // await 中に無効化された場合は、読み取り結果を破棄してクリップボードに触れない。
@@ -160,7 +161,7 @@ public partial class HomeViewModel : ObservableObject, IDisposable
                 return;
 
             BeforeText = text;
-            if (ConvertedText == HomeDisplayText.NoChange)
+            if (string.Equals(ConvertedText, HomeDisplayText.NoChange, StringComparison.Ordinal))
                 return;
 
             try

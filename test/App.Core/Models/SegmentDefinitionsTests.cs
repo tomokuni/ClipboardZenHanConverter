@@ -40,7 +40,7 @@ public sealed class SegmentDefinitionsTests
 
     [Theory]
     [MemberData(nameof(CategoryTheoryData))]
-    public void 各カテゴリの定義は空でなくラベルを持つ(string categoryLabel, SegmentDefine[] defs)
+    internal void 各カテゴリの定義は空でなくラベルを持つ(string categoryLabel, SegmentDefine[] defs)
     {
         Assert.False(string.IsNullOrEmpty(categoryLabel));
         Assert.NotEmpty(defs);
@@ -48,14 +48,14 @@ public sealed class SegmentDefinitionsTests
     }
 
     [Fact]
-    public void 全カテゴリでMode定義が設定され一意である()
+    internal void 全カテゴリでMode定義が設定され一意である()
     {
         Assert.All(s_allDefinitions, d => Assert.NotNull(d.Mode));
         Assert.Equal(s_allDefinitions.Length, s_allDefinitions.Select(d => d.Mode).Distinct().Count());
     }
 
     [Fact]
-    public void 数字と英字と連続スペースは単一項目()
+    internal void 数字と英字と連続スペースは単一項目()
     {
         Assert.Single(SegmentDefinitions.NumberDefs);
         Assert.Single(SegmentDefinitions.AlphabetDefs);
@@ -63,44 +63,44 @@ public sealed class SegmentDefinitionsTests
     }
 
     [Fact]
-    public void かなは3項目で各4セグメントを持つ()
+    internal void かなは3項目で各4セグメントを持つ()
     {
         Assert.Equal(3, SegmentDefinitions.KanaDefs.Length);
         Assert.All(SegmentDefinitions.KanaDefs, d => Assert.Equal(4, d.Segments?.Length));
     }
 
     [Fact]
-    public void 記号は34項目()
+    internal void 記号は34項目()
     {
         Assert.Equal(34, SegmentDefinitions.SymbolDefs.Length);
     }
 
     [Fact]
-    public void 記号のラベルは名称と記号の2部構成()
+    internal void 記号のラベルは名称と記号の2部構成()
     {
         Assert.All(SegmentDefinitions.SymbolDefs, d => Assert.Contains('\u3000', d.Label));
     }
 
     [Fact]
-    public void 特殊文字はタブと改行の2項目()
+    internal void 特殊文字はタブと改行の2項目()
     {
         Assert.Equal(2, SegmentDefinitions.EtcSpecialDefs.Length);
     }
 
     [Fact]
-    public void バックスラッシュと円記号は4項目()
+    internal void バックスラッシュと円記号は4項目()
     {
         Assert.Equal(4, SegmentDefinitions.EtcBslashYenDefs.Length);
     }
 
     [Fact]
-    public void 連続スペースは高さを指定する()
+    internal void 連続スペースは高さを指定する()
     {
         Assert.Equal(80, SegmentDefinitions.EtcMultiSpaceDefs[0].Height);
     }
 
     [Fact]
-    public void セグメントを持つ定義はModeで設定を往復できる()
+    internal void セグメントを持つ定義はModeで設定を往復できる()
     {
         var config = TestHelper.CreateDefaultConfig();
         var defs = s_allDefinitions.Where(d => d.Segments is { Length: > 0 });
@@ -114,7 +114,7 @@ public sealed class SegmentDefinitionsTests
     }
 
     [Fact]
-    public void かな定義は対応するモードに接続されている()
+    internal void かな定義は対応するモードに接続されている()
     {
         var config = TestHelper.CreateDefaultConfig();
 
@@ -124,7 +124,7 @@ public sealed class SegmentDefinitionsTests
     }
 
     [Fact]
-    public void 記号定義は記号モードに接続されている()
+    internal void 記号定義は記号モードに接続されている()
     {
         var config = TestHelper.CreateDefaultConfig();
 

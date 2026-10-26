@@ -28,7 +28,7 @@ public sealed class ClipboardService : IClipboardService
     private const int PollIntervalMs = ClipboardChangeDetector.RecommendedPollIntervalMs;
 
     /// <summary>クリップボード内容変更イベント。</summary>
-    public event EventHandler<object>? ContentChanged;
+    public event EventHandler<EventArgs>? ContentChanged;
 
     /// <summary>クリップボード内容の変更検出器。</summary>
     private readonly ClipboardChangeDetector _changeDetector = new(SafeGetSequence);

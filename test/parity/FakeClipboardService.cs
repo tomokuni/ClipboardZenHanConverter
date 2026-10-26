@@ -21,7 +21,7 @@ internal sealed class FakeClipboardService : IClipboardService
     public int FlushCount { get; private set; }
 
     /// <inheritdoc/>
-    public event EventHandler<object>? ContentChanged;
+    public event EventHandler<EventArgs>? ContentChanged;
 
     /// <inheritdoc/>
     public Task<string?> GetTextAsync() => Task.FromResult(Text);
@@ -40,5 +40,5 @@ internal sealed class FakeClipboardService : IClipboardService
     public void Dispose() { }
 
     /// <summary>クリップボード内容の変更をシミュレートします。</summary>
-    public void RaiseContentChanged() => ContentChanged?.Invoke(this, EventArgs.Empty);
+    internal void RaiseContentChanged() => ContentChanged?.Invoke(this, EventArgs.Empty);
 }

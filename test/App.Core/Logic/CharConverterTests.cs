@@ -12,12 +12,14 @@ public sealed class CharConverterTests : IDisposable
     private readonly ConvertConfig _config;
     private readonly CharConverter _converter;
 
+    /// <summary>テスト クラスの新しいインスタンスを初期化します。</summary>
     public CharConverterTests()
     {
         _config = TestHelper.CreateDefaultConfig();
         _converter = new CharConverter(_config);
     }
 
+    /// <summary>テストで生成した一時ファイルとインスタンスを破棄します。</summary>
     public void Dispose()
     {
         _converter.Dispose();
@@ -25,13 +27,13 @@ public sealed class CharConverterTests : IDisposable
     }
 
     [Fact]
-    public void Constructor_Configを正しく保持する()
+    internal void Constructor_Configを正しく保持する()
     {
         Assert.Same(_config, _converter.Config);
     }
 
     [Fact]
-    public void Convert_nullを渡すとnullを返す()
+    internal void Convert_nullを渡すとnullを返す()
     {
         Assert.Null(_converter.Convert(null!));
     }
@@ -45,7 +47,7 @@ public sealed class CharConverterTests : IDisposable
     [InlineData(ConvertConfig.BuiltInPresetAlphanumericHanKanaZen, "当社の製品「Ｗｉｄｇｅｔ」は￥１，２００です。", "当社の製品｢Widget｣は¥1,200です。")]
     [InlineData(ConvertConfig.BuiltInPresetAlphanumericHanKanaZen, "お問合せは「ｓｕｐｐｏｒｔ＠ｅｘａｍｐｌｅ．ｃｏｍ」迄", "お問合せは｢support@example.com｣迄")]
     [InlineData(ConvertConfig.BuiltInPresetAlphanumericHanKanaZen, "ﾀﾞｲｽｷﾅﾗｰﾒﾝ! ﾏｲｳｪｲ!", "ダイスキナラーメン! マイウェイ!")]
-    public void Convert_組み込みプリセットの代表的な変換結果(string presetName, string input, string expected)
+    internal void Convert_組み込みプリセットの代表的な変換結果(string presetName, string input, string expected)
     {
         // 両 UI（App.MewUI / App.WinUI3）が共有する変換仕様の正を固定します。
         // このテストが通る限り、2 つのアプリの変換結果は一致します。
@@ -55,13 +57,13 @@ public sealed class CharConverterTests : IDisposable
     }
 
     [Fact]
-    public void Convert_空文字を渡すと空文字を返す()
+    internal void Convert_空文字を渡すと空文字を返す()
     {
         Assert.Equal(string.Empty, _converter.Convert(string.Empty));
     }
 
     [Fact]
-    public void Convert_全角半角変換の有効フラグに関わらず変換する()
+    internal void Convert_全角半角変換の有効フラグに関わらず変換する()
     {
         // 変換の実行可否は呼び出し側（画面側）のポリシーであり、変換エンジンは判断しません。
         _config.IsEnabledZenHan = false;
@@ -75,7 +77,7 @@ public sealed class CharConverterTests : IDisposable
     [InlineData(ZenHanMode.ToZen, "123", "１２３")]
     [InlineData(ZenHanMode.None, "123", "123")]
     [InlineData(ZenHanMode.None, "１２３", "１２３")]
-    public void Convert_数字変換モードに応じた変換を行う(ZenHanMode mode, string input, string expected)
+    internal void Convert_数字変換モードに応じた変換を行う(ZenHanMode mode, string input, string expected)
     {
         _config.ConvertModeNumber = mode;
 
@@ -83,7 +85,7 @@ public sealed class CharConverterTests : IDisposable
     }
 
     [Fact]
-    public void Convert_数字の境界値を正しく変換する()
+    internal void Convert_数字の境界値を正しく変換する()
     {
         _config.ConvertModeNumber = ZenHanMode.ToHan;
 
@@ -95,7 +97,7 @@ public sealed class CharConverterTests : IDisposable
     [InlineData(ZenHanMode.ToZen, "ABC", "ＡＢＣ")]
     [InlineData(ZenHanMode.ToHan, "ａｂｃ", "abc")]
     [InlineData(ZenHanMode.ToZen, "abc", "ａｂｃ")]
-    public void Convert_英字変換モードに応じた変換を行う(ZenHanMode mode, string input, string expected)
+    internal void Convert_英字変換モードに応じた変換を行う(ZenHanMode mode, string input, string expected)
     {
         _config.ConvertModeAlphabet = mode;
 
@@ -105,7 +107,7 @@ public sealed class CharConverterTests : IDisposable
     [Theory]
     [InlineData(ZenHanMode.ToHan, "！", "!")]
     [InlineData(ZenHanMode.ToZen, "!", "！")]
-    public void Convert_感嘆符変換モードに応じた変換を行う(ZenHanMode mode, string input, string expected)
+    internal void Convert_感嘆符変換モードに応じた変換を行う(ZenHanMode mode, string input, string expected)
     {
         _config.ConvertModeSymbolExclamation = mode;
 
@@ -115,7 +117,7 @@ public sealed class CharConverterTests : IDisposable
     [Theory]
     [InlineData(ZenHanMode.ToHan, "（）", "()")]
     [InlineData(ZenHanMode.ToZen, "()", "（）")]
-    public void Convert_括弧変換モードに応じた変換を行う(ZenHanMode mode, string input, string expected)
+    internal void Convert_括弧変換モードに応じた変換を行う(ZenHanMode mode, string input, string expected)
     {
         _config.ConvertModeSymbolParenthesis = mode;
 
@@ -125,7 +127,7 @@ public sealed class CharConverterTests : IDisposable
     [Theory]
     [InlineData(ZenHanKanaMode.ToZenKata, "ｱｲｳｴｵ", "アイウエオ")]
     [InlineData(ZenHanKanaMode.ToZenHira, "ｱｲｳｴｵ", "あいうえお")]
-    public void Convert_半角カナ変換モードに応じた変換を行う(ZenHanKanaMode mode, string input, string expected)
+    internal void Convert_半角カナ変換モードに応じた変換を行う(ZenHanKanaMode mode, string input, string expected)
     {
         _config.ConvertModeKanaHan = mode;
 
@@ -135,7 +137,7 @@ public sealed class CharConverterTests : IDisposable
     [Theory]
     [InlineData(ZenHanKanaMode.ToHan, "アイウエオ", "ｱｲｳｴｵ")]
     [InlineData(ZenHanKanaMode.ToZenHira, "アイウエオ", "あいうえお")]
-    public void Convert_全角カタカナ変換モードに応じた変換を行う(ZenHanKanaMode mode, string input, string expected)
+    internal void Convert_全角カタカナ変換モードに応じた変換を行う(ZenHanKanaMode mode, string input, string expected)
     {
         _config.ConvertModeKanaZenKata = mode;
 
@@ -145,7 +147,7 @@ public sealed class CharConverterTests : IDisposable
     [Theory]
     [InlineData(ZenHanKanaMode.ToHan, "あいうえお", "ｱｲｳｴｵ")]
     [InlineData(ZenHanKanaMode.ToZenHira, "あいうえお", "アイウエオ")]
-    public void Convert_全角ひらがな変換モードに応じた変換を行う(ZenHanKanaMode mode, string input, string expected)
+    internal void Convert_全角ひらがな変換モードに応じた変換を行う(ZenHanKanaMode mode, string input, string expected)
     {
         _config.ConvertModeKanaZenHira = mode;
 
@@ -157,7 +159,7 @@ public sealed class CharConverterTests : IDisposable
     [InlineData(ZenHanEtcSpecial.ToZenSpace, "A\r\nB", "A　B")]
     [InlineData(ZenHanEtcSpecial.Remove, "A\r\nB", "AB")]
     [InlineData(ZenHanEtcSpecial.None, "A\r\nB", "A\r\nB")]
-    public void Convert_改行変換モードに応じた変換を行う(ZenHanEtcSpecial mode, string input, string expected)
+    internal void Convert_改行変換モードに応じた変換を行う(ZenHanEtcSpecial mode, string input, string expected)
     {
         _config.ConvertModeEtcNewline = mode;
 
@@ -167,7 +169,7 @@ public sealed class CharConverterTests : IDisposable
     [Theory]
     [InlineData("A\nB", "A B")]
     [InlineData("A\rB", "A B")]
-    public void Convert_各種改行コードを正しく変換する(string input, string expected)
+    internal void Convert_各種改行コードを正しく変換する(string input, string expected)
     {
         _config.ConvertModeEtcNewline = ZenHanEtcSpecial.ToHanSpace;
 
@@ -179,7 +181,7 @@ public sealed class CharConverterTests : IDisposable
     [InlineData(ZenHanEtcSpecial.ToHanSpace, "A  B", "A B")]
     [InlineData(ZenHanEtcSpecial.ToZenSpace, "A   B", "A　B")]
     [InlineData(ZenHanEtcSpecial.None, "A   B", "A   B")]
-    public void Convert_連続スペース変換モードに応じた変換を行う(ZenHanEtcSpecial mode, string input, string expected)
+    internal void Convert_連続スペース変換モードに応じた変換を行う(ZenHanEtcSpecial mode, string input, string expected)
     {
         _config.ConvertModeEtcMultiSpace = mode;
 
@@ -191,7 +193,7 @@ public sealed class CharConverterTests : IDisposable
     [InlineData(ZenHanEtcSpecial.ToZenSpace, "A\tB", "A　B")]
     [InlineData(ZenHanEtcSpecial.Remove, "A\tB", "AB")]
     [InlineData(ZenHanEtcSpecial.None, "A\tB", "A\tB")]
-    public void Convert_タブ変換モードに応じた変換を行う(ZenHanEtcSpecial mode, string input, string expected)
+    internal void Convert_タブ変換モードに応じた変換を行う(ZenHanEtcSpecial mode, string input, string expected)
     {
         _config.ConvertModeEtcTabSpace = mode;
 
@@ -203,7 +205,7 @@ public sealed class CharConverterTests : IDisposable
     [InlineData(ZenHanEtcYenMode.ToZenBSlash, "\\", "＼")]
     [InlineData(ZenHanEtcYenMode.ToHanYen, "\\", "¥")]
     [InlineData(ZenHanEtcYenMode.ToZenYen, "\\", "￥")]
-    public void Convert_バックスラッシュ変換モードに応じた変換を行う(ZenHanEtcYenMode mode, string input, string expected)
+    internal void Convert_バックスラッシュ変換モードに応じた変換を行う(ZenHanEtcYenMode mode, string input, string expected)
     {
         _config.ConvertModeEtcBSlashHan = mode;
 
@@ -215,7 +217,7 @@ public sealed class CharConverterTests : IDisposable
     [InlineData(ZenHanEtcYenMode.ToZenBSlash, "＼", "＼")]
     [InlineData(ZenHanEtcYenMode.ToHanYen, "＼", "¥")]
     [InlineData(ZenHanEtcYenMode.ToZenYen, "＼", "￥")]
-    public void Convert_全角バックスラッシュ変換モードに応じた変換を行う(ZenHanEtcYenMode mode, string input, string expected)
+    internal void Convert_全角バックスラッシュ変換モードに応じた変換を行う(ZenHanEtcYenMode mode, string input, string expected)
     {
         _config.ConvertModeEtcBSlashZen = mode;
 
@@ -226,7 +228,7 @@ public sealed class CharConverterTests : IDisposable
     [InlineData(ZenHanEtcZenHanAsciiMode.ToHan, "ー", "ｰ")]
     [InlineData(ZenHanEtcZenHanAsciiMode.ToZen, "ｰ", "ー")]
     [InlineData(ZenHanEtcZenHanAsciiMode.ToAscii, "ー", "-")]
-    public void Convert_長音記号変換モードに応じた変換を行う(ZenHanEtcZenHanAsciiMode mode, string input, string expected)
+    internal void Convert_長音記号変換モードに応じた変換を行う(ZenHanEtcZenHanAsciiMode mode, string input, string expected)
     {
         _config.ConvertModeEtcKanaProlong = mode;
 
@@ -234,7 +236,7 @@ public sealed class CharConverterTests : IDisposable
     }
 
     [Fact]
-    public void Convert_複数の変換設定を同時に適用する()
+    internal void Convert_複数の変換設定を同時に適用する()
     {
         _config.ConvertModeNumber = ZenHanMode.ToHan;
         _config.ConvertModeAlphabet = ZenHanMode.ToHan;
@@ -243,7 +245,7 @@ public sealed class CharConverterTests : IDisposable
     }
 
     [Fact]
-    public void Convert_変換対象外の文字は変更しない()
+    internal void Convert_変換対象外の文字は変更しない()
     {
         _config.ConvertModeNumber = ZenHanMode.ToHan;
 
@@ -251,7 +253,7 @@ public sealed class CharConverterTests : IDisposable
     }
 
     [Fact]
-    public void Convert_ユーザー定義の通常置換を適用する()
+    internal void Convert_ユーザー定義の通常置換を適用する()
     {
         _config.ReplacePairs = [new ReplacePair("aaa", "bbb")];
 
@@ -259,7 +261,7 @@ public sealed class CharConverterTests : IDisposable
     }
 
     [Fact]
-    public void Convert_ユーザー定義の正規表現置換を適用する()
+    internal void Convert_ユーザー定義の正規表現置換を適用する()
     {
         _config.ReplacePairs = [new ReplacePair(@"\d+", "NUM", IsRegex: true)];
 
@@ -267,7 +269,7 @@ public sealed class CharConverterTests : IDisposable
     }
 
     [Fact]
-    public void Convert_検索文字列が空の置換ルールはスキップする()
+    internal void Convert_検索文字列が空の置換ルールはスキップする()
     {
         _config.ReplacePairs = [new ReplacePair("", "bbb")];
 
@@ -275,7 +277,7 @@ public sealed class CharConverterTests : IDisposable
     }
 
     [Fact]
-    public void Convert_不正な正規表現の置換ルールは無視して処理を継続する()
+    internal void Convert_不正な正規表現の置換ルールは無視して処理を継続する()
     {
         _config.ReplacePairs = [new ReplacePair("[invalid", "bbb", IsRegex: true)];
 
@@ -286,7 +288,7 @@ public sealed class CharConverterTests : IDisposable
     }
 
     [Fact]
-    public void Convert_置換ルールは定義順に逐次適用する()
+    internal void Convert_置換ルールは定義順に逐次適用する()
     {
         _config.ReplacePairs =
         [
@@ -298,7 +300,7 @@ public sealed class CharConverterTests : IDisposable
     }
 
     [Fact]
-    public void GetConvertPairs_同一設定では同じインスタンスを返す()
+    internal void GetConvertPairs_同一設定では同じインスタンスを返す()
     {
         var pairs1 = _converter.GetConvertPairs();
         var pairs2 = _converter.GetConvertPairs();
@@ -307,7 +309,7 @@ public sealed class CharConverterTests : IDisposable
     }
 
     [Fact]
-    public void GetConvertPairs_設定変更後はキャッシュが無効化される()
+    internal void GetConvertPairs_設定変更後はキャッシュが無効化される()
     {
         var pairs1 = _converter.GetConvertPairs();
 
@@ -318,7 +320,7 @@ public sealed class CharConverterTests : IDisposable
     }
 
     [Fact]
-    public void Dispose_複数回呼び出しても例外を送出しない()
+    internal void Dispose_複数回呼び出しても例外を送出しない()
     {
         var converter = new CharConverter(TestHelper.CreateDefaultConfig());
         converter.Dispose();
@@ -329,7 +331,7 @@ public sealed class CharConverterTests : IDisposable
     }
 
     [Fact]
-    public void Dispose_PropertyChanged購読が解除される()
+    internal void Dispose_PropertyChanged購読が解除される()
     {
         var config = TestHelper.CreateDefaultConfig();
         var converter = new CharConverter(config);

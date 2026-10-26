@@ -18,7 +18,9 @@ namespace EsUtil.ZenHanConverter.App.MewUI.Views;
 /// - 上下の分割は MewUI の <see cref="SplitPanel"/> に委譲します。長さをスターサイズで保持するため、
 ///   ウィンドウの高さが変わっても上下の比率が維持されます
 /// </remarks>
-public sealed class HomeView : UserControl
+/// <remarks>HomeView の新しいインスタンスを初期化します。</remarks>
+/// <param name="viewModel">ホーム画面の ViewModel。</param>
+public sealed class HomeView(HomeViewModel viewModel) : UserControl
 {
     /// <summary>分割バーの太さ（論理ピクセル）。</summary>
     private const double SplitterThickness = 6;
@@ -33,14 +35,7 @@ public sealed class HomeView : UserControl
     private const double TextAreaPadding = 8;
 
     /// <summary>ホーム画面の ViewModel。</summary>
-    private readonly HomeViewModel _viewModel;
-
-    /// <summary>HomeView の新しいインスタンスを初期化します。</summary>
-    /// <param name="viewModel">ホーム画面の ViewModel。</param>
-    public HomeView(HomeViewModel viewModel)
-    {
-        _viewModel = viewModel;
-    }
+    private readonly HomeViewModel _viewModel = viewModel;
 
     /// <summary>ビューの内容を構築します。</summary>
     /// <returns>ホーム画面のルート要素。</returns>
@@ -52,9 +47,9 @@ public sealed class HomeView : UserControl
         // ViewModel の変更を ObservableValue に反映
         _viewModel.PropertyChanged += (_, e) =>
         {
-            if (e.PropertyName == nameof(HomeViewModel.BeforeText))
+            if (string.Equals(e.PropertyName, nameof(HomeViewModel.BeforeText), System.StringComparison.Ordinal))
                 beforeText.Value = _viewModel.BeforeText;
-            else if (e.PropertyName == nameof(HomeViewModel.ConvertedText))
+            else if (string.Equals(e.PropertyName, nameof(HomeViewModel.ConvertedText), System.StringComparison.Ordinal))
                 convertedText.Value = _viewModel.ConvertedText;
         };
 
@@ -84,7 +79,7 @@ public sealed class HomeView : UserControl
     /// <summary>変換後のペイン（見出し + 読み取り専用のテキスト）を構築します。</summary>
     /// <param name="convertedText">変換後テキストのバインド元。</param>
     /// <returns>変換後のペイン。</returns>
-    private UIElement BuildAfterPane(ObservableValue<string> convertedText)
+    private static UIElement BuildAfterPane(ObservableValue<string> convertedText)
         => BuildPane(
             "変更後：",
             new MultiLineTextBox()

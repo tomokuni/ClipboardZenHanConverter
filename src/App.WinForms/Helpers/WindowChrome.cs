@@ -14,7 +14,7 @@ namespace EsUtil.ZenHanConverter.App.WinForms.Helpers;
 ///   自前でマウスを追跡するより、スナップ・最大化・マルチモニタ対応が OS と一致する<br/>
 /// - <c>WM_NCHITTEST</c> は子コントロールがその領域を所有する場合はフォームへ届かない。
 ///   そのため移動はコントロールのマウスイベントから開始し、リサイズはフォームが所有する
-///   外周領域（<see cref="Control.Padding"/> の領域）で <c>WM_NCHITTEST</c> に応答する<br/><br/>
+///   外周領域（<c>Control.Padding</c> の領域）で <c>WM_NCHITTEST</c> に応答する<br/><br/>
 /// 注意点: <br/>
 /// - <see cref="BeginDrag"/> は OS のドラッグループが終わるまで戻りません
 /// </remarks>
@@ -55,7 +55,7 @@ internal static partial class WindowChrome
 
     /// <summary>マウスキャプチャを解放します。</summary>
     /// <returns>解放に成功した場合は true。</returns>
-    [LibraryImport("user32.dll")]
+    [LibraryImport("user32.dll"), DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static partial bool ReleaseCapture();
 
@@ -65,7 +65,7 @@ internal static partial class WindowChrome
     /// <param name="wParam">メッセージの wParam。</param>
     /// <param name="lParam">メッセージの lParam。</param>
     /// <returns>メッセージの処理結果。</returns>
-    [LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
+    [LibraryImport("user32.dll", EntryPoint = "SendMessageW"), DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
     /// <summary>指定されたヒットテスト結果でウィンドウの移動またはリサイズを開始します。</summary>

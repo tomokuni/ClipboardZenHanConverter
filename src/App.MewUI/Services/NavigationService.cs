@@ -19,7 +19,7 @@ namespace EsUtil.ZenHanConverter.App.MewUI.Services;
 public sealed class NavigationService(IServiceProvider services) : INavigationService
 {
     /// <summary>キャッシュされたビューインスタンス。初回アクセス時に生成され再利用されます。</summary>
-    private readonly Dictionary<string, Element> _viewCache = [];
+    private readonly Dictionary<string, Element> _viewCache = [with(global::System.StringComparer.Ordinal)];
 
     /// <summary>タグに対応するビューを生成（またはキャッシュから取得）します。</summary>
     /// <param name="tag">ページタグ（"Home" / "Settings"）。</param>

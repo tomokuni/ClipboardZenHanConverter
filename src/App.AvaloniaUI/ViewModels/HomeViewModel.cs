@@ -105,13 +105,13 @@ public partial class HomeViewModel : ObservableObject, IDisposable
             return "";
 
         var converted = _converter.Convert(text);
-        return text == converted ? HomeDisplayText.NoChange : converted;
+        return string.Equals(text, converted, StringComparison.Ordinal) ? HomeDisplayText.NoChange : converted;
     }
 
     /// <summary>クリップボードの内容変更時に呼び出されます。UI スレッドまたはバックグラウンドで変換処理を開始します。</summary>
     /// <param name="sender">イベントソース。</param>
     /// <param name="e">イベントデータ。</param>
-    private void Clipboard_ContentChanged(object? sender, object e)
+    private void Clipboard_ContentChanged(object? sender, EventArgs e)
     {
         if (IsTestMode)
         {
@@ -155,7 +155,7 @@ public partial class HomeViewModel : ObservableObject, IDisposable
             if (string.IsNullOrEmpty(text))
                 return;
 
-            if (ConvertedText == text)
+            if (string.Equals(ConvertedText, text, StringComparison.Ordinal))
                 return;
 
             // await 中に無効化された場合は、読み取り結果を破棄してクリップボードに触れない。
@@ -163,7 +163,7 @@ public partial class HomeViewModel : ObservableObject, IDisposable
                 return;
 
             BeforeText = text;
-            if (ConvertedText == HomeDisplayText.NoChange)
+            if (string.Equals(ConvertedText, HomeDisplayText.NoChange, StringComparison.Ordinal))
                 return;
 
             try

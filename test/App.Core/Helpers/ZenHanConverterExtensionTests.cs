@@ -14,7 +14,7 @@ public sealed class ZenHanConverterExtensionTests
     [InlineData(ZenHanMode.None)]
     [InlineData(ZenHanKanaMode.None)]
     [InlineData(ZenHanEtcZenHanAsciiMode.None)]
-    public void GetConvertPairs_Noneは空のペアを返す(Enum mode)
+    internal void GetConvertPairs_Noneは空のペアを返す(Enum mode)
     {
         var result = mode switch
         {
@@ -28,19 +28,19 @@ public sealed class ZenHanConverterExtensionTests
     }
 
     [Fact]
-    public void GetConvertPairs_ZenHanMode_ToHanは変換ペアを返す()
+    internal void GetConvertPairs_ZenHanMode_ToHanは変換ペアを返す()
     {
         Assert.NotEmpty(ZenHanMode.ToHan.GetConvertPairs(GroupOf.Ascii.Numeric));
     }
 
     [Fact]
-    public void GetConvertPairs_ZenHanMode_ToZenは変換ペアを返す()
+    internal void GetConvertPairs_ZenHanMode_ToZenは変換ペアを返す()
     {
         Assert.NotEmpty(ZenHanMode.ToZen.GetConvertPairs(GroupOf.Ascii.Numeric));
     }
 
     [Fact]
-    public void GetConvertPairs_ZenHanMode_ToHanとToZenは異なるペアを返す()
+    internal void GetConvertPairs_ZenHanMode_ToHanとToZenは異なるペアを返す()
     {
         var toHan = ZenHanMode.ToHan.GetConvertPairs(GroupOf.Ascii.Numeric).ToList();
         var toZen = ZenHanMode.ToZen.GetConvertPairs(GroupOf.Ascii.Numeric).ToList();
@@ -49,13 +49,13 @@ public sealed class ZenHanConverterExtensionTests
     }
 
     [Fact]
-    public void GetConvertPairs_ZenHanKanaMode_ToHanは変換ペアを返す()
+    internal void GetConvertPairs_ZenHanKanaMode_ToHanは変換ペアを返す()
     {
         Assert.NotEmpty(ZenHanKanaMode.ToHan.GetConvertPairs(NameOf.Kana.GA));
     }
 
     [Fact]
-    public void GetConvertPairs_ZenHanKanaMode_ToZenKataとToZenHiraは変換ペアを返す()
+    internal void GetConvertPairs_ZenHanKanaMode_ToZenKataとToZenHiraは変換ペアを返す()
     {
         Assert.NotEmpty(ZenHanKanaMode.ToZenKata.GetConvertPairs(NameOf.Kana.GA));
         Assert.NotEmpty(ZenHanKanaMode.ToZenHira.GetConvertPairs(NameOf.Kana.GA));
@@ -65,7 +65,7 @@ public sealed class ZenHanConverterExtensionTests
     [InlineData(ZenHanEtcZenHanAsciiMode.ToHan)]
     [InlineData(ZenHanEtcZenHanAsciiMode.ToZen)]
     [InlineData(ZenHanEtcZenHanAsciiMode.ToAscii)]
-    public void GetConvertPairs_ZenHanEtcZenHanAsciiMode_未知のエントリ型は空を返す(ZenHanEtcZenHanAsciiMode mode)
+    internal void GetConvertPairs_ZenHanEtcZenHanAsciiMode_未知のエントリ型は空を返す(ZenHanEtcZenHanAsciiMode mode)
     {
         var result = mode.GetConvertPairs(new object());
 

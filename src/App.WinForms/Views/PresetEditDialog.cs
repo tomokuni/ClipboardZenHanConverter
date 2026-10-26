@@ -113,7 +113,7 @@ public sealed class PresetEditDialog : Form
             nameof(Label.Text), ViewModel, nameof(PresetEditDialogViewModel.ErrorMessage), true, DataSourceUpdateMode.Never);
         ViewModel.PropertyChanged += (_, e) =>
         {
-            if (e.PropertyName == nameof(PresetEditDialogViewModel.ErrorMessage))
+            if (string.Equals(e.PropertyName, nameof(PresetEditDialogViewModel.ErrorMessage), StringComparison.Ordinal))
                 label.Visible = !string.IsNullOrEmpty(ViewModel.ErrorMessage);
         };
         label.Visible = false;

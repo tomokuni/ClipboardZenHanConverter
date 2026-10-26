@@ -19,14 +19,14 @@ namespace EsUtil.ZenHanConverter.App.WinForms.Services;
 public sealed class NavigationService(IServiceProvider services) : INavigationService
 {
     /// <summary>タグ名とビュー型のマッピング。FrozenDictionary による高速・不変なルックアップ。</summary>
-    private static readonly FrozenDictionary<string, Type> s_viewMap = new Dictionary<string, Type>
+    private static readonly FrozenDictionary<string, Type> s_viewMap = new Dictionary<string, Type>(StringComparer.Ordinal)
     {
         ["Home"] = typeof(HomeView),
         ["Settings"] = typeof(SettingsView),
     }.ToFrozenDictionary();
 
     /// <summary>キャッシュされたビューインスタンス。初回アクセス時に生成され再利用されます。</summary>
-    private readonly Dictionary<string, Control> _viewCache = [];
+    private readonly Dictionary<string, Control> _viewCache = [with(global::System.StringComparer.Ordinal)];
 
     /// <summary>タグに対応するビューを生成（またはキャッシュから取得）します。</summary>
     /// <param name="tag">ページタグ（"Home" / "Settings"）。</param>
