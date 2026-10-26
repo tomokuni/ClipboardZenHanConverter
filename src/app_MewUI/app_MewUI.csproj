@@ -18,12 +18,9 @@
   <ItemGroup>
     <PackageReference Include="Aprillz.MewUI.Windows" Version="0.*" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.*" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.*" />
-  </ItemGroup>
-
-  <ItemGroup>
     <!-- マルチカラム配置の計算は UI 非依存の EsUtil.Feature.ColumnPacking.Core へ委譲する -->
-    <ProjectReference Include="..\..\..\EsUtil\EsUtil\Feature.ColumnPacking.Core\src\EsUtil.Feature.ColumnPacking.Core.csproj" />
+    <PackageReference Include="EsUtil.Feature.ColumnPacking.Core" Version="0.1.*" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.*" />
   </ItemGroup>
 
 </Project>

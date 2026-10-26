@@ -43,8 +43,6 @@
   <ItemGroup>
     <ProjectReference Include="..\core\core.csproj" />
     <ProjectReference Include="..\core_presentation\core_presentation.csproj" />
-    <!-- 記号の変換の一覧を並べるパネル（配置の計算は EsUtil.Feature.ColumnPacking.Core が持つ） -->
-    <ProjectReference Include="..\..\..\EsUtil\EsUtil.Ui.WinUI3\ColumnPacking\src\EsUtil.Ui.WinUI3.ColumnPacking.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -57,7 +55,8 @@
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.*" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.*" />
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.*" />
-    <!-- マルチカラム配置の計算は UI 非依存の EsUtil.Feature.ColumnPacking.Core へ委譲する（パネルは EsUtil.Ui.WinUI3.ColumnPacking） -->
+    <!-- マルチカラム配置パネル。配置の計算は EsUtil.Feature.ColumnPacking.Core が単一所有する -->
+    <PackageReference Include="EsUtil.Ui.WinUI3.ColumnPacking" Version="0.1.*" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.*" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.*" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.*" />

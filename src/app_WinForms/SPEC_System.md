@@ -16,7 +16,7 @@ UI フレームワークに **Windows Forms**（.NET 10）を使用します。
 - Windows Forms（`UseWindowsForms` / `net10.0-windows`）
 - CommunityToolkit.Mvvm 8.*（変換設定・ViewModel）
 - Microsoft.Extensions.Hosting 10.*（DI）
-- EsUtil.Feature.ZenHan.Core（変換ペア。`src/core` のプロジェクト参照経由）
+- EsUtil.Feature.ZenHan.Core（変換ペア。`src/core` のパッケージ参照経由）
 
 ## 共有コア
 

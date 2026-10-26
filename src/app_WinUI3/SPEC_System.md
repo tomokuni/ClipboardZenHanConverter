@@ -15,7 +15,7 @@ UI フレームワークとして WinUI 3（Windows App SDK）を使用します
 - CommunityToolkit.Mvvm 8.*（変換設定・ViewModel）
 - CommunityToolkit.WinUI.Controls.*（Segmented / SettingsControls / Primitives）
 - CommunityToolkit.WinUI.UI.Controls.DataGrid 7.*
-- EsUtil.Ui.WinUI3.ColumnPacking（プロジェクト参照。マルチカラム配置パネル `ColumnPackingPanel`）
+- EsUtil.Ui.WinUI3.ColumnPacking（0.1.* のパッケージ参照。マルチカラム配置パネル `ColumnPackingPanel`）
 - Microsoft.Extensions.Hosting 10.*（DI）
 
 マルチカラム配置パネルは `EsUtil.Ui.WinUI3.ColumnPacking` の `ColumnPackingPanel` を使います（同梱ソースは持ちません）。
@@ -438,7 +438,7 @@ DI コンテナへのサービス登録拡張メソッド。
 ### マルチカラム配置パネル（`EsUtil.Ui.WinUI3.ColumnPacking.ColumnPackingPanel`）
 
 子要素を縦方向の複数列へ配置し、配置に必要なサイズを算出するパネル。`ItemsControl` の `ItemsPanel` を置き換えられます。
-**同梱ソースは持たず**、EsUtil のパネルをプロジェクト参照で使います（配置計算は `EsUtil.Feature.ColumnPacking.Core` が単一所有）。
+**同梱ソースは持たず**、EsUtil のパネルをパッケージ参照で使います（配置計算は `EsUtil.Feature.ColumnPacking.Core` が単一所有）。
 
 **プロパティ**:
 

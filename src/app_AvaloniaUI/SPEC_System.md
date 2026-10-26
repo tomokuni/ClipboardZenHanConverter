@@ -17,7 +17,7 @@ UI フレームワークとして Avalonia UI（クロスプラットフォー�
 - AvaloniaUI.DiagnosticsSupport 2.*（Debug 構成のみ。廃止された `Avalonia.Diagnostics` は使用しません）
 - CommunityToolkit.Mvvm 8.*（変換設定・ViewModel）
 - Microsoft.Extensions.Hosting 10.*（DI）
-- EsUtil.Feature.ZenHan.Core（変換ペア。`src/core` のプロジェクト参照経由）
+- EsUtil.Feature.ZenHan.Core（変換ペア。`src/core` のパッケージ参照経由）
 
 ## 共有コア
 
@@ -32,7 +32,7 @@ flowchart LR
     AppMewUI[src/app_MewUI (MewUI)] -->|参照| Core[src/core (UI 非依存)]
     AppWinUI3[src/app_WinUI3 (WinUI 3)] -->|参照| Core
     AppAvalonia[src/app_AvaloniaUI (Avalonia UI)] -->|参照| Core
-    Core -->|ProjectReference| EsUtil[EsUtil.Feature.ZenHan.Core]
+    Core -->|PackageReference| EsUtil[EsUtil.Feature.ZenHan.Core]
     AppAvalonia -->|PackageReference| Avalonia[Avalonia UI]
 ```
 

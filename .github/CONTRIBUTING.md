@@ -57,7 +57,7 @@ ClipboardZenHanConverter/
 
 | プロジェクト | 説明 |
 | --- | --- |
-| `src/core` | 変換ロジック・モデル・変換カテゴリ定義・Win32 API・アイコンデータ（`CharConverter`, `ConvertConfig`, `SegmentDefinitions`, `Win32Clipboard`, `FluentIconData` など）。UI フレームワークに依存しない。 |
+| `src/core` | 変換ロジック・モデル・変換カテゴリ定義・表示領域の補正・アイコンデータ（`CharConverter`, `ConvertConfig`, `SegmentDefinitions`, `ScreenVisibleArea`, `FluentIconData` など）。UI フレームワークに依存しない。Win32 実装と変換ペアは EsUtil が単一所有する。 |
 | `src/core_presentation` | 4 つの UI が共有する設定画面の ViewModel（`SettingsViewModel`, `ZenHanConvertItem`, `SegmentOption`, `ReplacePairItem`, `PresetEditDialogViewModel`）。UI フレームワークに依存しない。 |
 | `src/app_MewUI` | MewUI アプリ本体。クリップボード監視・ホーム/設定画面。 |
 | `src/app_WinUI3` | WinUI 3 アプリ本体。同上。 |
@@ -86,7 +86,12 @@ dotnet build ZenHanConverter.slnx
 ### 依存パッケージ
 
 `PackageReference` には**メジャーバージョンのみ**を指定します（例: `Version="8.*"`）。
-同一メジャー内の最新版が復元時に選ばれるため、常に最新の状態でビルドできます。
+0.x のパッケージはメジャーが 0 で互換性が保証されないため、**マイナーまで**を指定します（例: `Version="0.1.*"`）。
+同一範囲内の最新版が復元時に選ばれるため、常に最新の状態でビルドできます。
+
+- EsUtil のパッケージ（`EsUtil.Feature.ZenHan.Core` / `EsUtil.Platform.Core` / `EsUtil.Feature.ColumnPacking.Core` / `EsUtil.Ui.WinUI3.ColumnPacking`）は nuget.org の公開版を参照します。
+  **未公開の版を参照すると CI は復元に失敗します。** ローカルでは `Directory.Build.props` が隣の EsUtil リポジトリの
+  ローカル フィード（`..\EsUtil\.nupkg`）を追加のソースにするため、公開前の版でも復元できます。
 
 - メジャーが上がる変更（破壊的変更を含む）は自動では取り込まれません。手動で更新します。
 - **浮動指定（`12.*` など）は復元時に同一メジャーの最新版を解決します。** そのため更新が必要になるのはメジャーが上がったときだけです。
@@ -111,7 +116,7 @@ dotnet build ZenHanConverter.slnx
 テストは UI を起動せずに実行できます。
 
 ```powershell
-# ソリューション全体（7 テストプロジェクト、449 件）
+# ソリューション全体（7 テストプロジェクト、434 件）
 dotnet test --solution ZenHanConverter.slnx
 
 # 個別に実行する場合（プロジェクトは --project で指定する）

@@ -16,8 +16,8 @@ UI フレームワークとして MewUI（コードファースト・NativeAOT �
 - MewUI（`Aprillz.MewUI.Windows` 0.*）
 - CommunityToolkit.Mvvm 8.*（変換設定・ViewModel）
 - Microsoft.Extensions.Hosting 10.*（DI）
-- EsUtil.Feature.ZenHan.Core（変換ペア。`src/core` のプロジェクト参照経由）
-- EsUtil.Feature.ColumnPacking.Core（プロジェクト参照。マルチカラム配置の計算）
+- EsUtil.Feature.ZenHan.Core（変換ペア。`src/core` のパッケージ参照経由）
+- EsUtil.Feature.ColumnPacking.Core（0.1.* のパッケージ参照。マルチカラム配置の計算）
 
 ## アーキテクチャ
 
@@ -56,7 +56,7 @@ src/app_MewUI
 flowchart LR
     App[src/app_MewUI (MewUI)] -->|参照| Core[src/core (UI 非依存)]
     AppWin[src/app_WinUI3 (WinUI 3)] -->|参照| Core
-    Core -->|ProjectReference| EsUtil[EsUtil.Feature.ZenHan.Core]
+    Core -->|PackageReference| EsUtil[EsUtil.Feature.ZenHan.Core]
     App -->|PackageReference| MewUI[Aprillz.MewUI.Windows]
 ```
 

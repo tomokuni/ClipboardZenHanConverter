@@ -14,9 +14,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="Exists('$(MSBuildThisFileDirectory)..\EsUtil\.nupkg')">
-    <!-- EsUtil の UI コントロールは、配置の計算などを EsUtil のローカル フィード（`.nupkg/`）の
-         パッケージ参照で解決する。 隣のリポジトリが無い環境（GitHub 上のビルド）では
-         この指定が付かず、EsUtil を参照するプロジェクトも存在しないため影響しない。 -->
+    <!--
+      EsUtil のパッケージ（変換ペア・Win32 実装・配置計算・WinUI 3 のパネル）は、nuget.org へ公開するまでの間、
+      隣のリポジトリが作るローカル フィード（`.nupkg/`）から解決する。
+      隣のリポジトリが無い環境（GitHub 上のビルド）ではこの指定が付かず、nuget.org から解決する。
+    -->
     <RestoreAdditionalProjectSources>$(RestoreAdditionalProjectSources);$(MSBuildThisFileDirectory)..\EsUtil\.nupkg</RestoreAdditionalProjectSources>
   </PropertyGroup>
 

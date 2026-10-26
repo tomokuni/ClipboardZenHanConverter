@@ -17,8 +17,8 @@
 ## 依存
 
 - `CommunityToolkit.Mvvm` — ObservableProperty 生成・変更通知
-- `EsUtil.Feature.ZenHan.Core`（プロジェクト参照）— 全角/半角変換ペア
-- `EsUtil.Platform.Core`（プロジェクト参照）— 幾何型（`EsPoint` / `EsSize` / `EsRect`）・DPI 換算・クリップボードと仮想画面の Win32 実装
+- `EsUtil.Feature.ZenHan.Core`（0.1.* のパッケージ参照）— 全角/半角変換ペア
+- `EsUtil.Platform.Core`（0.2.* のパッケージ参照）— 幾何型（`EsPoint` / `EsSize` / `EsRect`）・DPI 換算・クリップボードと仮想画面の Win32 実装
 
 UI フレームワークには依存しません。 Win32 API の呼び出しは `EsUtil.Platform.Core` の `Native.Win` が単一所有します。
 

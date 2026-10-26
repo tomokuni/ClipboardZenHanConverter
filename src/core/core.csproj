@@ -12,12 +12,9 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.*" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <!-- EsUtil は隣のリポジトリをプロジェクト参照で使う（型の変更が即座に反映されるため）。 -->
-    <ProjectReference Include="..\..\..\EsUtil\EsUtil\Feature.ZenHan.Core\src\EsUtil.Feature.ZenHan.Core.csproj" />
-    <ProjectReference Include="..\..\..\EsUtil\EsUtil\Platform.Core\src\EsUtil.Platform.Core.csproj" />
+    <!-- 変換ペアと Win32 実装は EsUtil が単一所有する（公開前は Directory.Build.props のローカル フィードから解決する） -->
+    <PackageReference Include="EsUtil.Feature.ZenHan.Core" Version="0.1.*" />
+    <PackageReference Include="EsUtil.Platform.Core" Version="0.2.*" />
   </ItemGroup>
 
   <ItemGroup>
