@@ -20,7 +20,7 @@
     <RootNamespace>EsUtil.ZenHanConverter.App.WinForms</RootNamespace>
     <AssemblyName>ZenHanConverter.App.WinForms</AssemblyName>
     <Product>ZenHanConverter</Product>
-    <Description>ZenHanConverter (WinForms) - clipboard text converter</Description>
+    <Description>ZenHanConverter (WinForms) - full-width / half-width text converter</Description>
   </PropertyGroup>
 
   <ItemGroup>

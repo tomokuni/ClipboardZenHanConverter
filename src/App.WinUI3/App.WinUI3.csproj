@@ -33,7 +33,7 @@
 
   <PropertyGroup>
     <Product>ZenHanConverter</Product>
-    <Description>A utility application that automatically converts text in the clipboard, such as converting full-width to half-width characters.</Description>
+    <Description>ZenHanConverter (WinUI 3) - full-width / half-width text converter</Description>
     <RootNamespace>EsUtil.ZenHanConverter.App.WinUI3</RootNamespace>
     <!-- exe （アセンブリ）名はプロジェクト名に合せる。名前空間は既存の App.WinUI のまま（変更すると全ソース・XAML へ波及するため） -->
     <AssemblyName>ZenHanConverter.App.WinUI3</AssemblyName>
