@@ -31,7 +31,7 @@ namespace EsUtil.ZenHanConverter.App.WinForms.Views;
 public sealed class MainForm : Form
 {
     /// <summary>タイトルバーに表示するアプリケーション名。</summary>
-    private const string WindowTitle = "clipboard text converter";
+    private const string WindowTitle = "ZenHanConverter";
 
     /// <summary>クリップボード変換スイッチのラベルとアクセシブル名。</summary>
     private const string ClipboardToggleLabelText = "クリップボード変換";

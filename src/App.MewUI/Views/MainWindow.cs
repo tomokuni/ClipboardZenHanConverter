@@ -31,7 +31,7 @@ namespace EsUtil.ZenHanConverter.App.MewUI.Views;
 public sealed class MainWindow : Window
 {
     /// <summary>タイトルバーに表示するアプリケーション名。</summary>
-    private const string WindowTitle = "clipboard text converter";
+    private const string WindowTitle = "ZenHanConverter";
 
     /// <summary>カスタムタイトルバーの高さ（DIP）。操作系コントロール（スイッチ/コンボボックス）の標準高さ 28 を下回らない値とする。</summary>
     private const double TitleBarHeight = 32;

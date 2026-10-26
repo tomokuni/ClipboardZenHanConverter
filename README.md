@@ -1,75 +1,418 @@
-<!-- markdownlint-disable MD041 -- バッジを先頭に配置するため -->
-[![Release](https://img.shields.io/github/v/release/tomokuni/ZenHanConverter?label=Release)](https://github.com/tomokuni/ZenHanConverter/releases)
-[![Build](https://github.com/tomokuni/ZenHanConverter/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/tomokuni/ZenHanConverter/actions/workflows/build.yml)
-[![Platform](https://img.shields.io/badge/Platform-Windows-0078D4?logo=windows)](https://www.microsoft.com/windows)
-[![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
-![Avalonia](https://img.shields.io/badge/UI-Avalonia-8D46D6)
-![MewUI](https://img.shields.io/badge/UI-MewUI-00BFFF)
-![WinUI 3](https://img.shields.io/badge/UI-WinUI_3-2563EB)
-![WinForms](https://img.shields.io/badge/UI-WinForms-107C10)
-![License](https://img.shields.io/badge/License-MIT-3DA639)
-
 # ZenHanConverter
 
-クリップボードのテキストを監視し、全角/半角の自動変換を行う Windows 向けデスクトップアプリケーションです。
-`src/App.Core`（モデル・変換ロジック）と `src/App.Core.Presentation`（UI 非依存の ViewModel）を共有し、**4 つの UI 実装**から利用します。
+**クリップボード全角/半角変換ユーティリティ** — コピーしたテキストを検知し、設定した規則で全角/半角を自動変換してクリップボードへ書き戻します。
+
+![Release](https://github.com/tomokuni/ZenHanConverter/actions/workflows/release.yml/badge.svg)
+![Build](https://github.com/tomokuni/ZenHanConverter/actions/workflows/build.yml/badge.svg?branch=main)
+![Platform](https://img.shields.io/badge/Platform-Windows%2010%2B-0078D6)
+![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)
+![Avalonia](https://img.shields.io/badge/UI-Avalonia-8D46D6)
+![MewUI](https://img.shields.io/badge/UI-MewUI-00BFFF)
+![WinUI3](https://img.shields.io/badge/UI-WinUI%203-0078D4)
+![WinForms](https://img.shields.io/badge/UI-WinForms-512BD4)
+![License](https://img.shields.io/badge/License-MIT-3DA639)
+
+---
+
+## 目次 <!-- omit from toc -->
+
+- [1. 概要](#1-概要)
+- [2. 機能一覧](#2-機能一覧)
+  - [2.1 文字変換](#21-文字変換)
+  - [2.2 ユーザー定義置換](#22-ユーザー定義置換)
+  - [2.3 プリセット](#23-プリセット)
+  - [2.4 クリップボード連携](#24-クリップボード連携)
+  - [2.5 設定のエクスポート / インポート](#25-設定のエクスポート--インポート)
+- [3. システム要件](#3-システム要件)
+  - [3.1 リリースビルド](#31-リリースビルド)
+- [4. インストール方法](#4-インストール方法)
+  - [4.1 配布物のダウンロード](#41-配布物のダウンロード)
+  - [4.2 ソースからのビルド](#42-ソースからのビルド)
+  - [4.3 検証（変更をコミットする前）](#43-検証変更をコミットする前)
+- [5. 操作方法](#5-操作方法)
+  - [5.1 基本操作フロー](#51-基本操作フロー)
+  - [5.2 画面構成](#52-画面構成)
+  - [5.3 変換の設定項目](#53-変換の設定項目)
+  - [5.4 変換例](#54-変換例)
+    - [5.4.1 数字・英字を半角に統一](#541-数字英字を半角に統一)
+    - [5.4.2 かな文字を全角ひらがなに統一](#542-かな文字を全角ひらがなに統一)
+    - [5.4.3 タブ / 改行をスペースに変換](#543-タブ--改行をスペースに変換)
+    - [5.4.4 全力会計プリセット（組み込み）](#544-全力会計プリセット組み込み)
+    - [5.4.5 英数記号半角、かな全角プリセット（組み込み）](#545-英数記号半角かな全角プリセット組み込み)
+- [6. 設定ファイル](#6-設定ファイル)
+- [7. アーキテクチャ概要](#7-アーキテクチャ概要)
+  - [7.1 プロジェクト構成](#71-プロジェクト構成)
+  - [7.2 旧名からの移行](#72-旧名からの移行)
+- [8. トラブルシューティング](#8-トラブルシューティング)
+- [9. ドキュメント](#9-ドキュメント)
+  - [9.1 文書の役割](#91-文書の役割)
+  - [9.2 文書ごとの記載範囲](#92-文書ごとの記載範囲)
+- [10. ライセンス](#10-ライセンス)
+
+---
+
+## 1. 概要
+
+ZenHanConverter は、クリップボードにコピーされたテキストを自動検出し、利用者が設定した変換規則に基づいて全角/半角変換を実行する Windows デスクトップ アプリケーションです。 変換結果は自動的にクリップボードへ書き戻されるため、**ペースト操作だけで変換済みのテキストを利用できます**。
+
+**全角/半角変換は常に有効**です（オン/オフの切り替えはありません）。 切り替えられるのはクリップボード連携（コピーの検知と変換結果の書き戻し）だけです。
+
+主な用途:
+
+- 業務システムへの入力時の全角/半角自動変換
+- 会計帳票作成時の数字・英字の半角統一
+- 文章作成時の記号・かなの統一
+
+**同じコアロジックを共有する 4 つの UI 実装**を持ちます。 変換仕様・設定画面の設定仕様・設定ファイルは 4 つで共通です。
 
 | UI | プロジェクト | フレームワーク | 利用仕様書 |
 | --- | --- | --- | --- |
+| Avalonia UI 版 | `src/App.AvaloniaUI` | Avalonia UI（クロスプラットフォーム・XAML） | [`README.md`](src/App.AvaloniaUI/README.md) |
 | MewUI 版 | `src/App.MewUI` | MewUI（コードファースト・Native AOT 対応） | [`README.md`](src/App.MewUI/README.md) |
 | WinUI 3 版 | `src/App.WinUI3` | WinUI 3（Windows App SDK） | [`README.md`](src/App.WinUI3/README.md) |
-| Avalonia UI 版 | `src/App.AvaloniaUI` | Avalonia UI（クロスプラットフォーム・XAML） | [`README.md`](src/App.AvaloniaUI/README.md) |
 | WinForms 版 | `src/App.WinForms` | Windows Forms（コードで画面を構築） | [`README.md`](src/App.WinForms/README.md) |
 
-4 つは同一のコアロジック・変換仕様・設定画面の設定仕様を共有し、**同じ設定ファイル**を使います。
+## 2. 機能一覧
 
-## 1. 入手方法
+### 2.1 文字変換
+
+| カテゴリ | 変換対象 | 変換方向 |
+| --- | --- | --- |
+| 数字 | `0123456789` / `０１２３４５６７８９` | 全角 ⇔ 半角 |
+| 英字 | `ABC...Z` / `ＡＢＣ...Ｚ` / `abc...z` / `ａｂｃ...ｚ` | 全角 ⇔ 半角 |
+| 記号 | `()[]{}"'` など 30 種類以上の記号 | 全角 ⇔ 半角 |
+| 半角カナ | `ｱｲｳｴｵ...` | 半角カナ → 全角カタカナ / 全角ひらがな |
+| 全角カタカナ | `アイウエオ...` | 全角カタカナ → 半角カナ / 全角ひらがな |
+| 全角ひらがな | `あいうえお...` | 全角ひらがな → 半角カナ / 全角カタカナ |
+| 濁点 / 半濁点 | `゛` `゜` | 全角 ⇔ 半角 |
+| かな約物 | 長音記号（`ー`）・読点（`。`）・句点（`、`） | 全角 ⇔ 半角 ⇔ ASCII |
+| バックスラッシュ / 円記号 | `\` `＼` `¥` `￥` | 4 系統間の相互変換 |
+| タブ | `\t` | 除去 / 半角スペース / 全角スペース |
+| 改行 | `\r\n` | 除去 / 半角スペース / 全角スペース |
+| 連続スペース | 2 つ以上の連続スペース | 1 つに統合 / 除去 |
+
+変換するカテゴリと方向は、設定画面でカテゴリごとに個別に選びます（[5.3 変換の設定項目](#53-変換の設定項目)）。
+
+### 2.2 ユーザー定義置換
+
+- 任意の文字列置換ルールを追加・編集・削除できます。
+- **正規表現**によるパターン置換に対応します（暴走を防ぐため、一致判定に 1 秒のタイムアウトを必ず付けます）。
+- 複数の置換ルールは登録順に適用されます。
+- 編集内容は即時に検証され、空の検索文字列や不正な正規表現はその場でエラーになります。
+
+### 2.3 プリセット
+
+- **組み込みプリセット**を 2 つ標準搭載します（削除できません）。
+  - **全力会計（Built-in）**: 数字・英字・一部記号を半角、その他の記号・かなを全角に統一（会計帳票向け）
+  - **英数記号半角、かな全角（Built-in）**: 英字 / 数字 / 記号をすべて半角、かなを全角カタカナに統一
+- **ユーザー定義プリセット**を保存・読み込み・削除できます。
+- 現在の設定と一致するプリセットを自動検出し、選択状態に反映します。
+- プリセットの選択はタイトルバーのドロップダウンと設定画面が同期します。
+
+### 2.4 クリップボード連携
+
+- クリップボードの内容変更を監視し、変換結果が元のテキストと異なる場合だけ書き戻します。
+- 書き戻しによる再帰的なイベントを検出して抑止します（重複変換を起こしません）。
+- タイトルバーのスイッチでクリップボード連携の有効/無効を切り替えられます。 無効のときはクリップボードの読み取りも書き戻しも行いません。
+- ホーム画面の「変更前」テキストは直接編集できます。 編集した内容も自動変換されますが、クリップボードへは書き戻しません（手元での確認用）。
+
+### 2.5 設定のエクスポート / インポート
+
+- **エクスポート**: 現在の変換設定を JSON ファイルとして保存します。
+- **インポート**: JSON ファイルから変換設定を復元します。
+
+## 3. システム要件
+
+| 項目 | 要件 |
+| --- | --- |
+| **OS** | Windows 10（1809 / 17763）以降、Windows 11 |
+| **.NET ランタイム** | .NET 10.0 以降（配布物は自己完結のため不要） |
+| **アーキテクチャ** | x64 |
+
+クリップボードの監視に Win32 API を使うため、本アプリは **Windows 専用**です。
+
+### 3.1 リリースビルド
+
+公開ビルド（`buildScript/publish_<UI>.bat`）は、**UI ごとに可能な方式を次の優先順で選びます**（実装は [`buildScript/publish_ui.bat`](buildScript/publish_ui.bat)）。
+
+| 優先 | 方式 | 中身 |
+| --- | --- | --- |
+| 1 | Single AOT | マネージドコードを exe へネイティブコンパイル（自己完結） |
+| 2 | Single | 自己完結ランタイムを 1 つの exe へ同梱（単一 exe） |
+| 3 | EXE | 通常の発行（exe + DLL をフォルダーで配布） |
+
+方式ごとの可否は UI とフレームワークが決めます（実測は各スクリプトのコメントを参照）。
+
+| UI | 方式 | 配布物 | 大きさの目安 |
+| --- | --- | --- | --- |
+| MewUI 版 | Single AOT | exe 1 個 | 約 13 MB |
+| Avalonia UI 版 | Single AOT | exe + ネイティブ DLL 3 個 | 約 42 MB |
+| WinUI 3 版 | Single（AOT 不可） | exe 1 個（Windows App SDK も自己完結） | 約 175 MB |
+| WinForms 版 | Single（AOT 不可） | exe 1 個（自己完結） | 約 137 MB |
+
+- 出力先は `publish/<UI>-<RID>-<方式>` で、**方式がフォルダー名に現れます**（期待する出力先は [`.github/release-config.json`](.github/release-config.json) の `uis[].output` が単一所有します）。
+- **Avalonia UI 版は exe 単体では起動しません**（Avalonia の描画が SkiaSharp のネイティブ ライブラリに依存し、Native AOT でも exe へ同梱できないため）。 展開したフォルダーの DLL と同じ場所に置いて使用します。
+- WinUI 3 版は Native AOT に対応しません（発行は成功しますが起動時にクラッシュします）。 WinForms 版もこのアプリでは Native AOT を使用しません。
+
+## 4. インストール方法
+
+### 4.1 配布物のダウンロード
 
 [GitHub Releases](https://github.com/tomokuni/ZenHanConverter/releases) から最新版をダウンロードします。
-いずれも自己完結で、.NET ランタイムのインストールは不要です。
 
-| UI | ファイル | 内容 |
-| --- | --- | --- |
-| MewUI 版 | `ZenHanConverter.App.MewUI.zip` | 単一 exe（Native AOT） |
-| WinUI 3 版 | `ZenHanConverter.App.WinUI3.zip` | 単一 exe（自己完結） |
-| Avalonia UI 版 | `ZenHanConverter.App.AvaloniaUI.zip` | exe + ネイティブ DLL 3 個 |
-| WinForms 版 | `ZenHanConverter.App.WinForms.zip` | 単一 exe（自己完結） |
+| UI | ファイル |
+| --- | --- |
+| Avalonia UI 版 | `ZenHanConverter.App.AvaloniaUI.zip` |
+| MewUI 版 | `ZenHanConverter.App.MewUI.zip` |
+| WinUI 3 版 | `ZenHanConverter.App.WinUI3.zip` |
+| WinForms 版 | `ZenHanConverter.App.WinForms.zip` |
 
-- いずれも zip を展開して使用します。
-- Avalonia UI 版は exe 単体では起動しません。展開したフォルダーにあるネイティブ DLL と同じ場所に置いて使用します。
+- いずれも zip を展開して使用します（インストーラーはありません）。
+- .NET ランタイムのインストールは不要です（自己完結）。
 - 起動するとホーム画面が表示され、クリップボードにコピーしたテキストを自動変換します。
 
-## 2. 設定ファイル
+### 4.2 ソースからのビルド
 
-4 つの UI は同じ設定ファイルを共有するため、UI を切り替えても設定は引き継がれます。
+```powershell
+git clone https://github.com/tomokuni/ZenHanConverter.git
+cd ZenHanConverter
+# UI ごとの配布物を作る（方式は可能なものが自動で選ばれる）
+cmd /c buildScript\publish_AvaloniaUI.bat
+cmd /c buildScript\publish_MewUI.bat
+cmd /c buildScript\publish_WinUI3.bat
+cmd /c buildScript\publish_WinForms.bat
+```
+
+出力先はスクリプトが表示します（`publish/<UI>-win-x64-<方式>`。 例: `publish/mewui-win-x64-aot`）。 リポジトリ外の一時領域へ発行してから必要なファイルだけを配置します（直接 `-o` で発行すると参照プロジェクトにも `publish` が作られます）。
+
+ビルドとテストだけを行う場合:
+
+```powershell
+dotnet build ZenHanConverter.slnx -c Release
+dotnet test --solution ZenHanConverter.slnx -c Release
+```
+
+### 4.3 検証（変更をコミットする前）
+
+**検証は 1 コマンドで実行できます**（ビルド・テスト・ドキュメント・配布物の起動をまとめて確かめます）。
+
+```powershell
+pwsh -NoProfile -File buildScript/verify.ps1
+```
+
+- 合否基準と手順は [`.github/検証手順.md`](.github/検証手順.md) が単一所有します（CI も同じスクリプトを Release 構成で実行します）。
+- 配布物の起動と設定の往復は `buildScript/verifyPublish.ps1` が検証します（`publish` を含むため数分かかります。 入力が前回と同一なら publish を省略します）。
+
+## 5. 操作方法
+
+### 5.1 基本操作フロー
+
+```text
+1. アプリケーション起動
+   └── 使う UI の実行ファイルを実行（例: ZenHanConverter.App.MewUI.exe）
+   └── 前回終了時のウィンドウ位置・サイズが復元
+
+2. 変換設定の確認
+   └── 設定画面でカテゴリごとの変換方向を選ぶ
+   └── タイトルバーまたは設定画面のドロップダウンでプリセットを選ぶ
+
+3. クリップボードの自動変換
+   └── 任意のアプリでテキストをコピー（Ctrl+C）
+   └── ZenHanConverter が変換してクリップボードへ書き戻す
+
+4. 貼り付け
+   └── 任意のアプリでペースト（Ctrl+V）
+```
+
+### 5.2 画面構成
+
+ナビゲーション ペイン（左側）から 2 つの画面を切り替えます。
+
+| 画面 | 内容 |
+| --- | --- |
+| ホーム | 変更前 / 変更後のテキスト（上下 2 分割。 分割バーで比率を変更） |
+| 設定 | 変換カテゴリごとの設定・文字列の置換・プリセット管理・エクスポート / インポート |
+
+タイトルバーは全 UI 共通の配置です。
+
+- **アプリ名**: `ZenHanConverter` を表示します。
+- **クリップボード変換**: クリップボード連携の有効/無効スイッチ。
+- **プリセット選択**: 保存済みプリセットを選んで設定を読み込みます（設定画面と同期）。
+- **ナビゲーションの開閉**: 左端のボタンでペインを展開 / 折りたたみます。
+- **ウィンドウ操作**: 右端のボタンで最小化・最大化 / 復元・閉じるを操作します。
+- 余白部分のドラッグでウィンドウを移動し、ダブルクリックで最大化 / 復元を切り替えます。
+- ウィンドウの位置とサイズは終了時に記憶され、次回起動時に復元されます（前回の位置が画面外なら見える位置へ補正）。
+
+### 5.3 変換の設定項目
+
+| カテゴリ | 選択肢 |
+| --- | --- |
+| 数字 / 英字 / 記号 | なし / 半角 / 全角 |
+| かな（半角カナ・全角カタカナ・全角ひらがな） | なし / 半角カナ / 全角カタカナ / 全角ひらがな |
+| かな約物（長音・読点・句点） | なし / 半角 / 全角 / Ascii |
+| 円記号・バックスラッシュ | なし / 半角 `\` / 全角 `＼` / 半角 `¥` / 全角 `￥` |
+| タブ・改行 | そのまま / 単純除去 / 半角スペース / 全角スペース |
+| 連続スペース | そのまま / 単純除去 / 単一半角スペース / 単一全角スペース |
+
+### 5.4 変換例
+
+#### 5.4.1 数字・英字を半角に統一
+
+設定: 数字 = 半角、英字 = 半角
+
+| コピー元 | 変換後 |
+| --- | --- |
+| `２０２４年ＡＢＣ株式会社` | `2024年ABC株式会社` |
+| `ＴＥＬ：０３−１２３４−５６７８` | `TEL：03-1234-5678` |
+
+#### 5.4.2 かな文字を全角ひらがなに統一
+
+設定: 半角カナ = 全角ひらがな
+
+| コピー元 | 変換後 |
+| --- | --- |
+| `ｺﾝﾆﾁﾊｾｶｲ` | `こんにちはせかい` |
+
+#### 5.4.3 タブ / 改行をスペースに変換
+
+設定: タブ = 半角スペース、改行 = 半角スペース
+
+| コピー元 | 変換後 |
+| --- | --- |
+| `Line1\r\nLine2` | `Line1 Line2` |
+
+#### 5.4.4 全力会計プリセット（組み込み）
+
+| コピー元 | 変換後 |
+| --- | --- |
+| `２０２４年１２月３１日（金）` | `2024年12月31日(金)` |
+| `（株）ＡＢＣ商事 １，２３４，５６７円` | `(株)ABC商事 1,234,567円` |
+
+#### 5.4.5 英数記号半角、かな全角プリセット（組み込み）
+
+| コピー元 | 変換後 |
+| --- | --- |
+| `（株）ＡＢＣ商事「設定」２０２４年` | `(株)ABC商事｢設定｣2024年` |
+| `ＴＥＬ：０３−１２３４−５６７８（代表）` | `TEL:03-1234-5678(代表)` |
+| `ﾀﾞｲｽｷﾅﾗｰﾒﾝ! ﾏｲｳｪｲ!` | `ダイスキナラーメン! マイウェイ!` |
+
+## 6. 設定ファイル
+
+設定は `%LOCALAPPDATA%\ZenHanConverter\` 配下へ JSON 形式で保存されます。 **4 つの UI は同じ設定ファイルを共有**するため、UI を切り替えても設定は引き継がれます。
 
 | ファイル | 内容 |
 | --- | --- |
-| `%LOCALAPPDATA%\ZenHanConverter\AppSetting.json` | ウィンドウ位置・サイズ、クリップボード変換の有効/無効 |
-| `%LOCALAPPDATA%\ZenHanConverter\Settings.json` | 全角/半角の変換設定、置換ルール |
-| `%LOCALAPPDATA%\ZenHanConverter\Presets\{名前}.json` | ユーザー定義プリセット |
+| `AppSetting.json` | ウィンドウ位置・サイズ、クリップボード変換の有効 / 無効 |
+| `Settings.json` | 全角 / 半角の変換設定（カテゴリごとの変換方向）、置換ルール |
+| `Presets\{プリセット名}.json` | ユーザー定義プリセット |
 
-設定は各 UI の設定画面から変更でき、終了時に自動保存されます。
+`AppSetting.json` の例:
 
-## 3. ドキュメント
+```json
+{
+  "WindowWidth": 1000,
+  "WindowHeight": 800,
+  "WindowX": 120,
+  "WindowY": 80,
+  "IsClipboardConvertEnabled": true
+}
+```
 
-| ドキュメント | 内容 |
-| --- | --- |
-| `src/app_*/README.md` | 各 UI の利用仕様書（機能・画面構成・使い方） |
-| `src/app_*/SPEC_ExtFunc.md` | 各 UI の外部機能仕様書（公開 API） |
-| `src/app_*/SPEC_System.md` | 各 UI のシステム仕様書（構成・動作仕様） |
-| `src/App.Core/` / `src/App.Core.Presentation/` の README・SPEC | 共有コア（変換ロジック・モデル）と共有プレゼンテーション層（設定画面 ViewModel）の仕様 |
+`Settings.json` の例（抜粋）:
 
-## 4. 開発者向け情報
+```json
+{
+  "ConvertModeNumber": 1,
+  "ConvertModeAlphabet": 1,
+  "ConvertModeKanaHan": 2,
+  "ConvertModeEtcTabSpace": 2,
+  "ReplacePairs": [
+    { "Search": "（株）", "Replace": "(株)", "IsRegex": false }
+  ]
+}
+```
 
-ビルド・テスト・CI・リリースは開発者向けドキュメントに分離しています。
+- 設定は設定画面から変更でき、変更から 300 ミリ秒後に自動保存されます（終了時は即時保存）。
+- ファイルを直接編集する場合は、アプリを終了してから行ってください（起動時に読み込み、以降はメモリ上の値で上書きされます）。
 
-- [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md) — リポジトリ構成、プロジェクト、ビルド、テスト、実行、配布用ビルド、CI
-- [`.github/RELEASE.md`](.github/RELEASE.md) — バージョンの単一所有、リリースワークフロー、手動実行、添付ファイル
+## 7. アーキテクチャ概要
 
-## 5. 名称の変更
+UI 非依存のコアと提示層（Presentation）を 4 つの UI が共有する構成です。 依存は常に **UI → Presentation → Core** の一方向です。
+
+```text
+┌──────────────────────────────────────────────────────────┐
+│  UI（App.AvaloniaUI / App.MewUI / App.WinUI3 / App.WinForms）│
+│  View・ウィンドウ・クリップボード サービス・DI              │
+└───────────────────────────┬──────────────────────────────┘
+                            │
+┌───────────────────────────▼──────────────────────────────┐
+│  App.Core.Presentation                                    │
+│  SettingsViewModel（設定画面）・HomeDisplayText            │
+└───────────────────────────┬──────────────────────────────┘
+                            │
+┌───────────────────────────▼──────────────────────────────┐
+│  App.Core                                                 │
+│  ConvertConfig・CharConverter・セグメント定義・AppPaths     │
+│  AppSetting・ReplacePair・Win32 API・アイコン              │
+└──────────────────────────────────────────────────────────┘
+```
+
+### 7.1 プロジェクト構成
+
+| プロジェクト | 役割 | ドキュメント |
+| --- | --- | --- |
+| `src/App.Core` | 変換ロジック・モデル・変換カテゴリ定義・Win32 API・アイコン（UI 非依存） | [`README.md`](src/App.Core/README.md) |
+| `src/App.Core.Presentation` | UI 非依存の ViewModel（設定画面）と共有表示文言 | [`README.md`](src/App.Core.Presentation/README.md) |
+| `src/App.AvaloniaUI` | Avalonia UI 版アプリ | [`README.md`](src/App.AvaloniaUI/README.md) |
+| `src/App.MewUI` | MewUI 版アプリ | [`README.md`](src/App.MewUI/README.md) |
+| `src/App.WinUI3` | WinUI 3 版アプリ | [`README.md`](src/App.WinUI3/README.md) |
+| `src/App.WinForms` | WinForms 版アプリ | [`README.md`](src/App.WinForms/README.md) |
+| `test/App.*` | 各プロジェクトの単体テスト（`test/parity` は 4 UI の挙動の一致を検証） | — |
+
+### 7.2 旧名からの移行
 
 **旧名は `ClipboardZenHanConverter`** です。 リポジトリ名・製品名・アセンブリ名・実行ファイル名・配布物のファイル名・設定の保存先を、すべて `ZenHanConverter` へ変更しました（旧 URL は GitHub が新しい URL へ転送します）。
 
-- 設定の保存先は `%LOCALAPPDATA%\ClipboardZenHanConverter` から `%LOCALAPPDATA%\ZenHanConverter` へ変わります。 **初回起動時に旧フォルダーの内容を新しいフォルダーへ移行**します（移行後も旧フォルダーは残ります。 不要なら削除してください）。
-- WinUI 3 版は、かつて隣の `ClipboardZenHanConverter` リポジトリにあったものを本リポジトリへ統合済みです（`src/App.WinUI3`）。
+- 設定の保存先は `%LOCALAPPDATA%\ClipboardZenHanConverter` から `%LOCALAPPDATA%\ZenHanConverter` へ変わります。 **初回起動時に旧フォルダーの内容を新しいフォルダーへ移行**します（上書きはしません）。 移行後も旧フォルダーは残るため、不要なら削除してください。
+- 旧 `ClipboardZenHanConverter` リポジトリにあった WinUI 3 版は、本リポジトリの `src/App.WinUI3` へ統合済みです。
+
+## 8. トラブルシューティング
+
+| 問題 | 原因と対処 |
+| --- | --- |
+| **コピーしても変換されない** | タイトルバーの「クリップボード変換」スイッチが有効か確認してください。 セキュリティ ソフトやリモート デスクトップがクリップボードを仲介している場合は、監視できないことがあります。 |
+| **特定の文字だけ変換されない** | 設定画面でそのカテゴリの変換方向が「なし」になっていないか確認してください。 置換ルールが後から適用されて元に戻している場合もあります（置換ルールは登録順に適用されます）。 |
+| **設定ファイルが壊れた** | `%LOCALAPPDATA%\ZenHanConverter\AppSetting.json` と `Settings.json` を削除してアプリを再起動すると、既定値で再作成されます。 |
+| **配布物の exe が起動しない（Avalonia UI 版）** | exe と同じフォルダーにネイティブ DLL（`libSkiaSharp.dll` など）が必要です。 zip を展開したフォルダーごと配置してください。 |
+| **初回起動が遅い（WinUI 3 版 / WinForms 版）** | 単一 exe は初回起動時に依存ファイルを `%TEMP%\.net\` へ展開するため、初回だけ時間がかかります。 |
+| **旧フォルダーが残っている** | `%LOCALAPPDATA%\ClipboardZenHanConverter` は移行元として残します。 内容を確認してから削除してください。 |
+
+## 9. ドキュメント
+
+### 9.1 文書の役割
+
+| 文書 | 役割 | 場所 |
+| --- | --- | --- |
+| `README.md` | 利用仕様書（何ができるか・使い方・配布形態） | リポジトリ直下と各プロジェクト直下 |
+| `SPEC_ExtFunc.md` | 外部機能仕様書（利用者から見た機能・公開 API） | 各プロジェクト直下 |
+| `SPEC_System.md` | システム仕様書（アーキテクチャ・構成・動作仕様） | 各プロジェクト直下 |
+
+開発者向けの情報は `.github/` に分離しています。
+
+- [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md) — リポジトリ構成、プロジェクト、ビルド、テスト、実行、配布用ビルド、CI
+- [`.github/RELEASE.md`](.github/RELEASE.md) — バージョンの単一所有、リリースワークフロー、手動実行、添付ファイル
+- [`.github/copilot-instructions.md`](.github/copilot-instructions.md) — 規約文書の索引（コーディング・命名・テスト・ログ・文書・依存関係・ビルド設定・例外処理・検証・コミット）
+
+### 9.2 文書ごとの記載範囲
+
+| 文書 | 書く | 書かない |
+| --- | --- | --- |
+| `README.md` | 概要・使い方（最小例）・機能一覧・システム要件・設定ファイル・ドキュメントへのリンク | メンバー単位の API 仕様・内部構造と設計判断・改変の経緯 |
+| `SPEC_ExtFunc.md` | 利用者から見た機能・公開 API・制限事項 | 内部の層構成 |
+| `SPEC_System.md` | アーキテクチャ・依存方向・コンポーネント構成・設計判断・ログ・テスト方針 | メンバー単位の API 仕様・移行の経緯 |
+
+コード変更時は 3 文書を同時に更新します（仕様と実装の乖離を防ぐため）。
+
+## 10. ライセンス
+
+[MIT License](LICENSE)

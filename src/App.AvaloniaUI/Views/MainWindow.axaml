@@ -42,7 +42,7 @@
                             ToolTip.Tip="ナビゲーションの表示/非表示" />
 
                     <TextBlock Grid.Column="1"
-                               Text="clipboard text converter"
+                               Text="ZenHanConverter"
                                FontWeight="Bold"
                                VerticalAlignment="Center"
                                Margin="6,0,0,0" />
