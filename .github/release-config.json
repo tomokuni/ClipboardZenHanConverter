@@ -7,6 +7,7 @@
     "main",
     "release/**"
   ],
+  "settingsFiles": ["AppSetting.json", "Settings.json"],
   "requiredBuildProps": [],
   "artifactRetentionDays": 30,
   "releaseNotes": "4 種の UI 実装の配布物です。いずれも zip で、展開すると exe（Avalonia UI 版はネイティブ DLL も）が入っています。",
