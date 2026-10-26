@@ -1,7 +1,7 @@
 # 開発者向け情報（ビルド・テスト・CI）
 
 本ドキュメントは ZenHanConverter（リポジトリ名は `ZenHanConverter`）を**ビルド・テストする開発者**向けの情報です。
-アプリの利用方法は [`../README.md`](../README.md)、各 UI の利用仕様は `../src/app_*/README.md` を参照してください。
+アプリの利用方法は [`../README.md`](../README.md)、各 UI の利用仕様は `../src/App.<UI>/README.md`（例: `../src/App.MewUI/README.md`）を参照してください。
 
 - リリース手順は [`RELEASE.md`](RELEASE.md)、他のリポジトリへの流用方法は [`REUSING.md`](REUSING.md) に分離しています。
 
