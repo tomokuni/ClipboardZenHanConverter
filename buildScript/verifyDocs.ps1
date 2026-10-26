@@ -269,6 +269,8 @@ $rxStale = if ($skipStale) { $null } else { [regex]('(?<p>' + ($stalePatterns -j
 $staleHits = if ($skipStale) { @() } else { Get-GitList @('-c', 'core.quotepath=false', 'grep', '--untracked', '-n', '-E', '--', ($stalePatterns -join '|')) }
 foreach ($hit in $staleHits) {
     if ($hit -match 'archive/') { continue }
+    # パターンの一覧そのものは対象外（自分の定義に一致してしまう）
+    if ($hit -match 'verify-stale-patterns\.txt') { continue }
     # バイナリ（バンドル・パッケージ・画像等）は対象外にする（`--untracked` は作業ツリーの
     # 非テキスト ファイルも走査するため、圧縮データの中身がたまたま一致することがある）
     if ($hit -match '\.(bundle|nupkg|snupkg|zip|dll|exe|pdb|png|jpg|jpeg|gif|ico|pdf|snk|pfx|ttf|woff|woff2)(:\d+)?:') { continue }
