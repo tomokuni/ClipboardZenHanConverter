@@ -75,10 +75,28 @@
 スクリプトはリポジトリルートを基準に動作するため、どこから実行しても同じ結果になります。
 
 ```powershell
-.\buildScript\MewUI_run_publish.bat     # Native AOT の単一 exe をビルドして起動（publish\mewui-win-x64-singleaot\）
-.\buildScript\MewUI_run_release.bat     # Release 構成でビルドして起動（src\app_MewUI\bin\Release\net10.0\。AOT は適用されません）
+.\buildScript\publish_MewUI.bat     # Native AOT の単一 exe をビルドして起動（publish\mewui-win-x64-singleaot\）
+.\buildScript\publish_MewUI.bat     # Release 構成でビルドして起動（src\app_MewUI\bin\Release\net10.0\。AOT は適用されません）
 ```
 
-### 2.7 ライセンス・著作権
+## 3. テスト
 
-Copyright (c) 2025
+テストは `test/app_MewUI` にあります。 リポジトリ ルートで次を実行します（合否基準は [.github/CONTRIBUTING.md](../../.github/CONTRIBUTING.md)）。
+
+`powershell
+dotnet test --solution ZenHanConverter.slnx -c Release
+`
+
+## 4. ドキュメント
+
+| ドキュメント | 内容 |
+| --- | --- |
+| [README.md](README.md) | 本ドキュメント（機能・画面・使い方） |
+| [SPEC_ExtFunc.md](SPEC_ExtFunc.md) | 外部機能仕様書（公開 API） |
+| [SPEC_System.md](SPEC_System.md) | システム仕様書（構成・動作仕様） |
+| [.github/CONTRIBUTING.md](../../.github/CONTRIBUTING.md) | 開発者向け（ビルド・テスト・CI） |
+| [.github/RELEASE.md](../../.github/RELEASE.md) | リリース手順 |
+
+## 5. ライセンス
+
+[MIT License](../../LICENSE)

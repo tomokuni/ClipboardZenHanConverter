@@ -13,28 +13,28 @@
   "uis": [
     {
       "name": "MewUI",
-      "script": "buildScript/MewUI_publish_singleaot.bat",
-      "output": "publish/mewui-win-x64-singleaot/ZenHanConverter.App.MewUI.exe",
+      "script": "buildScript/publish_MewUI.bat",
+      "output": "publish/mewui-win-x64-aot/ZenHanConverter.App.MewUI.exe",
       "asset": "ZenHanConverter.App.MewUI.zip",
       "zip": true
     },
     {
       "name": "WinUI3",
-      "script": "buildScript/WinUI3_publish_single.bat",
+      "script": "buildScript/publish_WinUI3.bat",
       "output": "publish/winui3-win-x64-single/ZenHanConverter.App.WinUI3.exe",
       "asset": "ZenHanConverter.App.WinUI3.zip",
       "zip": true
     },
     {
       "name": "WinForms",
-      "script": "buildScript/WinForms_publish_single.bat",
+      "script": "buildScript/publish_WinForms.bat",
       "output": "publish/winforms-win-x64-single/ZenHanConverter.App.WinForms.exe",
       "asset": "ZenHanConverter.App.WinForms.zip",
       "zip": true
     },
     {
       "name": "AvaloniaUI",
-      "script": "buildScript/AvaloniaUI_publish_aot.bat",
+      "script": "buildScript/publish_AvaloniaUI.bat",
       "output": "publish/avaloniaui-win-x64-aot",
       "asset": "ZenHanConverter.App.AvaloniaUI.zip",
       "zip": true

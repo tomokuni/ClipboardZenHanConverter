@@ -61,7 +61,7 @@ public partial class App : Application
     private void SubscribeExceptionHandlers()
     {
         UnhandledException += OnUnhandledException;
-        AppDomain.CurrentDomain.UnhandledException += OnCurrentDomainUnhandledException;
+        AppDomain.CurrentDomain.UnhandledException += OnUnhandledExceptionRaised;
         TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
     }
 
@@ -73,7 +73,7 @@ public partial class App : Application
     }
 
     /// <summary>バックグラウンドスレッドの致命的な未処理例外を処理します。ログ出力のみ行います。</summary>
-    private static void OnCurrentDomainUnhandledException(object sender, System.UnhandledExceptionEventArgs e)
+    private static void OnUnhandledExceptionRaised(object sender, System.UnhandledExceptionEventArgs e)
     {
         if (e.ExceptionObject is Exception ex)
             Debug.WriteLine($"[集約ログ(致命的)]: {ex.Message}");

@@ -166,6 +166,22 @@ flowchart TD
 
 クリップボードと仮想画面の Win32 実装（`EsUtil.Platform.Core`）は、EsUtil 側の `WinClipboardTests` が検証します。
 
+## 依存関係
+
+本プロジェクトが直接参照するプロジェクトとパッケージです（版は `Directory.Packages.props` が単一所有します）。
+
+| 種別 | 参照先 | 用途 |
+| --- | --- | --- |
+| プロジェクト | `ZenHanConverter.Core` | 変換ロジック・設定モデル・Win32 連携 |
+| プロジェクト | `ZenHanConverter.Presentation` | UI 非依存の ViewModel |
+| パッケージ | `EsUtil.Feature.ZenHan.Core` | 変換ペア・記号表（変換の定義） |
+| パッケージ | `EsUtil.Platform.Core` | 画面座標・ウィンドウ配置の共通実装 |
+| パッケージ | `CommunityToolkit.Mvvm` | 変更通知とコマンド |
+| パッケージ | `Microsoft.Extensions.Hosting` | DI コンテナ |
+| パッケージ | `EsUtil.Ui.<UI>.*` | マーキー・ルーペ・列パッキングのコントロール（UI ごと） |
+
+- 依存の版は `Directory.Packages.props` が単一所有し、復元は `packages.lock.json` で固定します（`.github/CONTRIBUTING.md`）。
+
 ## 例外処理ポリシー
 
 - 設定ファイルの読み書き失敗（IOException / UnauthorizedAccessException / JsonException）は握り潰し、アプリ動作を継続。

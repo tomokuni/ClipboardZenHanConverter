@@ -221,16 +221,16 @@ dotnet run --project src/app_WinUI3/app_WinUI3.csproj
 
 ## 10. 単一 exe の作成
 
-`buildScript/` の `WinUI3_publish_single.bat`（ビルド）と `WinUI3_run_publish.bat`（ビルドして起動）で、自己完結の単一 exe を作成できます。
+`buildScript/` の `publish_WinUI3.bat`（ビルド）と `publish_WinUI3.bat`（ビルドして起動）で、自己完結の単一 exe を作成できます。
 スクリプトはリポジトリルートを基準に動作するため、どこから実行しても同じ結果になります。
 
 ```powershell
-.\buildScript\WinUI3_publish_single.bat          # publish\winui3-win-x64-single\ZenHanConverter.App.WinUI3.exe
-.\buildScript\WinUI3_run_publish.bat             # 上記をビルドして起動
-.\buildScript\WinUI3_publish_single.bat win-arm64
+.\buildScript\publish_WinUI3.bat          # publish\winui3-win-x64-single\ZenHanConverter.App.WinUI3.exe
+.\buildScript\publish_WinUI3.bat             # 上記をビルドして起動
+.\buildScript\publish_WinUI3.bat win-arm64
 ```
 
-発行を行わず、Release 構成のビルドと実行だけを行う場合は `buildScript\WinUI3_run_release.bat` を使用します（`src\app_WinUI3\bin\Release\net10.0-windows10.0.26100.0\win-x64\` の exe を起動します。単一ファイル化は適用されません）。
+発行を行わず、Release 構成のビルドと実行だけを行う場合は `buildScript\publish_WinUI3.bat` を使用します（`src\app_WinUI3\bin\Release\net10.0-windows10.0.26100.0\win-x64\` の exe を起動します。単一ファイル化は適用されません）。
 
 - 通常ビルドも **.NET と Windows App SDK の両方が自己完結**です（実行環境に Windows App Runtime のインストールは不要）。
 
@@ -240,3 +240,25 @@ dotnet run --project src/app_WinUI3/app_WinUI3.csproj
 - WinUI 3 は Native AOT に対応しません。`PublishAot=true` は発行自体は成功しますが、起動時に `Microsoft.UI.Xaml.dll` でクラッシュします。
 - プロジェクトは発行時に Windows App SDK の未使用ペイロード（AI / ML / Search / Widgets / WebView2）を自動除外します。
   `Microsoft.WindowsAppSDK.Runtime` の MSIX に含まれるためパッケージ参照では削れず、約 55 MB を削減できます。
+
+## 11. テスト
+
+テストは `test/app_WinUI3` にあります。 リポジトリ ルートで次を実行します（合否基準は [.github/CONTRIBUTING.md](../../.github/CONTRIBUTING.md)）。
+
+`powershell
+dotnet test --solution ZenHanConverter.slnx -c Release
+`
+
+## 12. ドキュメント
+
+| ドキュメント | 内容 |
+| --- | --- |
+| [README.md](README.md) | 本ドキュメント（機能・画面・使い方） |
+| [SPEC_ExtFunc.md](SPEC_ExtFunc.md) | 外部機能仕様書（公開 API） |
+| [SPEC_System.md](SPEC_System.md) | システム仕様書（構成・動作仕様） |
+| [.github/CONTRIBUTING.md](../../.github/CONTRIBUTING.md) | 開発者向け（ビルド・テスト・CI） |
+| [.github/RELEASE.md](../../.github/RELEASE.md) | リリース手順 |
+
+## 13. ライセンス
+
+[MIT License](../../LICENSE)

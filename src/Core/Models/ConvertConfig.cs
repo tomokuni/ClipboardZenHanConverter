@@ -624,9 +624,10 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
                     if (JsonSerializer.Deserialize(stream, SerializeInfo.Type, SerializeInfo.Context) is ConvertConfig loaded && PropertiesEqual(this, loaded))
                         return name;
                 }
-                catch (JsonException) { }
-                catch (IOException) { }
-                catch (UnauthorizedAccessException) { }
+                // 壊れたファイル・読めないファイルは「一致するプリセットが無い」として扱う（起動は止めない）
+                catch (JsonException) { }   // 壊れた JSON は「一致するプリセットが無い」として扱う
+                catch (IOException) { }       // 読み取り失敗も同じ扱いにする
+                catch (UnauthorizedAccessException) { }   // 権限が無い場合も同じ扱いにする
             }
         }
         return null;
