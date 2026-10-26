@@ -213,7 +213,7 @@ dotnet run --project src/app_WinForms/app_WinForms.csproj
    - 配布物の作成は行いません（リリースの `publish.yml` が担当します）
 
 - 対象のソリューション ファイルは `release-config.json` の `solutionFile` が単一所有します（ワークフローには書きません）。
-- **`dev` への push でも実行します**（作業ブランチの壊れを早く見つけるため）。 **`main` へは PR でのみ**反映します（ruleset `Protect main` が直接 push を拒否し、`build` の成功をマージ条件にします）。
+- **`dev` への push でも実行します**（**開発〜dry-run までの確認は `dev` で行う**ため）。 **`main` へは PR でのみ**反映します（ruleset `Protect main` が直接 push を拒否し、`build` の成功をマージ条件にします）。 **公開（release）は `main` からのみ**です。
 - **配布物は作成しません。** publish（Native AOT を含む重い処理）は、手動実行の [`workflows/release.yml`](workflows/release.yml) が
   [`workflows/publish.yml`](workflows/publish.yml) を通じて**リリース時に 1 度だけ**行います。
 - GitHub Release への**登録は行いません**。
