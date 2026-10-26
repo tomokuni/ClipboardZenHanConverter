@@ -31,7 +31,7 @@ public static class AppPaths
     public static string GetFilePath(string fileName) => Path.Combine(RootFolder, fileName);
 
     /// <summary>旧名のフォルダーから現在のフォルダーへ内容を移行します（初回のみ）。</summary>
-    /// <returns>移行したファイル数。移行が不要だった場合と、移行に失敗した場合は 0。</returns>
+    /// <returns>移行したファイル数。 移行が不要だった場合（現在のフォルダーが既にある／旧フォルダーが無い）と、列挙やコピーが途中で失敗した場合は 0。</returns>
     /// <remarks>新しいフォルダーにまだ何も無く、旧フォルダーがある場合だけ写します（上書きしません）。<br/>
     /// 旧フォルダーは残します（移行後に利用者が判断して削除できるようにするため）。<br/>
     /// **移行は起動を止めない best-effort** とします（読めないファイルがあっても、アプリは既定値で起動できます）。</remarks>

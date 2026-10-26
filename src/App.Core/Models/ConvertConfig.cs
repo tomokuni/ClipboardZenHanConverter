@@ -432,6 +432,27 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
             [BuiltInPresetAlphanumericHanKanaZen] = ApplyAlphanumericHanKanaZenPreset,
         }.ToFrozenDictionary(StringComparer.Ordinal);
 
+    /// <summary>組み込みプリセットを適用した設定のキャッシュ（名前 → 適用済みの設定）。</summary>
+    /// <remarks>
+    /// <b>なぜキャッシュするか</b>: <see cref="FindMatchingPreset"/> は設定が 1 つ変わるたびに呼ばれる
+    /// （置換行の 1 文字入力でも呼ばれる）。 組み込みプリセットの適用は毎回 <see cref="ConvertConfig"/> を
+    /// 1 つ作り、全モードのプロパティ（既定で 45）を書き込むため、入力のたびにその費用を払っていた。<br/>
+    /// <b>安全である根拠</b>: <see cref="BuiltInPresets"/> は不変（<see cref="FrozenDictionary{TKey, TValue}"/>）で、
+    /// 適用結果は入力に依存しない。 キャッシュした設定は <see cref="FindMatchingPreset"/> が読むだけで書き換えない。
+    /// </remarks>
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, ConvertConfig> BuiltInPresetCache =
+        new(StringComparer.Ordinal);
+
+    /// <summary>ユーザー プリセットの読み込み結果のキャッシュ（パス → ファイルの状態と読み込んだ設定）。</summary>
+    /// <remarks>
+    /// <b>なぜキャッシュするか</b>: <see cref="FindMatchingPreset"/> はユーザー プリセットの JSON を
+    /// 毎回開いて逆シリアル化していた（呼ばれる頻度は上のキャッシュと同じ）。<br/>
+    /// <b>陳腐化させない仕組み</b>: ファイルの最終更新日時と長さを鍵に含める。 保存・削除・外部からの編集の
+    /// いずれでもスタンプが変わるため、古い内容を使い続けない（保存と削除はさらに明示的に捨てる）。
+    /// </remarks>
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, (DateTime WriteTime, long Length, ConvertConfig? Config)> UserPresetCache =
+        new(StringComparer.Ordinal);
+
     /// <summary>組み込みプリセット「英数記号半角、かな全角」を適用します。</summary>
     /// <param name="c">設定を適用する ConvertConfig インスタンス。</param>
     /// <remarks>英字/数字/記号を半角、半角カナを全角カタカナ、バックスラッシュ/円記号を半角円記号に統一します。<br/>
@@ -605,7 +626,10 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
     {
         if (string.IsNullOrWhiteSpace(name)) return;
         Directory.CreateDirectory(PresetDirectory);
-        SaveToJsonFile(Path.Combine(PresetDirectory, $"{name}.json"));
+        var path = Path.Combine(PresetDirectory, $"{name}.json");
+        SaveToJsonFile(path);
+        // 保存した内容は次の FindMatchingPreset で必ず読み直す（スタンプが同じ秒に収まる場合があるため）
+        UserPresetCache.TryRemove(path, out _);
     }
 
     /// <summary>指定されたプリセットを読み込みます。</summary>
@@ -629,6 +653,7 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
         if (string.IsNullOrWhiteSpace(name) || BuiltInPresets.ContainsKey(name)) return;
         var fp = Path.Combine(PresetDirectory, $"{name}.json");
         if (File.Exists(fp)) File.Delete(fp);
+        UserPresetCache.TryRemove(fp, out _);
     }
 
     /// <summary>2つの ConvertConfig の全プロパティが等しいかを検証します。</summary>
@@ -652,27 +677,69 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
         // GetPresetNames() と同じ並び順で一致確認
         foreach (var name in GetPresetNames())
         {
+            if (BuiltInPresetCache.TryGetValue(name, out var cached))
+            {
+                if (PropertiesEqual(this, cached)) return name;
+                continue;
+            }
+
             if (BuiltInPresets.TryGetValue(name, out var apply))
             {
                 var temp = new ConvertConfig();
                 apply(temp);
+                // 適用結果は入力に依存しないため、次回から使い回す（上記のコメントを参照）
+                BuiltInPresetCache[name] = temp;
                 if (PropertiesEqual(this, temp)) return name;
             }
             else
             {
-                var fp = Path.Combine(PresetDirectory, $"{name}.json");
-                try
-                {
-                    using var stream = File.OpenRead(fp);
-                    if (JsonSerializer.Deserialize(stream, SerializeInfo.Type, SerializeInfo.Context) is ConvertConfig loaded && PropertiesEqual(this, loaded))
-                        return name;
-                }
-                // 壊れたファイル・読めないファイルは「一致するプリセットが無い」として扱う（起動は止めない）
-                catch (JsonException) { }   // 壊れた JSON は「一致するプリセットが無い」として扱う
-                catch (IOException) { }       // 読み取り失敗も同じ扱いにする
-                catch (UnauthorizedAccessException) { }   // 権限が無い場合も同じ扱いにする
+                if (TryLoadUserPreset(name) is { } loaded && PropertiesEqual(this, loaded))
+                    return name;
             }
         }
+
         return null;
+    }
+
+    /// <summary>ユーザー プリセットを読み込みます（ファイルの状態が同じなら前回の結果を使います）。</summary>
+    /// <param name="name">プリセット名（拡張子なし）。</param>
+    /// <returns>読み込んだ設定。読めない場合は null（壊れたファイル・権限なしを含む）。</returns>
+    private ConvertConfig? TryLoadUserPreset(string name)
+    {
+        var path = Path.Combine(PresetDirectory, $"{name}.json");
+
+        // ファイルの状態（最終更新日時と長さ）を鍵にする。 取得できない場合（無い・読めない）は
+        // キャッシュを使わず、従来どおり読み込みを試みる
+        DateTime writeTime;
+        long length;
+        try
+        {
+            var info = new FileInfo(path);
+            if (!info.Exists) return null;
+            writeTime = info.LastWriteTimeUtc;
+            length = info.Length;
+        }
+        catch (IOException) { return null; }                  // 読み取り失敗は「一致するプリセットが無い」として扱う
+        catch (UnauthorizedAccessException) { return null; }  // 権限が無い場合も同じ扱いにする
+
+        if (UserPresetCache.TryGetValue(path, out var cached)
+            && cached.WriteTime == writeTime && cached.Length == length)
+        {
+            return cached.Config;
+        }
+
+        ConvertConfig? loaded = null;
+        try
+        {
+            using var stream = File.OpenRead(path);
+            loaded = JsonSerializer.Deserialize(stream, SerializeInfo.Type, SerializeInfo.Context) as ConvertConfig;
+        }
+        // 壊れたファイル・読めないファイルは「一致するプリセットが無い」として扱う（起動は止めない）
+        catch (JsonException) { }   // 壊れた JSON は「一致するプリセットが無い」として扱う
+        catch (IOException) { }       // 読み取り失敗も同じ扱いにする
+        catch (UnauthorizedAccessException) { }   // 権限が無い場合も同じ扱いにする
+
+        UserPresetCache[path] = (writeTime, length, loaded);
+        return loaded;
     }
 }
