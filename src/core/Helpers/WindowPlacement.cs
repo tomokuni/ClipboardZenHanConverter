@@ -1,7 +1,7 @@
 using EsUtil.Platform.Core.Geometry;
 using System;
 
-namespace EsUtil.ClipboardZenHanConverter.Core.Helpers;
+namespace EsUtil.ZenHanConverter.Core.Helpers;
 
 /// <summary>保存されたウィンドウ位置を表示領域内へ補正する純粋ロジックを提供する静的クラス。</summary>
 /// <remarks>提供機能: <br/>

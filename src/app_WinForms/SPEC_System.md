@@ -1,4 +1,4 @@
-# ClipboardZenHanConverter.App.WinForms システム仕様書
+# ZenHanConverter.App.WinForms システム仕様書
 
 本ドキュメントは `src/app_WinForms`（WinForms アプリ）の内部設計を記載します。
 メソッド内部のコードは記載しません。
@@ -38,7 +38,7 @@ dotnet run --project src/app_WinForms/app_WinForms.csproj
 ### 配布用ビルド（単一 exe）
 
 `buildScript/` の `WinForms_publish_single.bat`（ビルド）と `WinForms_run_publish.bat`（ビルドして起動）で、自己完結の単一 exe を
-`publish\winforms-<RID>-single\ClipboardZenHanConverter.App.WinForms.exe` に出力します（既定 RID は `win-x64`、約 119 MB）。
+`publish\winforms-<RID>-single\ZenHanConverter.App.WinForms.exe` に出力します（既定 RID は `win-x64`、約 119 MB）。
 スクリプトはリポジトリルートを基準に動作します。
 
 単一 exe 化に必要なプロパティは次のとおりです。
@@ -47,7 +47,7 @@ dotnet run --project src/app_WinForms/app_WinForms.csproj
 2. `SelfContained=true`（配布先に .NET ランタイムを要求しない）
 3. `DebugType=None`（`.pdb` を配布対象から外す）
 
-初回起動時に依存ファイルを `%TEMP%\.net\ClipboardZenHanConverter.App.WinForms\` へ展開するため、初回のみ起動に時間がかかります。  
+初回起動時に依存ファイルを `%TEMP%\.net\ZenHanConverter.App.WinForms\` へ展開するため、初回のみ起動に時間がかかります。  
 また、展開先が破損・残留していると起動に失敗する場合があります。その場合は展開先フォルダを削除してから再起動します。
 
 発行はリポジトリ外の一時領域（`%TEMP%\czhc-single-winforms-<RID>`）で行い、単一 exe のみを出力先へ配置します。  
@@ -263,7 +263,7 @@ sequenceDiagram
 
 ## 設定の保存と復元
 
-- 保存先は `%LOCALAPPDATA%\ClipboardZenHanConverter\`（`AppSetting.json` / ユーザープリセット）で、他 UI と共有します。
+- 保存先は `%LOCALAPPDATA%\ZenHanConverter\`（`AppSetting.json` / ユーザープリセット）で、他 UI と共有します。
 - `SettingsPersistenceBase` のデバウンス付き自動保存（300ms）を利用します。
 - 終了時はデバウンスを待たず、`CancelPendingSave` の後に同期で保存します。
 

@@ -1,4 +1,4 @@
-# ClipboardZenHanConverter (WinForms)
+# ZenHanConverter (WinForms)
 
 クリップボードのテキストを監視し、全角/半角の自動変換を行う Windows 向けデスクトップアプリケーションです。
 本バージョンは UI フレームワークに **Windows Forms** を使用しています。
@@ -25,7 +25,7 @@
 1. アプリケーションを起動します（ホーム画面が表示されます）。
 2. タイトルバーの「クリップボード変換」スイッチが有効であることを確認します。
 3. 任意のアプリケーションでテキストをコピー（Ctrl+C）します。
-4. ClipboardZenHanConverter が自動的に変換を実行します。
+4. ZenHanConverter が自動的に変換を実行します。
 5. 変換後のテキストを任意の場所にペースト（Ctrl+V）します。
 
 画面左のナビゲーションペイン（ホーム / 設定）で画面を切り替えます。各項目にはアイコンが表示されます（ホーム: 変換範囲 / 設定: 歯車）。
@@ -104,12 +104,12 @@
 スクリプトはリポジトリルートを基準に動作するため、どこから実行しても同じ結果になります。
 
 ```powershell
-.\buildScript\WinForms_publish_single.bat          # publish\winforms-win-x64-single\ClipboardZenHanConverter.App.WinForms.exe
+.\buildScript\WinForms_publish_single.bat          # publish\winforms-win-x64-single\ZenHanConverter.App.WinForms.exe
 .\buildScript\WinForms_run_publish.bat             # 上記をビルドして起動
 .\buildScript\WinForms_publish_single.bat win-arm64
 ```
 
-- 出力は exe 1 ファイル（約 119 MB）です。初回起動時に依存ファイルを `%TEMP%\.net\ClipboardZenHanConverter.App.WinForms\` へ展開するため、初回のみ起動に時間がかかります。
+- 出力は exe 1 ファイル（約 119 MB）です。初回起動時に依存ファイルを `%TEMP%\.net\ZenHanConverter.App.WinForms\` へ展開するため、初回のみ起動に時間がかかります。
 - 単一 exe 化には `PublishSingleFile` / `SelfContained` が必要です。
 - **WinForms は Native AOT に対応せず、トリミングもサポートされません**（`PublishTrimmed=true` は `NETSDK1175` で失敗します）。そのため MewUI 版・Avalonia UI 版と異なり AOT を使用しません（詳細は `SPEC_System.md`）。
 

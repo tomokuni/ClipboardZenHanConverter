@@ -14,10 +14,10 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <RootNamespace>EsUtil.ClipboardZenHanConverter.App.AvaloniaUI</RootNamespace>
-    <AssemblyName>ClipboardZenHanConverter.App.AvaloniaUI</AssemblyName>
-    <Product>ClipboardZenHanConverter</Product>
-    <Description>ClipboardZenHanConverter (Avalonia UI) - clipboard text converter</Description>
+    <RootNamespace>EsUtil.ZenHanConverter.App.AvaloniaUI</RootNamespace>
+    <AssemblyName>ZenHanConverter.App.AvaloniaUI</AssemblyName>
+    <Product>ZenHanConverter</Product>
+    <Description>ZenHanConverter (Avalonia UI) - clipboard text converter</Description>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,7 +27,7 @@
 
   <ItemGroup>
     <!-- 検証ロジック（internal static）をテストから参照するため -->
-    <InternalsVisibleTo Include="ClipboardZenHanConverter.Tests.App.AvaloniaUI" />
+    <InternalsVisibleTo Include="ZenHanConverter.Tests.App.AvaloniaUI" />
   </ItemGroup>
 
   <ItemGroup>

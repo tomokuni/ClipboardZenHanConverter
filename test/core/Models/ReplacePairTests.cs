@@ -1,7 +1,7 @@
-using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.Core.Models;
 using Xunit;
 
-namespace EsUtil.ClipboardZenHanConverter.Tests.Core.Models;
+namespace EsUtil.ZenHanConverter.Tests.Core.Models;
 
 /// <summary><see cref="ReplacePair"/> の検証ロジックと値の等価性を検証します。</summary>
 public sealed class ReplacePairTests

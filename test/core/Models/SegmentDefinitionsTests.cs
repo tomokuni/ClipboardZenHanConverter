@@ -1,10 +1,10 @@
-using EsUtil.ClipboardZenHanConverter.Core.Enums;
-using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.Core.Enums;
+using EsUtil.ZenHanConverter.Core.Models;
 using System;
 using System.Linq;
 using Xunit;
 
-namespace EsUtil.ClipboardZenHanConverter.Tests.Core.Models;
+namespace EsUtil.ZenHanConverter.Tests.Core.Models;
 
 /// <summary><see cref="SegmentDefinitions"/> の定義内容を検証します。</summary>
 public sealed class SegmentDefinitionsTests

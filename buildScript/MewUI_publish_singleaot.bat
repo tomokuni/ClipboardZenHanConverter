@@ -2,7 +2,7 @@
 setlocal
 
 rem ============================================================
-rem  ClipboardZenHanConverter (MewUI) 単一 exe ビルドスクリプト
+rem  ZenHanConverter (MewUI) 単一 exe ビルドスクリプト
 rem  Release / Native AOT / 単一 exe を生成する
 rem ============================================================
 
@@ -12,7 +12,7 @@ pushd "%~dp0.."
 rem ターゲットランタイム（既定: win-x64）
 if "%~1"=="" (set "RID=win-x64") else (set "RID=%~1")
 
-set "APP_NAME=ClipboardZenHanConverter.App.MewUI.exe"
+set "APP_NAME=ZenHanConverter.App.MewUI.exe"
 
 rem 最終的な出力先
 set "OUTDIR=%CD%\publish\mewui-%RID%-singleaot"

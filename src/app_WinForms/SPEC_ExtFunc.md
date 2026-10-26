@@ -1,4 +1,4 @@
-# ClipboardZenHanConverter.App.WinForms 外部機能仕様書
+# ZenHanConverter.App.WinForms 外部機能仕様書
 
 本ドキュメントは `src/app_WinForms`（WinForms アプリ）の公開 API 仕様（外部機能仕様）を記載します。
 メソッド内部のコードは記載しません。外部利用者に関係する情報のみを扱います。
@@ -56,7 +56,7 @@
 クリップボード変換スイッチとプリセット選択はタイトルバー（`MainForm`）が単一所有し、この ViewModel は関与しません。  
 UI スレッド以外から `IClipboardService.ContentChanged` が発行された場合、生成時に捕捉した `SynchronizationContext` へ処理を委譲します。
 
-### Services（`EsUtil.ClipboardZenHanConverter.App.WinForms.Services`）
+### Services（`EsUtil.ZenHanConverter.App.WinForms.Services`）
 
 #### `INavigationService`
 
@@ -71,9 +71,9 @@ UI スレッド以外から `IClipboardService.ContentChanged` が発行され�
 
 #### `DependencyInjectionExtensions`
 
-- `IServiceCollection AddClipboardZenHanConverterServices(this IServiceCollection services)` — 全サービスの登録
+- `IServiceCollection AddZenHanConverterServices(this IServiceCollection services)` — 全サービスの登録
 
-### Helpers（`EsUtil.ClipboardZenHanConverter.App.WinForms.Helpers`）
+### Helpers（`EsUtil.ZenHanConverter.App.WinForms.Helpers`）
 
 #### `FluentIcons`
 
@@ -92,7 +92,7 @@ M / L / H / V / C / S / Q / T / Z と各相対コマンドに対応し、円弧�
 | `FormatException` | 数値またはコマンドの並びが不正 |
 | `NotSupportedException` | 円弧（A / a）コマンドが含まれる |
 
-### Views（`EsUtil.ClipboardZenHanConverter.App.WinForms.Views`）
+### Views（`EsUtil.ZenHanConverter.App.WinForms.Views`）
 
 `System.Windows.Forms.Form` / `UserControl` を継承する画面クラスです。UI を組み立てるのみで、ロジックは持ちません。
 

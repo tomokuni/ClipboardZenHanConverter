@@ -2,7 +2,7 @@
 setlocal
 
 rem ============================================================
-rem  ClipboardZenHanConverter (WinForms) 単一 exe ビルド&実行スクリプト
+rem  ZenHanConverter (WinForms) 単一 exe ビルド&実行スクリプト
 rem  WinForms_publish_single.bat で単一 exe build し、実行する
 rem ============================================================
 
@@ -14,7 +14,7 @@ if "%~1"=="" (set "RID=win-x64") else (set "RID=%~1")
 
 rem 発行先は WinForms_publish_single.bat と揃える（絶対パス）
 set "OUTDIR=%CD%\publish\winforms-%RID%-single"
-set "APP_EXE=%OUTDIR%\ClipboardZenHanConverter.App.WinForms.exe"
+set "APP_EXE=%OUTDIR%\ZenHanConverter.App.WinForms.exe"
 
 rem ビルドを実行（同じフォルダにある publish スクリプトを呼ぶ）
 call "%~dp0WinForms_publish_single.bat" %RID%

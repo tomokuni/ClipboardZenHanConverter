@@ -1,9 +1,9 @@
-using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.Core.Models;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace EsUtil.ClipboardZenHanConverter.Tests;
+namespace EsUtil.ZenHanConverter.Tests;
 
 /// <summary>テスト用の共通ヘルパーメソッドを提供します。</summary>
 public static class TestHelper
@@ -18,7 +18,7 @@ public static class TestHelper
     /// <returns>作成されたディレクトリのパス。</returns>
     public static string CreateTempDirectory()
     {
-        var path = Path.Combine(Path.GetTempPath(), "ClipboardZenHanConverter.Tests", Guid.NewGuid().ToString("N"));
+        var path = Path.Combine(Path.GetTempPath(), "ZenHanConverter.Tests", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(path);
         return path;
     }

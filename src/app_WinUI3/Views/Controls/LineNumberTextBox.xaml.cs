@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System.Linq;
 
-namespace EsUtil.ClipboardZenHanConverter.App.WinUI.Views.Controls;
+namespace EsUtil.ZenHanConverter.App.WinUI.Views.Controls;
 
 /// <summary>行番号を表示するテキストボックスコントロール。</summary>
 /// <remarks>改行コード(CRLF / CR / LF)で行数をカウントし、左ガターに行番号を表示します。<br/>

@@ -1,4 +1,4 @@
-# ClipboardZenHanConverter (WinUI 3)
+# ZenHanConverter (WinUI 3)
 
 本ドキュメントは src/app_WinUI3（WinUI 3 アプリ）の利用仕様書です。
 同じコアロジック（src/core）を共有する MewUI 版（src/app_MewUI）があり、両者は同一の設定ファイルを使用します。
@@ -7,7 +7,7 @@
 
 ## 概要
 
-ClipboardZenHanConverter は、クリップボードにコピーされたテキストを自動検出し、ユーザーが設定した変換ルールに基づいて全角/半角変換を実行します。変換結果は自動的にクリップボードに書き戻されるため、ペースト操作だけで変換済みのテキストを利用できます。
+ZenHanConverter は、クリップボードにコピーされたテキストを自動検出し、ユーザーが設定した変換ルールに基づいて全角/半角変換を実行します。変換結果は自動的にクリップボードに書き戻されるため、ペースト操作だけで変換済みのテキストを利用できます。
 
 **全角/半角変換は常に有効です**（オン/オフの切り替えはありません）。切り替えできるのはクリップボード連携（コピーの検知と変換結果の書き戻し）のみです。
 
@@ -87,7 +87,7 @@ ClipboardZenHanConverter は、クリップボードにコピーされたテキ�
 1. アプリケーションを起動すると、ホーム画面が表示されます
 2. タイトルバーの「クリップボード変換」スイッチが有効であることを確認します
 3. 任意のアプリケーションでテキストをコピー（Ctrl+C）します
-4. ClipboardZenHanConverter が自動的に変換を実行します
+4. ZenHanConverter が自動的に変換を実行します
 5. 変換後のテキストを任意の場所にペースト（Ctrl+V）します
 
 ホーム画面の「変更前」テキストボックスは編集できます。直接入力・貼り付けした場合も自動変換され、
@@ -225,7 +225,7 @@ dotnet run --project src/app_WinUI3/app_WinUI3.csproj
 スクリプトはリポジトリルートを基準に動作するため、どこから実行しても同じ結果になります。
 
 ```powershell
-.\buildScript\WinUI3_publish_single.bat          # publish\winui3-win-x64-single\ClipboardZenHanConverter.App.WinUI3.exe
+.\buildScript\WinUI3_publish_single.bat          # publish\winui3-win-x64-single\ZenHanConverter.App.WinUI3.exe
 .\buildScript\WinUI3_run_publish.bat             # 上記をビルドして起動
 .\buildScript\WinUI3_publish_single.bat win-arm64
 ```
@@ -234,7 +234,7 @@ dotnet run --project src/app_WinUI3/app_WinUI3.csproj
 
 - 通常ビルドも **.NET と Windows App SDK の両方が自己完結**です（実行環境に Windows App Runtime のインストールは不要）。
 
-- 出力は exe 1 ファイル（約 179 MB）です。初回起動時に依存ファイルを `%TEMP%\.net\ClipboardZenHanConverter.App.WinUI3\` へ展開するため、初回のみ起動に時間がかかります。
+- 出力は exe 1 ファイル（約 179 MB）です。初回起動時に依存ファイルを `%TEMP%\.net\ZenHanConverter.App.WinUI3\` へ展開するため、初回のみ起動に時間がかかります。
 - 発行はリポジトリ外の一時領域（`%TEMP%\czhc-single-winui-<RID>`）で行い、exe のみを出力先へ配置します。リポジトリ内へ直接発行するとフレームワーク配置のファイルが混在し、それをアプリのコンテンツとして取り込むと単一 exe が肥大化します。
 - 単一 exe 化には `PublishSingleFile` / `SelfContained` / `WindowsAppSDKSelfContained` / `EnableMsixTooling` / `IncludeAllContentForSelfExtract` が必要です（`WindowsPackageType=None` はプロジェクトで設定済み）。
 - WinUI 3 は Native AOT に対応しません。`PublishAot=true` は発行自体は成功しますが、起動時に `Microsoft.UI.Xaml.dll` でクラッシュします。

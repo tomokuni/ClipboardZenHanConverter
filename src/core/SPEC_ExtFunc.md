@@ -1,11 +1,11 @@
-# ClipboardZenHanConverter.Core 外部機能仕様書
+# ZenHanConverter.Core 外部機能仕様書
 
 本ドキュメントは `src/core` プロジェクトの公開 API 仕様（外部機能仕様）を記載します。
 メソッド内部のコードは記載しません。外部利用者に関係する情報のみを扱います。
 
 ## 公開型一覧
 
-### 列挙型（`EsUtil.ClipboardZenHanConverter.Core.Enums`）
+### 列挙型（`EsUtil.ZenHanConverter.Core.Enums`）
 
 #### `ZenHanMode`
 
@@ -62,7 +62,7 @@
 | 2 | ToHanSpace | 半角スペース |
 | 3 | ToZenSpace | 全角スペース |
 
-### データモデル（`EsUtil.ClipboardZenHanConverter.Core.Models`）
+### データモデル（`EsUtil.ZenHanConverter.Core.Models`）
 
 #### `ConvertConfig`
 
@@ -75,7 +75,7 @@
 - `List<ReplacePair> ReplacePairs` — ユーザー定義の置換ルール一覧
 - `string[] GetPresetNames()` — 利用可能なプリセット名一覧
 - `void SavePreset(string name)` / `bool LoadPreset(string name)` / `void DeletePreset(string name)`
-- `static string PresetDirectory` — ユーザープリセットの保存ディレクトリ（既定 `%LOCALAPPDATA%\ClipboardZenHanConverter\Presets`、既定値は設定で切替可能）
+- `static string PresetDirectory` — ユーザープリセットの保存ディレクトリ（既定 `%LOCALAPPDATA%\ZenHanConverter\Presets`、既定値は設定で切替可能）
 - `bool IsBuiltInPreset(string name)`
 - `string? FindMatchingPreset()` — 現在の設定に一致するプリセット名を返す
 - `void ExportToFile(string filePath)` / `bool ImportFromFile(string filePath)`
@@ -161,7 +161,7 @@ UI セグメントコントロールの定義レコード。
 `SaveNow` はアプリの終了時など、デバウンス（300ms）の完了を待てない場面で使用します。
 終了直前はプロセスが停止するため、非同期保存では書き込みが完了しません。
 
-### インターフェース（`EsUtil.ClipboardZenHanConverter.Core.Interfaces`）
+### インターフェース（`EsUtil.ZenHanConverter.Core.Interfaces`）
 
 #### `IClipboardService : IDisposable`
 
@@ -174,7 +174,7 @@ UI セグメントコントロールの定義レコード。
 
 - `string Convert(string text)` — テキスト変換
 
-### 変換ロジック（`EsUtil.ClipboardZenHanConverter.Core.Logic`）
+### 変換ロジック（`EsUtil.ZenHanConverter.Core.Logic`）
 
 #### `CharConverter : ITextConverter, IDisposable`
 
@@ -184,7 +184,7 @@ UI セグメントコントロールの定義レコード。
 
 変換の実行可否（`ConvertConfig.IsEnabledZenHan`）は**参照しません**。変換をスキップするか否かは呼び出し側（画面側）のポリシーです。現在の両アプリ（MewUI 版・WinUI 3 版）は全角/半角変換を常に有効として扱います。
 
-### ウィンドウ位置補正（`EsUtil.ClipboardZenHanConverter.Core.Helpers`）
+### ウィンドウ位置補正（`EsUtil.ZenHanConverter.Core.Helpers`）
 
 UI フレームワークに依存しないため Core に配置しています。座標は DIP の幾何型で扱います
 （型は `EsUtil.Platform.Core.Geometry` の `EsPoint` / `EsSize` / `EsRect` を使います）。
@@ -218,7 +218,7 @@ UI フレームワークに依存しないため Core に配置しています�
 
 `trackHeight` は上下 2 ペインの合計高さとし、分割バーの太さは含めません。
 
-### 変更検出（`EsUtil.ClipboardZenHanConverter.Core.Logic`）
+### 変更検出（`EsUtil.ZenHanConverter.Core.Logic`）
 
 #### `ClipboardChangeDetector`
 
@@ -230,7 +230,7 @@ UI フレームワークに依存しないため Core に配置しています�
 | `HasChanged()` | `bool` | 前回の確認から変化していれば true を返し、内部状態を更新する |
 | `RecommendedPollIntervalMs` | `int`（const） | 推奨するポーリング間隔（250 ミリ秒）。各 UI のクリップボード監視タイマーが共有する単一所有元 |
 
-### ウィンドウの復元（`EsUtil.ClipboardZenHanConverter.Core.Native`）
+### ウィンドウの復元（`EsUtil.ZenHanConverter.Core.Native`）
 
 UI フレームワークに依存しないため Core に配置しています。Win32 の P/Invoke は `EsUtil.Platform.Core` が単一所有します。
 
@@ -248,7 +248,7 @@ UI フレームワークに依存しないため Core に配置しています�
 | `ToPhysical(double dip, double scale)` | `int` | DIP を物理ピクセルへ換算（四捨五入）。丸め規則を一元管理する |
 | `ToDip(int physical, double scale)` | `double` | 物理ピクセルを DIP へ換算 |
 
-### アイコンデータ（`EsUtil.ClipboardZenHanConverter.Core.Icons`）
+### アイコンデータ（`EsUtil.ZenHanConverter.Core.Icons`）
 
 UI フレームワークに依存しないため Core に配置しています。SVG ファイルをアイコン形状の唯一の定義元とし、`Icons` フォルダの SVG を埋め込みリソースとして登録します。
 

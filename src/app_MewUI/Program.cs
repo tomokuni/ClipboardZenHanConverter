@@ -1,14 +1,14 @@
 using Aprillz.MewUI;
-using EsUtil.ClipboardZenHanConverter.App.MewUI.Services;
-using EsUtil.ClipboardZenHanConverter.App.MewUI.Views;
-using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.App.MewUI.Services;
+using EsUtil.ZenHanConverter.App.MewUI.Views;
+using EsUtil.ZenHanConverter.Core.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace EsUtil.ClipboardZenHanConverter.App.MewUI;
+namespace EsUtil.ZenHanConverter.App.MewUI;
 
 /// <summary>アプリケーションのエントリポイントを提供します。</summary>
 /// <remarks>
@@ -28,10 +28,12 @@ public static class Program
         SubscribeExceptionHandlers();
 
         var builder = Host.CreateApplicationBuilder();
-        builder.Services.AddClipboardZenHanConverterServices();
+        builder.Services.AddZenHanConverterServices();
         var host = builder.Build();
 
         // 設定を読み込み、自動保存を開始
+        // 旧名のフォルダー（%LOCALAPPDATA%\ClipboardZenHanConverter）から初回だけ移行する
+        AppPaths.Migrate();
         host.Services.GetRequiredService<AppSetting>().Initialize();
         host.Services.GetRequiredService<ConvertConfig>().Initialize();
 

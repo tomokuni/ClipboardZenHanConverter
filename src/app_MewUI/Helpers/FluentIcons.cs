@@ -1,7 +1,7 @@
 using Aprillz.MewUI.Rendering;
-using EsUtil.ClipboardZenHanConverter.Core.Icons;
+using EsUtil.ZenHanConverter.Core.Icons;
 
-namespace EsUtil.ClipboardZenHanConverter.App.MewUI.Helpers;
+namespace EsUtil.ZenHanConverter.App.MewUI.Helpers;
 
 /// <summary>アプリで使用する Fluent Icons のアイコン形状を提供する静的クラス。</summary>
 /// <remarks>提供機能: <br/>

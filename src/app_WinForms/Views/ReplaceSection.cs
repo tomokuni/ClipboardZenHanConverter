@@ -1,7 +1,7 @@
-using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using EsUtil.ZenHanConverter.Presentation.ViewModels;
 using System.Windows.Forms;
 
-namespace EsUtil.ClipboardZenHanConverter.App.WinForms.Views;
+namespace EsUtil.ZenHanConverter.App.WinForms.Views;
 
 /// <summary>文字列の置換ルール（追加・編集・削除）を表示するセクションです。</summary>
 /// <remarks>

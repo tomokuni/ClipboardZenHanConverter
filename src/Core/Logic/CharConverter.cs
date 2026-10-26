@@ -1,15 +1,18 @@
-using EsUtil.ClipboardZenHanConverter.Core.Enums;
-using EsUtil.ClipboardZenHanConverter.Core.Helpers;
-using EsUtil.ClipboardZenHanConverter.Core.Interfaces;
-using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.Core.Enums;
+using EsUtil.ZenHanConverter.Core.Helpers;
+using EsUtil.ZenHanConverter.Core.Interfaces;
+using EsUtil.ZenHanConverter.Core.Models;
 using EsUtil.Feature.ZenHan;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using static EsUtil.Feature.ZenHan.Define;
+// 名前空間のルート（EsUtil.ZenHanConverter）が型 ZenHanConverter と同じ名前になるため、
+// `ZenHanConverter.ToNormalize` が名前空間として解決される。 別名で型を指す。
+using ZenHanApi = EsUtil.Feature.ZenHan.ZenHanConverter;
 
-namespace EsUtil.ClipboardZenHanConverter.Core.Logic;
+namespace EsUtil.ZenHanConverter.Core.Logic;
 
 /// <summary>ConvertConfig の設定に基づいて文字列の全角/半角変換を実行します。</summary>
 /// <remarks>
@@ -240,7 +243,7 @@ public partial class CharConverter : ITextConverter, IDisposable
     /// 処理フロー: <br/>
     /// 1. null/空文字チェック（そのまま返す）<br/>
     /// 2. 全角/半角変換<br/>
-    ///    2a. ZenHanConverter.ToNormalize で正規化<br/>
+    ///    2a. ZenHanApi.ToNormalize で正規化<br/>
     ///    2b. 変換ペアに基づく置換<br/>
     ///    2c. 連続スペースの整形<br/>
     /// 3. ユーザー定義の置換ルール適用<br/><br/>
@@ -256,7 +259,7 @@ public partial class CharConverter : ITextConverter, IDisposable
             return text;
 
         // Step 2: 全角/半角変換
-        text = ZenHanConverter.ToNormalize(text);
+        text = ZenHanApi.ToNormalize(text);
         text = GetConvertPairs().Convert(text);
         text = Config.ConvertModeEtcMultiSpace switch
         {

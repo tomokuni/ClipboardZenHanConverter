@@ -4,7 +4,7 @@ using EsUtil.Platform.Core.Native.Win;
 using System;
 using System.Runtime.Versioning;
 
-namespace EsUtil.ClipboardZenHanConverter.Core.Native;
+namespace EsUtil.ZenHanConverter.Core.Native;
 
 /// <summary>仮想画面（全モニタの外接矩形）に基づくウィンドウ位置の補正を提供する静的クラス。</summary>
 /// <remarks>

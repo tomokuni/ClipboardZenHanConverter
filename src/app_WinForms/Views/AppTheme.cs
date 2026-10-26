@@ -1,7 +1,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace EsUtil.ClipboardZenHanConverter.App.WinForms.Views;
+namespace EsUtil.ZenHanConverter.App.WinForms.Views;
 
 /// <summary>WinForms 画面で共有する配色・寸法・フォントを提供します。</summary>
 /// <remarks>提供機能: <br/>

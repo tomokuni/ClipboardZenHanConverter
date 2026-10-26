@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <RootNamespace>EsUtil.ClipboardZenHanConverter.Core</RootNamespace>
-    <AssemblyName>ClipboardZenHanConverter.Core</AssemblyName>
-    <Description>Core logic, models and platform APIs for ClipboardZenHanConverter (UI framework agnostic)</Description>
+    <RootNamespace>EsUtil.ZenHanConverter.Core</RootNamespace>
+    <AssemblyName>ZenHanConverter.Core</AssemblyName>
+    <Description>Core logic, models and platform APIs for ZenHanConverter (UI framework agnostic)</Description>
     <Copyright>Copyright (c) 2025</Copyright>
     <!-- Win32 P/Invoke（LibraryImport ソース生成）が unsafe コードを生成するため許可する -->
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

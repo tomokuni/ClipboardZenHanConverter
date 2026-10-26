@@ -1,7 +1,7 @@
 using Microsoft.UI.Dispatching;
 using System;
 
-namespace EsUtil.ClipboardZenHanConverter.App.WinUI.Services;
+namespace EsUtil.ZenHanConverter.App.WinUI.Services;
 
 /// <summary>Windows App SDK の DispatcherQueue を用いて UI スレッドへ処理を委譲します。</summary>
 /// <remarks>Decorator パターンではありませんが、Adapter として機能し、<br/>

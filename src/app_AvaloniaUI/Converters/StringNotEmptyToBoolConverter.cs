@@ -2,7 +2,7 @@ using Avalonia.Data.Converters;
 using System;
 using System.Globalization;
 
-namespace EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Converters;
+namespace EsUtil.ZenHanConverter.App.AvaloniaUI.Converters;
 
 /// <summary>文字列が空でない場合に true を返す値コンバーター。</summary>
 /// <remarks>任意項目（見出し・説明・エラーメッセージなど）の表示可否を IsVisible へバインドするために使用します。</remarks>

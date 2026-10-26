@@ -15,7 +15,7 @@ param(
     [string]$Solution = 'ZenHanConverter.slnx',
     [string]$Output = 'artifacts/sbom',
     [string]$Version = '',
-    [string]$Product = 'ClipboardZenHanConverter'
+    [string]$Product = 'ZenHanConverter'
 )
 
 $ErrorActionPreference = 'Stop'

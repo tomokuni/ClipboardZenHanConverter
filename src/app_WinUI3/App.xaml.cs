@@ -1,6 +1,6 @@
-using EsUtil.ClipboardZenHanConverter.App.WinUI.Services;
-using EsUtil.ClipboardZenHanConverter.App.WinUI.Views;
-using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.App.WinUI.Services;
+using EsUtil.ZenHanConverter.App.WinUI.Views;
+using EsUtil.ZenHanConverter.Core.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using System;
@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EsUtil.ClipboardZenHanConverter.App.WinUI;
+namespace EsUtil.ZenHanConverter.App.WinUI;
 
 /// <summary>アプリケーションのエントリポイントとなるクラスです。</summary>
 /// <remarks>
@@ -47,10 +47,12 @@ public partial class App : Application
         SubscribeExceptionHandlers();
 
         var builder = Host.CreateApplicationBuilder();
-        builder.Services.AddClipboardZenHanConverterServices();
+        builder.Services.AddZenHanConverterServices();
         var host = builder.Build();
 
         Services = host.Services;
+        // 旧名のフォルダー（%LOCALAPPDATA%\ClipboardZenHanConverter）から初回だけ移行する
+        AppPaths.Migrate();
         GetService<AppSetting>().Initialize();
         GetService<ConvertConfig>().Initialize();
     }

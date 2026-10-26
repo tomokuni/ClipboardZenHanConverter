@@ -1,11 +1,11 @@
-using EsUtil.ClipboardZenHanConverter.Core.Enums;
-using EsUtil.ClipboardZenHanConverter.Core.Helpers;
+using EsUtil.ZenHanConverter.Core.Enums;
+using EsUtil.ZenHanConverter.Core.Helpers;
 using EsUtil.Feature.ZenHan;
 using System;
 using System.Linq;
 using Xunit;
 
-namespace EsUtil.ClipboardZenHanConverter.Tests.Core.Helpers;
+namespace EsUtil.ZenHanConverter.Tests.Core.Helpers;
 
 /// <summary><see cref="ZenHanConverterExtension"/> のモード別ペア解決を検証します。</summary>
 public sealed class ZenHanConverterExtensionTests

@@ -4,8 +4,8 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
     <IsPackable>false</IsPackable>
-    <RootNamespace>EsUtil.ClipboardZenHanConverter.Tests.Presentation</RootNamespace>
-    <AssemblyName>ClipboardZenHanConverter.Tests.Presentation</AssemblyName>
+    <RootNamespace>EsUtil.ZenHanConverter.Tests.Presentation</RootNamespace>
+    <AssemblyName>ZenHanConverter.Tests.Presentation</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

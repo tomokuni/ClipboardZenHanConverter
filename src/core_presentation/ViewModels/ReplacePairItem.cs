@@ -1,7 +1,7 @@
-using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.Core.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+namespace EsUtil.ZenHanConverter.Presentation.ViewModels;
 
 /// <summary>文字列置換ペアの編集項目です。</summary>
 /// <remarks>編集内容の変更は <see cref="ObservableObject"/> の変更通知で <see cref="SettingsViewModel"/> へ伝わり、

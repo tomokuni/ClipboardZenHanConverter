@@ -1,4 +1,4 @@
-# ClipboardZenHanConverter.Presentation システム仕様書
+# ZenHanConverter.Presentation システム仕様書
 
 本ドキュメントは `src/core_presentation`（UI フレームワーク非依存のプレゼンテーション層）の内部設計を記載します。
 メソッド内部のコードは記載しません。
@@ -222,8 +222,8 @@ test/core_presentation
 
 | 項目 | 内容 |
 | --- | --- |
-| 参照方法 | 各アプリの ViewModel・View が `using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;` を宣言する |
-| XAML からの参照 | `xmlns:vm="using:EsUtil.ClipboardZenHanConverter.Presentation.ViewModels"` |
+| 参照方法 | 各アプリの ViewModel・View が `using EsUtil.ZenHanConverter.Presentation.ViewModels;` を宣言する |
+| XAML からの参照 | `xmlns:vm="using:EsUtil.ZenHanConverter.Presentation.ViewModels"` |
 | `HomeViewModel` | 本プロジェクトに含めない（UI スレッドへの委譲方法がフレームワークごとに異なるため） |
 | `MainWindowViewModel` | 本プロジェクトに含めない（画面解決が UI の型に依存するため） |
 | ナビゲーション項目 | アイコン表現が UI の型（`Geometry` / `NavigationIcon` 等）に依存するため各アプリに残す |

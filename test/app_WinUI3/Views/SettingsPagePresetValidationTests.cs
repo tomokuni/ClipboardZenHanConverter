@@ -1,7 +1,7 @@
-using EsUtil.ClipboardZenHanConverter.App.WinUI.Views;
+using EsUtil.ZenHanConverter.App.WinUI.Views;
 using Xunit;
 
-namespace EsUtil.ClipboardZenHanConverter.Tests.App.WinUI.Views;
+namespace EsUtil.ZenHanConverter.Tests.App.WinUI.Views;
 
 public class SettingsPagePresetValidationTests
 {

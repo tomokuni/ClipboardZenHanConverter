@@ -1,7 +1,7 @@
 using Microsoft.UI.Xaml.Data;
 using System;
 
-namespace EsUtil.ClipboardZenHanConverter.App.WinUI.Converters;
+namespace EsUtil.ZenHanConverter.App.WinUI.Converters;
 
 /// <summary>bool 値をチェックマーク文字列に変換します。</summary>
 /// <remarks>true の場合は "✅"、false の場合は "□" を返します。<br/>

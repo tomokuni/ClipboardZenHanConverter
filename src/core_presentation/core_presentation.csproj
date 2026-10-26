@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <RootNamespace>EsUtil.ClipboardZenHanConverter.Presentation</RootNamespace>
-    <AssemblyName>ClipboardZenHanConverter.Presentation</AssemblyName>
-    <Description>UI framework agnostic presentation layer (ViewModels) for ClipboardZenHanConverter</Description>
+    <RootNamespace>EsUtil.ZenHanConverter.Presentation</RootNamespace>
+    <AssemblyName>ZenHanConverter.Presentation</AssemblyName>
+    <Description>UI framework agnostic presentation layer (ViewModels) for ZenHanConverter</Description>
     <Copyright>Copyright (c) 2025</Copyright>
   </PropertyGroup>
 
@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <!-- 検証ロジック（internal static）をテストから参照するため -->
-    <InternalsVisibleTo Include="ClipboardZenHanConverter.Tests.Presentation" />
+    <InternalsVisibleTo Include="ZenHanConverter.Tests.Presentation" />
   </ItemGroup>
 
 </Project>

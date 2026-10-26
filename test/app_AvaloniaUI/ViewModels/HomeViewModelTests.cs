@@ -1,13 +1,13 @@
-using EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.ViewModels;
-using EsUtil.ClipboardZenHanConverter.Core.Enums;
-using EsUtil.ClipboardZenHanConverter.Core.Interfaces;
-using EsUtil.ClipboardZenHanConverter.Core.Logic;
-using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.App.AvaloniaUI.ViewModels;
+using EsUtil.ZenHanConverter.Core.Enums;
+using EsUtil.ZenHanConverter.Core.Interfaces;
+using EsUtil.ZenHanConverter.Core.Logic;
+using EsUtil.ZenHanConverter.Core.Models;
 using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace EsUtil.ClipboardZenHanConverter.Tests.App.AvaloniaUI.ViewModels;
+namespace EsUtil.ZenHanConverter.Tests.App.AvaloniaUI.ViewModels;
 
 /// <summary>テスト用のクリップボードサービススタブ。</summary>
 file sealed class StubClipboardService : IClipboardService

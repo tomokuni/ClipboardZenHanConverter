@@ -1,8 +1,8 @@
-using EsUtil.ClipboardZenHanConverter.Core.Enums;
-using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.Core.Enums;
+using EsUtil.ZenHanConverter.Core.Models;
 using Xunit;
 
-namespace EsUtil.ClipboardZenHanConverter.Tests.Core.Models;
+namespace EsUtil.ZenHanConverter.Tests.Core.Models;
 
 /// <summary><see cref="SegmentItem"/> / <see cref="SegmentDefine"/> の値の保持を検証します。</summary>
 public sealed class SegmentItemTests

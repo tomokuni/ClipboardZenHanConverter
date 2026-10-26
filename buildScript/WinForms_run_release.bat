@@ -2,7 +2,7 @@
 setlocal
 
 rem ============================================================
-rem  ClipboardZenHanConverter (WinForms) Release ビルド&実行スクリプト
+rem  ZenHanConverter (WinForms) Release ビルド&実行スクリプト
 rem  Release 構成でビルドし、生成された exe を実行する
 rem  （publish を行わないため、単一ファイル化・トリムは適用されない）
 rem ============================================================
@@ -12,7 +12,7 @@ pushd "%~dp0.."
 
 set "PROJECT=src\app_WinForms\app_WinForms.csproj"
 set "TFM=net10.0-windows"
-set "APP_NAME=ClipboardZenHanConverter.App.WinForms.exe"
+set "APP_NAME=ZenHanConverter.App.WinForms.exe"
 
 rem ビルド出力先（RID を指定しないビルドのため TFM 直下）
 set "APPDIR=%CD%\src\app_WinForms\bin\Release\%TFM%"

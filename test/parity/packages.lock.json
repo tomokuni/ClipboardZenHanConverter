@@ -530,11 +530,11 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
-      "ClipboardZenHanConverter.App.WinUI3": {
+      "ZenHanConverter.App.WinUI3": {
         "type": "Project",
         "dependencies": {
-          "ClipboardZenHanConverter.Core": "[0.1.7, )",
-          "ClipboardZenHanConverter.Presentation": "[0.1.7, )",
+          "ZenHanConverter.Core": "[0.1.7, )",
+          "ZenHanConverter.Presentation": "[0.1.7, )",
           "CommunityToolkit.Mvvm": "[8.4.2, )",
           "CommunityToolkit.WinUI.Controls.Primitives": "[8.2.251219, )",
           "CommunityToolkit.WinUI.Controls.Segmented": "[8.2.251219, )",
@@ -547,7 +547,7 @@
           "Microsoft.Xaml.Behaviors.WinUI.Managed": "[3.0.1, )"
         }
       },
-      "ClipboardZenHanConverter.Core": {
+      "ZenHanConverter.Core": {
         "type": "Project",
         "dependencies": {
           "CommunityToolkit.Mvvm": "[8.4.2, )",
@@ -555,10 +555,10 @@
           "EsUtil.Platform.Core": "[0.1.0, )"
         }
       },
-      "ClipboardZenHanConverter.Presentation": {
+      "ZenHanConverter.Presentation": {
         "type": "Project",
         "dependencies": {
-          "ClipboardZenHanConverter.Core": "[0.1.7, )",
+          "ZenHanConverter.Core": "[0.1.7, )",
           "CommunityToolkit.Mvvm": "[8.4.2, )"
         }
       },

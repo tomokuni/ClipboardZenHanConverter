@@ -1,10 +1,10 @@
-using EsUtil.ClipboardZenHanConverter.App.WinForms.ViewModels;
-using EsUtil.ClipboardZenHanConverter.Core.Icons;
+using EsUtil.ZenHanConverter.App.WinForms.ViewModels;
+using EsUtil.ZenHanConverter.Core.Icons;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace EsUtil.ClipboardZenHanConverter.App.WinForms.Helpers;
+namespace EsUtil.ZenHanConverter.App.WinForms.Helpers;
 
 /// <summary>アプリで使用する Fluent Icons のアイコン画像を提供する静的クラス。</summary>
 /// <remarks>提供機能: <br/>

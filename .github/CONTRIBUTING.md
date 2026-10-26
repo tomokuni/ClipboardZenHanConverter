@@ -1,6 +1,6 @@
 # 開発者向け情報（ビルド・テスト・CI）
 
-本ドキュメントは ClipboardZenHanConverter（リポジトリ名は `ZenHanConverter`）を**ビルド・テストする開発者**向けの情報です。
+本ドキュメントは ZenHanConverter（リポジトリ名は `ZenHanConverter`）を**ビルド・テストする開発者**向けの情報です。
 アプリの利用方法は [`../README.md`](../README.md)、各 UI の利用仕様は `../src/app_*/README.md` を参照してください。
 
 - リリース手順は [`RELEASE.md`](RELEASE.md)、他のリポジトリへの流用方法は [`REUSING.md`](REUSING.md) に分離しています。
@@ -79,8 +79,8 @@ dotnet build ZenHanConverter.slnx
 
 ### 名前空間と using
 
-- 名前空間のルートは `EsUtil.ClipboardZenHanConverter` です（例: `EsUtil.ClipboardZenHanConverter.Core.Models`）。
-- アセンブリ名・exe 名・設定ファイルの保存先（`%LOCALAPPDATA%\ClipboardZenHanConverter`）は `ClipboardZenHanConverter` のままです（**リポジトリ名 `ZenHanConverter` とは別**。 利用者の設定と配布物の互換性を保つため）。
+- 名前空間のルートは `EsUtil.ZenHanConverter` です（例: `EsUtil.ZenHanConverter.Core.Models`）。
+- アセンブリ名・exe 名・設定ファイルの保存先（`%LOCALAPPDATA%\ZenHanConverter`）は `ZenHanConverter` のままです（**リポジトリ名 `ZenHanConverter` とは別**。 利用者の設定と配布物の互換性を保つため）。
 - 暗黙の global using（`ImplicitUsings`）は無効です。各ソースファイルが使用する名前空間を `using` で明示し、プロジェクト共通の `GlobalUsings.cs` は置きません。
 
 ### 依存パッケージ
@@ -182,7 +182,7 @@ dotnet run --project src/app_WinForms/app_WinForms.csproj
 - WinUI 3 版は単一ファイル化できますが、初回起動時に依存ファイルを `%TEMP%\.net\<AppName>\` へ展開します。また WinUI 3 は Native AOT に対応しないため、AOT は使用しません（詳細は `src/app_WinUI3/SPEC_System.md`）。
 - Avalonia UI 版は Native AOT ですが、描画に使う SkiaSharp のネイティブ DLL を exe へ同梱できないため、**exe 単体ではなくフォルダー単位で配布**します（`libSkiaSharp.dll` / `av_libglesv2.dll` / `libHarfBuzzSharp.dll` を同じフォルダーに置きます。詳細は `src/app_AvaloniaUI/SPEC_System.md`）。
 - WinForms 版は Native AOT に対応せず、トリミングもサポートされないため（`NETSDK1175`）、単一ファイル化のみを行います（詳細は `src/app_WinForms/SPEC_System.md`）。
-- WinUI 3 版の exe 名は `ClipboardZenHanConverter.App.WinUI3.exe`、WinForms 版は `ClipboardZenHanConverter.App.WinForms.exe` です（WinUI 3 版はアセンブリ名をプロジェクト名に合わせ、名前空間は `EsUtil.ClipboardZenHanConverter.App.WinUI` のままです）。
+- WinUI 3 版の exe 名は `ZenHanConverter.App.WinUI3.exe`、WinForms 版は `ZenHanConverter.App.WinForms.exe` です（WinUI 3 版はアセンブリ名をプロジェクト名に合わせ、名前空間は `EsUtil.ZenHanConverter.App.WinUI` のままです）。
 - ここでの出力は展開済みの状態です。**Release に添付する配布物はすべて zip**（`release-config.json` の `uis[].zip`。`release.yml` が publish 後に zip 化）です。
 
 ### Release ビルドと実行

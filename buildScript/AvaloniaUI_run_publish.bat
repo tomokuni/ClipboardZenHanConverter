@@ -2,7 +2,7 @@
 setlocal
 
 rem ============================================================
-rem  ClipboardZenHanConverter (Avalonia UI) ビルド&実行スクリプト
+rem  ZenHanConverter (Avalonia UI) ビルド&実行スクリプト
 rem  AvaloniaUI_publish_aot.bat で Native AOT build し、実行する
 rem ============================================================
 
@@ -21,7 +21,7 @@ if "%~1"=="" (set "RID=win-x64") else (set "RID=%~1")
 
 rem 発行先は AvaloniaUI_publish_aot.bat と揃える（絶対パス）
 set "OUTDIR=%CD%\publish\avaloniaui-%RID%-aot"
-set "APP_EXE=%OUTDIR%\ClipboardZenHanConverter.App.AvaloniaUI.exe"
+set "APP_EXE=%OUTDIR%\ZenHanConverter.App.AvaloniaUI.exe"
 
 rem ビルドを実行（同じフォルダにある publish スクリプトを呼ぶ）
 call "%~dp0AvaloniaUI_publish_aot.bat" %RID%

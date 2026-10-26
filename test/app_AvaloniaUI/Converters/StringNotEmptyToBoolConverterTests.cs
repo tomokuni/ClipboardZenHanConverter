@@ -1,9 +1,9 @@
-using EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Converters;
+using EsUtil.ZenHanConverter.App.AvaloniaUI.Converters;
 using System;
 using System.Globalization;
 using Xunit;
 
-namespace EsUtil.ClipboardZenHanConverter.Tests.App.AvaloniaUI.Converters;
+namespace EsUtil.ZenHanConverter.Tests.App.AvaloniaUI.Converters;
 
 /// <summary><see cref="StringNotEmptyToBoolConverter"/> の変換を検証します。</summary>
 public sealed class StringNotEmptyToBoolConverterTests

@@ -1,5 +1,5 @@
-using EsUtil.ClipboardZenHanConverter.Core.Models;
-using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using EsUtil.ZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.Presentation.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -11,7 +11,7 @@ using System.Text;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 
-namespace EsUtil.ClipboardZenHanConverter.App.WinUI.Views;
+namespace EsUtil.ZenHanConverter.App.WinUI.Views;
 
 /// <summary>設定画面を表示するページクラスです。</summary>
 /// <remarks>8つの変換カテゴリの選択、ユーザー定義置換ルールの編集、プリセット管理、<br/>
@@ -108,7 +108,7 @@ public sealed partial class SettingsPage : Page
         var picker = new FileSavePicker
         {
             SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
-            SuggestedFileName = "ClipboardZenHanConverter_Settings.json",
+            SuggestedFileName = "ZenHanConverter_Settings.json",
         };
         picker.FileTypeChoices.Add("JSON ファイル", [".json"]);
 

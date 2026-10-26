@@ -1,4 +1,4 @@
-# ClipboardZenHanConverter (Avalonia UI)
+# ZenHanConverter (Avalonia UI)
 
 クリップボードのテキストを監視し、全角/半角の自動変換を行う Windows 向けデスクトップアプリケーションです。
 本バージョンは UI フレームワークに **Avalonia UI**（`12.*`）を使用しています。
@@ -25,7 +25,7 @@
 1. アプリケーションを起動します（ホーム画面が表示されます）。
 2. タイトルバーの「クリップボード変換」スイッチが有効であることを確認します。
 3. 任意のアプリケーションでテキストをコピー（Ctrl+C）します。
-4. ClipboardZenHanConverter が自動的に変換を実行します。
+4. ZenHanConverter が自動的に変換を実行します。
 5. 変換後のテキストを任意の場所にペースト（Ctrl+V）します。
 
 画面左のナビゲーションペイン（ホーム / 設定）で画面を切り替えます。各項目にはアイコンが表示されます（ホーム: 変換範囲 / 設定: 歯車）。
@@ -130,7 +130,7 @@ dotnet run --project src/app_AvaloniaUI/app_AvaloniaUI.csproj
 
 | ファイル | 説明 | サイズ |
 | --- | --- | --- |
-| `ClipboardZenHanConverter.App.AvaloniaUI.exe` | 本体（Native AOT で事前コンパイル済み） | 約 25.0 MB |
+| `ZenHanConverter.App.AvaloniaUI.exe` | 本体（Native AOT で事前コンパイル済み） | 約 25.0 MB |
 | `libSkiaSharp.dll` | SkiaSharp のネイティブライブラリ（描画） | 約 11.6 MB |
 | `av_libglesv2.dll` | ANGLE（OpenGL ES バックエンド。GPU 描画に使用） | 約 5.4 MB |
 | `libHarfBuzzSharp.dll` | テキストシェーピング | 約 1.8 MB |

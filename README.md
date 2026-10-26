@@ -9,7 +9,7 @@
 ![WinForms](https://img.shields.io/badge/UI-WinForms-107C10)
 ![License](https://img.shields.io/badge/License-MIT-3DA639)
 
-# ClipboardZenHanConverter
+# ZenHanConverter
 
 クリップボードのテキストを監視し、全角/半角の自動変換を行う Windows 向けデスクトップアプリケーションです。
 `src/core`（モデル・変換ロジック）と `src/core_presentation`（UI 非依存の ViewModel）を共有し、**4 つの UI 実装**から利用します。
@@ -30,10 +30,10 @@
 
 | UI | ファイル | 内容 |
 | --- | --- | --- |
-| MewUI 版 | `ClipboardZenHanConverter.App.MewUI.zip` | 単一 exe（Native AOT） |
-| WinUI 3 版 | `ClipboardZenHanConverter.App.WinUI3.zip` | 単一 exe（自己完結） |
-| Avalonia UI 版 | `ClipboardZenHanConverter.App.AvaloniaUI.zip` | exe + ネイティブ DLL 3 個 |
-| WinForms 版 | `ClipboardZenHanConverter.App.WinForms.zip` | 単一 exe（自己完結） |
+| MewUI 版 | `ZenHanConverter.App.MewUI.zip` | 単一 exe（Native AOT） |
+| WinUI 3 版 | `ZenHanConverter.App.WinUI3.zip` | 単一 exe（自己完結） |
+| Avalonia UI 版 | `ZenHanConverter.App.AvaloniaUI.zip` | exe + ネイティブ DLL 3 個 |
+| WinForms 版 | `ZenHanConverter.App.WinForms.zip` | 単一 exe（自己完結） |
 
 - いずれも zip を展開して使用します。
 - Avalonia UI 版は exe 単体では起動しません。展開したフォルダーにあるネイティブ DLL と同じ場所に置いて使用します。
@@ -45,9 +45,9 @@
 
 | ファイル | 内容 |
 | --- | --- |
-| `%LOCALAPPDATA%\ClipboardZenHanConverter\AppSetting.json` | ウィンドウ位置・サイズ、クリップボード変換の有効/無効 |
-| `%LOCALAPPDATA%\ClipboardZenHanConverter\Settings.json` | 全角/半角の変換設定、置換ルール |
-| `%LOCALAPPDATA%\ClipboardZenHanConverter\Presets\{名前}.json` | ユーザー定義プリセット |
+| `%LOCALAPPDATA%\ZenHanConverter\AppSetting.json` | ウィンドウ位置・サイズ、クリップボード変換の有効/無効 |
+| `%LOCALAPPDATA%\ZenHanConverter\Settings.json` | 全角/半角の変換設定、置換ルール |
+| `%LOCALAPPDATA%\ZenHanConverter\Presets\{名前}.json` | ユーザー定義プリセット |
 
 設定は各 UI の設定画面から変更でき、終了時に自動保存されます。
 
@@ -67,8 +67,9 @@
 - [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md) — リポジトリ構成、プロジェクト、ビルド、テスト、実行、配布用ビルド、CI
 - [`.github/RELEASE.md`](.github/RELEASE.md) — バージョンの単一所有、リリースワークフロー、手動実行、添付ファイル
 
-## リポジトリ名
+## 名称の変更
 
-本リポジトリの名前は `ZenHanConverter` です（以前は `ClipboardZenHanConverter` でした。 旧 URL は GitHub が新しい URL へ転送します）。
+**旧名は `ClipboardZenHanConverter`** です。 リポジトリ名・製品名・アセンブリ名・実行ファイル名・配布物のファイル名・設定の保存先を、すべて `ZenHanConverter` へ変更しました（旧 URL は GitHub が新しい URL へ転送します）。
 
-**製品名は `ClipboardZenHanConverter` のまま**です。 アセンブリ名・実行ファイル名・配布物のファイル名・設定の保存先（`%LOCALAPPDATA%\ClipboardZenHanConverter`）は、利用者の設定と配布物の互換性を保つため変更していません。 WinUI 3 版は隣の `../ClipboardZenHanConverter` にあったものを本リポジトリへ統合済みです（`src/app_WinUI3`）。
+- 設定の保存先は `%LOCALAPPDATA%\ClipboardZenHanConverter` から `%LOCALAPPDATA%\ZenHanConverter` へ変わります。 **初回起動時に旧フォルダーの内容を新しいフォルダーへ移行**します（移行後も旧フォルダーは残ります。 不要なら削除してください）。
+- WinUI 3 版は、かつて隣の `ClipboardZenHanConverter` リポジトリにあったものを本リポジトリへ統合済みです（`src/app_WinUI3`）。

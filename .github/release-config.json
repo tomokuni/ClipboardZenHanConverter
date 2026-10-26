@@ -1,5 +1,5 @@
 {
-  "product": "ClipboardZenHanConverter",
+  "product": "ZenHanConverter",
   "versionFile": "Directory.Build.props",
   "solutionFile": "ZenHanConverter.slnx",
   "gateWorkflow": "build.yml",
@@ -13,29 +13,29 @@
     {
       "name": "MewUI",
       "script": "buildScript/MewUI_publish_singleaot.bat",
-      "output": "publish/mewui-win-x64-singleaot/ClipboardZenHanConverter.App.MewUI.exe",
-      "asset": "ClipboardZenHanConverter.App.MewUI.zip",
+      "output": "publish/mewui-win-x64-singleaot/ZenHanConverter.App.MewUI.exe",
+      "asset": "ZenHanConverter.App.MewUI.zip",
       "zip": true
     },
     {
       "name": "WinUI3",
       "script": "buildScript/WinUI3_publish_single.bat",
-      "output": "publish/winui3-win-x64-single/ClipboardZenHanConverter.App.WinUI3.exe",
-      "asset": "ClipboardZenHanConverter.App.WinUI3.zip",
+      "output": "publish/winui3-win-x64-single/ZenHanConverter.App.WinUI3.exe",
+      "asset": "ZenHanConverter.App.WinUI3.zip",
       "zip": true
     },
     {
       "name": "WinForms",
       "script": "buildScript/WinForms_publish_single.bat",
-      "output": "publish/winforms-win-x64-single/ClipboardZenHanConverter.App.WinForms.exe",
-      "asset": "ClipboardZenHanConverter.App.WinForms.zip",
+      "output": "publish/winforms-win-x64-single/ZenHanConverter.App.WinForms.exe",
+      "asset": "ZenHanConverter.App.WinForms.zip",
       "zip": true
     },
     {
       "name": "AvaloniaUI",
       "script": "buildScript/AvaloniaUI_publish_aot.bat",
       "output": "publish/avaloniaui-win-x64-aot",
-      "asset": "ClipboardZenHanConverter.App.AvaloniaUI.zip",
+      "asset": "ZenHanConverter.App.AvaloniaUI.zip",
       "zip": true
     }
   ]

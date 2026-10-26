@@ -1,4 +1,4 @@
-# ClipboardZenHanConverter.App.AvaloniaUI 外部機能仕様書
+# ZenHanConverter.App.AvaloniaUI 外部機能仕様書
 
 本ドキュメントは `src/app_AvaloniaUI`（Avalonia UI アプリ）の公開 API 仕様（外部機能仕様）を記載します。
 メソッド内部のコードは記載しません。外部利用者に関係する情報のみを扱います。
@@ -50,7 +50,7 @@
 全角/半角変換は常に有効（オン/オフの切り替えはありません）。クリップボードの読み書き可否は `AppSetting.IsClipboardConvertEnabled` に従います。  
 クリップボード変換スイッチとプリセット選択はタイトルバー（`MainWindow`）が単一所有し、この ViewModel は関与しません。
 
-### Views（`EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Views`）
+### Views（`EsUtil.ZenHanConverter.App.AvaloniaUI.Views`）
 
 #### `MainWindow : Window`
 
@@ -90,7 +90,7 @@
 - `string Header` / `string Description` / `string Remark` — 見出し・説明・補足（空の場合は非表示）
 - `IEnumerable? Items` — 表示する変換項目（`ZenHanConvertItem` の列挙）
 
-### Services（`EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Services`）
+### Services（`EsUtil.ZenHanConverter.App.AvaloniaUI.Services`）
 
 #### `INavigationService` interface
 
@@ -111,7 +111,7 @@
 - `Task<string?> GetTextAsync()` / `void SetText(string text)` / `void Flush()`
 - `void RaiseContentChanged()` — テスト用の発火
 
-### Helpers（`EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Helpers`）
+### Helpers（`EsUtil.ZenHanConverter.App.AvaloniaUI.Helpers`）
 
 #### `FluentIcons` static class
 
@@ -120,7 +120,7 @@ Core のパスデータから Avalonia のアイコン形状を提供します�
 - `Geometry ConvertRange` — ホーム項目用の「Convert Range」アイコン形状
 - `Geometry Settings` — 設定項目用の「Settings」アイコン形状
 
-### Converters（`EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Converters`）
+### Converters（`EsUtil.ZenHanConverter.App.AvaloniaUI.Converters`）
 
 #### `StringNotEmptyToBoolConverter`
 

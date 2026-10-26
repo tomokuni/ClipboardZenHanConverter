@@ -1,11 +1,11 @@
-using EsUtil.ClipboardZenHanConverter.Core.Interfaces;
-using EsUtil.ClipboardZenHanConverter.Core.Logic;
+using EsUtil.ZenHanConverter.Core.Interfaces;
+using EsUtil.ZenHanConverter.Core.Logic;
 using EsUtil.Platform.Core.Native.Win;
 using Aprillz.MewUI;
 using System;
 using System.Threading.Tasks;
 
-namespace EsUtil.ClipboardZenHanConverter.App.MewUI.Services;
+namespace EsUtil.ZenHanConverter.App.MewUI.Services;
 
 /// <summary>システムクリップボードの読み書きと内容変更監視を提供します。</summary>
 /// <remarks>

@@ -1,4 +1,4 @@
-# ClipboardZenHanConverter.Core
+# ZenHanConverter.Core
 
 クリップボードの全角/半角自動変換アプリのコアロジック・モデル・プラットフォーム API ライブラリです。
 **MewUI にも WinUI3 にも依存しない**ため、両方の UI 実装から共有できます。

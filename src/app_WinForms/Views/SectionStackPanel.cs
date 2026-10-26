@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace EsUtil.ClipboardZenHanConverter.App.WinForms.Views;
+namespace EsUtil.ZenHanConverter.App.WinForms.Views;
 
 /// <summary>セクションを縦に並べ、内容に応じて縦スクロールを提供するパネルです。</summary>
 /// <remarks>
