@@ -1,8 +1,8 @@
-using EsUtil.ClipboardZenHanConverter.Core.Enums;
+using EsUtil.ZenHanConverter.Core.Enums;
 using EsUtil.Feature.ZenHan;
 using static EsUtil.Feature.ZenHan.Define;
 
-namespace EsUtil.ClipboardZenHanConverter.Core.Helpers;
+namespace EsUtil.ZenHanConverter.Core.Helpers;
 
 /// <summary>列挙型の変換モードに基づいて EsUtil の ConvertPairs を解決する拡張メソッドを提供します。</summary>
 /// <remarks>CharConverter.ResolvePairs から呼び出され、モード種別ごとに適切な変換ペアを生成します。<br/>

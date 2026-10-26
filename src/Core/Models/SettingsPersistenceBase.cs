@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace EsUtil.ClipboardZenHanConverter.Core.Models;
+namespace EsUtil.ZenHanConverter.Core.Models;
 
 /// <summary>シリアライズに使用する JsonSerializerContext と型を保持するレコード。</summary>
 /// <param name="Context">ソース生成された JsonSerializerContext</param>

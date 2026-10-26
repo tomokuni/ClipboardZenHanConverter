@@ -1,7 +1,7 @@
 using Avalonia.Media;
-using EsUtil.ClipboardZenHanConverter.Core.Icons;
+using EsUtil.ZenHanConverter.Core.Icons;
 
-namespace EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Helpers;
+namespace EsUtil.ZenHanConverter.App.AvaloniaUI.Helpers;
 
 /// <summary>アプリで使用する Fluent Icons のアイコン形状を提供する静的クラス。</summary>
 /// <remarks>提供機能: <br/>

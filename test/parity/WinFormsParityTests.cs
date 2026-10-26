@@ -1,14 +1,14 @@
-using EsUtil.ClipboardZenHanConverter.Core.Enums;
-using EsUtil.ClipboardZenHanConverter.Core.Logic;
-using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.Core.Enums;
+using EsUtil.ZenHanConverter.Core.Logic;
+using EsUtil.ZenHanConverter.Core.Models;
 using System;
 using System.Threading.Tasks;
 using Xunit;
-using MewUIHomeViewModel = EsUtil.ClipboardZenHanConverter.App.MewUI.ViewModels.HomeViewModel;
-using WinFormsHomeViewModel = EsUtil.ClipboardZenHanConverter.App.WinForms.ViewModels.HomeViewModel;
-using WinUIHomeViewModel = EsUtil.ClipboardZenHanConverter.App.WinUI.ViewModels.HomeViewModel;
+using MewUIHomeViewModel = EsUtil.ZenHanConverter.App.MewUI.ViewModels.HomeViewModel;
+using WinFormsHomeViewModel = EsUtil.ZenHanConverter.App.WinForms.ViewModels.HomeViewModel;
+using WinUIHomeViewModel = EsUtil.ZenHanConverter.App.WinUI.ViewModels.HomeViewModel;
 
-namespace EsUtil.ClipboardZenHanConverter.Tests.Parity;
+namespace EsUtil.ZenHanConverter.Tests.Parity;
 
 /// <summary>WinForms 版の挙動が MewUI 版・WinUI 版と一致することを検証します。</summary>
 /// <remarks>

@@ -1,9 +1,9 @@
 using Aprillz.MewUI;
 using Aprillz.MewUI.Controls;
-using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using EsUtil.ZenHanConverter.Presentation.ViewModels;
 using System.Collections.Generic;
 
-namespace EsUtil.ClipboardZenHanConverter.App.MewUI.Views;
+namespace EsUtil.ZenHanConverter.App.MewUI.Views;
 
 /// <summary>設定画面を表示するビューです。</summary>
 /// <remarks>

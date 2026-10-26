@@ -1,4 +1,4 @@
-# ClipboardZenHanConverter.App.AvaloniaUI システム仕様書
+# ZenHanConverter.App.AvaloniaUI システム仕様書
 
 本ドキュメントは `src/app_AvaloniaUI`（Avalonia UI アプリ）のシステム仕様（概要・技術スタック・アーキテクチャ・構成・動作仕様）を記載します。
 メソッド内部のコードは記載しません。
@@ -25,7 +25,7 @@ UI フレームワークとして Avalonia UI（クロスプラットフォー�
 仕様は `../core/SPEC_ExtFunc.md` と `../core/SPEC_System.md` を参照してください。
 
 Avalonia アプリは `src/core` と `src/core_presentation` のみを参照し、`src/app_MewUI` / `src/app_WinUI3` / `src/app_WinForms` とは相互依存しません。
-3 つのアプリは同一の設定ファイル（`%LOCALAPPDATA%\ClipboardZenHanConverter`）を共有します。
+3 つのアプリは同一の設定ファイル（`%LOCALAPPDATA%\ZenHanConverter`）を共有します。
 
 ```mermaid
 flowchart LR
@@ -59,7 +59,7 @@ dotnet run --project src/app_AvaloniaUI/app_AvaloniaUI.csproj
 
 `OptimizationPreference` は既定（`Speed`）を使用します。
 
-出力は exe（`ClipboardZenHanConverter.App.AvaloniaUI.exe`）と、SkiaSharp のネイティブ DLL（`libSkiaSharp.dll` / `av_libglesv2.dll` /
+出力は exe（`ZenHanConverter.App.AvaloniaUI.exe`）と、SkiaSharp のネイティブ DLL（`libSkiaSharp.dll` / `av_libglesv2.dll` /
 `libHarfBuzzSharp.dll`）です。**フォルダー単位で配布**する必要があります。
 `.pdb` は配布対象外のため出力先へ配置しません。
 
@@ -238,14 +238,14 @@ sequenceDiagram
 ## アイコンアセット
 
 使用するアイコンの形状は SVG ファイル（Fluent Icons 24px regular）を唯一の定義元とし、パスデータの二重管理を排除します。
-SVG は `src/core/Icons` が埋め込みリソースとして所有し、`EsUtil.ClipboardZenHanConverter.Core.Icons.FluentIconData` が初回アクセス時に
+SVG は `src/core/Icons` が埋め込みリソースとして所有し、`EsUtil.ZenHanConverter.Core.Icons.FluentIconData` が初回アクセス時に
 ファイル名一致で読み込み、パスデータ（d 属性の値）を抽出して保持します。
 Avalonia 側の `FluentIcons` がそのパスデータを `Geometry.Parse` でベクター形状へ変換して保持します。
 アイコンデータを Core に置くことで 3 つの UI で同じアイコン形状を利用できます。
 
 ## 設定の保存と復元
 
-永続化される設定は 3 種類です。いずれも `%LOCALAPPDATA%\ClipboardZenHanConverter` 配下へ JSON で保存します。
+永続化される設定は 3 種類です。いずれも `%LOCALAPPDATA%\ZenHanConverter` 配下へ JSON で保存します。
 
 | 設定 | ファイル | 内容 |
 | --- | --- | --- |

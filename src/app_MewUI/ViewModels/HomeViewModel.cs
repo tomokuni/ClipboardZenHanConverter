@@ -1,11 +1,11 @@
-using EsUtil.ClipboardZenHanConverter.Core.Interfaces;
-using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.Core.Interfaces;
+using EsUtil.ZenHanConverter.Core.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
-using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using EsUtil.ZenHanConverter.Presentation.ViewModels;
 using System;
 using System.Threading.Tasks;
 
-namespace EsUtil.ClipboardZenHanConverter.App.MewUI.ViewModels;
+namespace EsUtil.ZenHanConverter.App.MewUI.ViewModels;
 
 /// <summary>ホーム画面のデータを管理し、クリップボード監視と文字変換を実行します。</summary>
 /// <remarks>

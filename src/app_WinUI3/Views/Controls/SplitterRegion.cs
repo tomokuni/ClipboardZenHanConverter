@@ -5,7 +5,7 @@ using Microsoft.UI.Xaml.Input;
 using System;
 using Windows.Foundation;
 
-namespace EsUtil.ClipboardZenHanConverter.App.WinUI.Views.Controls;
+namespace EsUtil.ZenHanConverter.App.WinUI.Views.Controls;
 
 /// <summary>上下 2 分割の分割バー領域です。</summary>
 /// <remarks>

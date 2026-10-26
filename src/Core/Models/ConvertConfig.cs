@@ -1,4 +1,4 @@
-using EsUtil.ClipboardZenHanConverter.Core.Enums;
+using EsUtil.ZenHanConverter.Core.Enums;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Frozen;
@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 
-namespace EsUtil.ClipboardZenHanConverter.Core.Models;
+namespace EsUtil.ZenHanConverter.Core.Models;
 
 /// <summary>モードプロパティの単一定義。</summary>
 /// <remarks>Get/Set デリゲートのペアで、ConvertConfig のモードプロパティを型安全にアクセスします。<br/>
@@ -44,10 +44,7 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
     /// <summary>ConvertConfig の新しいインスタンスを初期化します。自動保存先を %LOCALAPPDATA% 配下に設定します。</summary>
     public ConvertConfig()
     {
-        AutoSaveFileName = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "ClipboardZenHanConverter",
-            "Settings.json");
+        AutoSaveFileName = AppPaths.GetFilePath("Settings.json");
     }
 
     // ─── 全モードプロパティの単一定義（これ1つでコピー・比較・全角設定を生成） ───
@@ -537,11 +534,9 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
     }
 
     /// <summary>ユーザープリセットの保存ディレクトリパスを取得または設定します。</summary>
-    /// <value>既定は %LOCALAPPDATA%\ClipboardZenHanConverter\Presets。</value>
+    /// <value>既定は <c>%LOCALAPPDATA%\ZenHanConverter\Presets</c>。</value>
     /// <remarks>テストでは一時ディレクトリへ差し替えて、実ユーザーのプリセットを汚さないようにします。</remarks>
-    public static string PresetDirectory { get; set; } = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "ClipboardZenHanConverter", "Presets");
+    public static string PresetDirectory { get; set; } = Path.Combine(AppPaths.RootFolder, "Presets");
 
     /// <summary>利用可能なプリセット名の一覧を取得します。</summary>
     /// <returns>プリセット名の配列。組み込みプリセット + ユーザー定義プリセット（.json）</returns>
@@ -562,7 +557,7 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
 
     /// <summary>現在の設定をプリセットとして保存します。</summary>
     /// <param name="name">プリセット名。空または空白の場合は何もしない。</param>
-    /// <remarks>保存先: %LOCALAPPDATA%\ClipboardZenHanConverter\Presets\{name}.json</remarks>
+    /// <remarks>保存先: %LOCALAPPDATA%\ZenHanConverter\Presets\{name}.json</remarks>
     public void SavePreset(string name)
     {
         if (string.IsNullOrWhiteSpace(name)) return;

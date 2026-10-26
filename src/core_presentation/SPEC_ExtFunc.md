@@ -1,4 +1,4 @@
-# ClipboardZenHanConverter.Presentation 外部機能仕様書
+# ZenHanConverter.Presentation 外部機能仕様書
 
 本ドキュメントは `src/core_presentation`（UI フレームワーク非依存のプレゼンテーション層）の公開 API 仕様を記載します。
 メソッド内部のコードは記載しません。外部利用者に関係する情報のみを扱います。
@@ -10,7 +10,7 @@
 
 ## 公開型一覧
 
-### ViewModels（`EsUtil.ClipboardZenHanConverter.Presentation.ViewModels`）
+### ViewModels（`EsUtil.ZenHanConverter.Presentation.ViewModels`）
 
 4 つの UI（MewUI 版 / WinUI 3 版 / Avalonia UI 版 / WinForms 版）が共有します。
 

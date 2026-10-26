@@ -2,7 +2,7 @@
 setlocal
 
 rem ============================================================
-rem  ClipboardZenHanConverter (Avalonia UI) Release ビルド&実行スクリプト
+rem  ZenHanConverter (Avalonia UI) Release ビルド&実行スクリプト
 rem  Release 構成でビルドし、生成された exe を実行する
 rem  （publish を行わないため、Native AOT は適用されない）
 rem ============================================================
@@ -12,7 +12,7 @@ pushd "%~dp0.."
 
 set "PROJECT=src\app_AvaloniaUI\app_AvaloniaUI.csproj"
 set "TFM=net10.0"
-set "APP_NAME=ClipboardZenHanConverter.App.AvaloniaUI.exe"
+set "APP_NAME=ZenHanConverter.App.AvaloniaUI.exe"
 
 rem ビルド出力先（RID を指定しないビルドのため TFM 直下）
 set "APPDIR=%CD%\src\app_AvaloniaUI\bin\Release\%TFM%"

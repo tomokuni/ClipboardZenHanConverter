@@ -1,6 +1,6 @@
 # リリース手順（GitHub Actions）
 
-本ドキュメントは ClipboardZenHanConverter の**リリース作業を行う開発者**向けの情報です。
+本ドキュメントは ZenHanConverter の**リリース作業を行う開発者**向けの情報です。
 開発環境（ビルド・テスト・CI）は [`CONTRIBUTING.md`](CONTRIBUTING.md)、他のリポジトリへの流用方法は [`REUSING.md`](REUSING.md)、
 アプリの利用方法は [`../README.md`](../README.md) を参照してください。
 
@@ -256,10 +256,10 @@ semver 形式で入力します。数値部分の**先頭 0 は使用できま�
 
 | UI | 添付ファイル | zip の中身 |
 | --- | --- | --- |
-| MewUI 版 | `ClipboardZenHanConverter.App.MewUI.zip` | exe 1 個（Native AOT） |
-| WinUI 3 版 | `ClipboardZenHanConverter.App.WinUI3.zip` | exe 1 個（自己完結） |
-| Avalonia UI 版 | `ClipboardZenHanConverter.App.AvaloniaUI.zip` | exe 1 個 + ネイティブ DLL 3 個 |
-| WinForms 版 | `ClipboardZenHanConverter.App.WinForms.zip` | exe 1 個（自己完結） |
+| MewUI 版 | `ZenHanConverter.App.MewUI.zip` | exe 1 個（Native AOT） |
+| WinUI 3 版 | `ZenHanConverter.App.WinUI3.zip` | exe 1 個（自己完結） |
+| Avalonia UI 版 | `ZenHanConverter.App.AvaloniaUI.zip` | exe 1 個 + ネイティブ DLL 3 個 |
+| WinForms 版 | `ZenHanConverter.App.WinForms.zip` | exe 1 個（自己完結） |
 
 **すべて zip で配布します。** `uis[].zip` が `true` の UI は、publish 後に配布物を zip 化してから保管します
 （出力が単一ファイル（exe）でもフォルダでも同じ指定で扱えます）。

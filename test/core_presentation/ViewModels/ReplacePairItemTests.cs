@@ -1,9 +1,9 @@
-using EsUtil.ClipboardZenHanConverter.Core.Models;
-using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using EsUtil.ZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.Presentation.ViewModels;
 using System.Collections.Generic;
 using Xunit;
 
-namespace EsUtil.ClipboardZenHanConverter.Tests.Presentation.ViewModels;
+namespace EsUtil.ZenHanConverter.Tests.Presentation.ViewModels;
 
 /// <summary><see cref="ReplacePairItem"/> の編集値とバリデーションを検証します。</summary>
 public sealed class ReplacePairItemTests

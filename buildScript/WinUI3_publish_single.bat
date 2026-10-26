@@ -2,7 +2,7 @@
 setlocal
 
 rem ============================================================
-rem  ClipboardZenHanConverter (WinUI 3) 単一 exe ビルドスクリプト
+rem  ZenHanConverter (WinUI 3) 単一 exe ビルドスクリプト
 rem  Release / 自己完結 / 単一 exe を生成する
 rem
 rem  注意: WinUI 3 は Native AOT に未対応です。PublishAot=true は
@@ -15,7 +15,7 @@ pushd "%~dp0.."
 rem ターゲットランタイム（既定: win-x64）
 if "%~1"=="" (set "RID=win-x64") else (set "RID=%~1")
 
-set "APP_NAME=ClipboardZenHanConverter.App.WinUI3.exe"
+set "APP_NAME=ZenHanConverter.App.WinUI3.exe"
 
 rem 最終的な出力先（MewUI 版と分ける）
 set "OUTDIR=%CD%\publish\winui3-%RID%-single"

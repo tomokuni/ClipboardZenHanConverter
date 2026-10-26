@@ -1,7 +1,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace EsUtil.ClipboardZenHanConverter.App.WinForms.Views;
+namespace EsUtil.ZenHanConverter.App.WinForms.Views;
 
 /// <summary>メッセージを表示するシンプルなダイアログです。</summary>
 /// <remarks>提供機能: <br/>
@@ -24,7 +24,7 @@ internal sealed class MessageDialog : Form
     /// <param name="message">表示するメッセージ。</param>
     private MessageDialog(string message)
     {
-        Text = "ClipboardZenHanConverter";
+        Text = "ZenHanConverter";
         FormBorderStyle = FormBorderStyle.FixedDialog;
         StartPosition = FormStartPosition.CenterParent;
         ShowInTaskbar = false;

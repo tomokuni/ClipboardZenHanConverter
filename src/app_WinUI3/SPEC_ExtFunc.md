@@ -1,4 +1,4 @@
-# ClipboardZenHanConverter.App.WinUI 外部機能仕様書
+# ZenHanConverter.App.WinUI 外部機能仕様書
 
 本ドキュメントは `src/app_WinUI3`（WinUI 3 アプリ）の公開 API 仕様（外部機能仕様）を記載します。
 メソッド内部のコードは記載しません。外部利用者に関係する情報のみを扱います。
@@ -38,7 +38,7 @@ UI スレッドのディスパッチキューは UI 層（`DependencyInjectionEx
 
 - `object? SelectedPage` — 現在選択されているページ（変更時に `INavigationService.NavigateTo` を実行）
 
-### Services（`EsUtil.ClipboardZenHanConverter.App.WinUI.Services`）
+### Services（`EsUtil.ZenHanConverter.App.WinUI.Services`）
 
 #### `INavigationService`
 
@@ -60,9 +60,9 @@ WinRT の `Clipboard` API によるクリップボードの読み書きと、`Cl
 
 #### `DependencyInjectionExtensions`
 
-- `IServiceCollection AddClipboardZenHanConverterServices(this IServiceCollection services)` — アプリの全サービスを登録
+- `IServiceCollection AddZenHanConverterServices(this IServiceCollection services)` — アプリの全サービスを登録
 
-### Helpers（`EsUtil.ClipboardZenHanConverter.App.WinUI.Helpers`）
+### Helpers（`EsUtil.ZenHanConverter.App.WinUI.Helpers`）
 
 #### `FluentIcons`
 
@@ -71,14 +71,14 @@ WinRT の `Clipboard` API によるクリップボードの読み書きと、`Cl
 - `Geometry ConvertRange` — ホーム項目用の「Convert Range」アイコン形状
 - `Geometry Settings` — 設定項目用の「Settings」アイコン形状
 
-MewUI 版（`EsUtil.ClipboardZenHanConverter.App.MewUI.Helpers.FluentIcons`）と同じ SVG を共有するため、両 UI のアイコンが一致します。  
+MewUI 版（`EsUtil.ZenHanConverter.App.MewUI.Helpers.FluentIcons`）と同じ SVG を共有するため、両 UI のアイコンが一致します。  
 WinUI の `Geometry` には静的 `Parse` がないため、XAML の型変換（`XamlBindingHelper.ConvertValue`）でパスデータを形状化します。
 
 #### `EnableStyleSelector`
 
 `SegmentedItem` の有効/無効状態に応じたスタイルセレクター。
 
-### Converters（`EsUtil.ClipboardZenHanConverter.App.WinUI.Converters`）
+### Converters（`EsUtil.ZenHanConverter.App.WinUI.Converters`）
 
 #### `BoolToCheckMarkConverter`
 
@@ -88,7 +88,7 @@ bool をチェックマーク文字列へ変換します（true → "✅" / fals
 
 null・空文字を `Collapsed`、それ以外を `Visible` へ変換します。
 
-### Views（`EsUtil.ClipboardZenHanConverter.App.WinUI.Views`）
+### Views（`EsUtil.ZenHanConverter.App.WinUI.Views`）
 
 - `App : Application` — エントリポイント（DI 構築・集約エラーハンドラー・メインウィンドウ表示）
 - `MainWindow` — タイトルバー + `NavigationView` によるナビゲーションシル。

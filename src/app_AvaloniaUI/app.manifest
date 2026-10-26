@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
   <!-- Windows 専用のマニフェスト。ウィンドウ透過と埋め込みコントロールの動作に必要なため削除しない。 -->
-  <assemblyIdentity version="1.0.0.0" name="ClipboardZenHanConverter.App.AvaloniaUI"/>
+  <assemblyIdentity version="1.0.0.0" name="ZenHanConverter.App.AvaloniaUI"/>
 
   <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
     <application>

@@ -2,14 +2,14 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Services;
-using EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Views;
-using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.App.AvaloniaUI.Services;
+using EsUtil.ZenHanConverter.App.AvaloniaUI.Views;
+using EsUtil.ZenHanConverter.Core.Models;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Diagnostics;
 
-namespace EsUtil.ClipboardZenHanConverter.App.AvaloniaUI;
+namespace EsUtil.ZenHanConverter.App.AvaloniaUI;
 
 /// <summary>アプリケーションのエントリポイントとなるクラスです。</summary>
 /// <remarks>
@@ -55,10 +55,12 @@ public partial class App : Application
         SubscribeExceptionHandlers();
 
         var builder = Host.CreateApplicationBuilder();
-        builder.Services.AddClipboardZenHanConverterServices();
+        builder.Services.AddZenHanConverterServices();
         var host = builder.Build();
 
         Services = host.Services;
+        // 旧名のフォルダー（%LOCALAPPDATA%\ClipboardZenHanConverter）から初回だけ移行する
+        AppPaths.Migrate();
         GetService<AppSetting>().Initialize();
         GetService<ConvertConfig>().Initialize();
 

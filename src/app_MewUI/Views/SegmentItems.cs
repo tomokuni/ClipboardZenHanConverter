@@ -1,11 +1,11 @@
 using Aprillz.MewUI;
 using Aprillz.MewUI.Text;
-using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using EsUtil.ZenHanConverter.Presentation.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EsUtil.ClipboardZenHanConverter.App.MewUI.Views;
+namespace EsUtil.ZenHanConverter.App.MewUI.Views;
 
 /// <summary>設定画面のセグメントコントロール構築とバインディングを支援するヘルパークラス。</summary>
 /// <remarks>

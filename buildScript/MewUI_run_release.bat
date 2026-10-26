@@ -2,7 +2,7 @@
 setlocal
 
 rem ============================================================
-rem  ClipboardZenHanConverter (MewUI) Release ビルド&実行スクリプト
+rem  ZenHanConverter (MewUI) Release ビルド&実行スクリプト
 rem  Release 構成でビルドし、生成された exe を実行する
 rem  （publish を行わないため、Native AOT は適用されない）
 rem ============================================================
@@ -12,7 +12,7 @@ pushd "%~dp0.."
 
 set "PROJECT=src\app_MewUI\app_MewUI.csproj"
 set "TFM=net10.0"
-set "APP_NAME=ClipboardZenHanConverter.App.MewUI.exe"
+set "APP_NAME=ZenHanConverter.App.MewUI.exe"
 
 rem ビルド出力先（RID を指定しないビルドのため TFM 直下）
 set "APPDIR=%CD%\src\app_MewUI\bin\Release\%TFM%"

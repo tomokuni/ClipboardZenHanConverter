@@ -1,13 +1,13 @@
-using EsUtil.ClipboardZenHanConverter.Core.Enums;
-using EsUtil.ClipboardZenHanConverter.Core.Models;
-using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using EsUtil.ZenHanConverter.Core.Enums;
+using EsUtil.ZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.Presentation.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Xunit;
 
-namespace EsUtil.ClipboardZenHanConverter.Tests.Presentation.ViewModels;
+namespace EsUtil.ZenHanConverter.Tests.Presentation.ViewModels;
 
 /// <summary><see cref="SettingsViewModel"/> の項目生成・設定同期・プリセット・入出力を検証します。</summary>
 /// <remarks>ファイルを書き込むテストでは、実ユーザーの設定ファイルを汚さないよう<br/>

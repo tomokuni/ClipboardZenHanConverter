@@ -1,13 +1,13 @@
-using EsUtil.ClipboardZenHanConverter.App.WinForms.Services;
-using EsUtil.ClipboardZenHanConverter.App.WinForms.Views;
-using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.App.WinForms.Services;
+using EsUtil.ZenHanConverter.App.WinForms.Views;
+using EsUtil.ZenHanConverter.Core.Models;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace EsUtil.ClipboardZenHanConverter.App.WinForms;
+namespace EsUtil.ZenHanConverter.App.WinForms;
 
 /// <summary>アプリケーションのエントリポイントを提供します。</summary>
 /// <remarks>
@@ -34,10 +34,12 @@ public static class Program
         SubscribeExceptionHandlers();
 
         var builder = Host.CreateApplicationBuilder();
-        builder.Services.AddClipboardZenHanConverterServices();
+        builder.Services.AddZenHanConverterServices();
         var host = builder.Build();
 
         Services = host.Services;
+        // 旧名のフォルダー（%LOCALAPPDATA%\ClipboardZenHanConverter）から初回だけ移行する
+        AppPaths.Migrate();
         GetService<AppSetting>().Initialize();
         GetService<ConvertConfig>().Initialize();
 

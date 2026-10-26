@@ -1,4 +1,4 @@
-# ClipboardZenHanConverter.App.MewUI システム仕様書
+# ZenHanConverter.App.MewUI システム仕様書
 
 本ドキュメントは `src/app_MewUI`（MewUI アプリ）のシステム仕様（概要・技術スタック・アーキテクチャ・シーケンス・状態遷移）を記載します。
 メソッド内部のコードは記載しません。
@@ -60,7 +60,7 @@ flowchart LR
     App -->|PackageReference| MewUI[Aprillz.MewUI.Windows]
 ```
 
-両アプリは同一の設定ファイル（`%LOCALAPPDATA%\ClipboardZenHanConverter`）を共有します。
+両アプリは同一の設定ファイル（`%LOCALAPPDATA%\ZenHanConverter`）を共有します。
 
 ## コンポーネント構成
 
@@ -117,7 +117,7 @@ sequenceDiagram
 ## アイコンアセット
 
 使用するアイコンの形状は SVG ファイル（Fluent Icons 24px regular）を唯一の定義元とし、パスデータの二重管理を排除します。
-SVG は `src/core/Icons` が埋め込みリソースとして所有し、`EsUtil.ClipboardZenHanConverter.Core.Icons.FluentIconData` が初回アクセス時にファイル名一致で読み込み、パスデータ（d 属性の値）を抽出して保持します。  
+SVG は `src/core/Icons` が埋め込みリソースとして所有し、`EsUtil.ZenHanConverter.Core.Icons.FluentIconData` が初回アクセス時にファイル名一致で読み込み、パスデータ（d 属性の値）を抽出して保持します。  
 MewUI 側の `FluentIcons` がそのパスデータを `PathGeometry.Parse` でベクター形状へ変換して保持します。
 アイコンデータを Core に置くことで MewUI / WinUI3 の双方で同じアイコン形状を利用できます。
 同一形状の再取得は保持済みインスタンスの返却のみで完結します。
@@ -159,7 +159,7 @@ MewUI 側の `FluentIcons` がそのパスデータを `PathGeometry.Parse` で�
 
 ## 設定の保存と復元
 
-永続化される設定は 3 種類です。いずれも `%LOCALAPPDATA%\ClipboardZenHanConverter` 配下へ JSON で保存します。
+永続化される設定は 3 種類です。いずれも `%LOCALAPPDATA%\ZenHanConverter` 配下へ JSON で保存します。
 
 | 設定 | ファイル | 内容 |
 | --- | --- | --- |

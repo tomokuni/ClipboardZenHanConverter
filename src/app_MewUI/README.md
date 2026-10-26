@@ -1,4 +1,4 @@
-# ClipboardZenHanConverter (MewUI)
+# ZenHanConverter (MewUI)
 
 クリップボードのテキストを監視し、全角/半角の自動変換を行う Windows 向けデスクトップアプリケーションです。
 本バージョンは UI フレームワークに **MewUI**（コードファーストの .NET GUI フレームワーク）を使用しています。
@@ -25,7 +25,7 @@
 1. アプリケーションを起動します（タスクトレイ常駐ではなく、ホーム画面を表示）。
 2. タイトルバーの「クリップボード変換」スイッチが有効であることを確認します。
 3. 任意のアプリケーションでテキストをコピー（Ctrl+C）します。
-4. ClipboardZenHanConverter が自動的に変換を実行します。
+4. ZenHanConverter が自動的に変換を実行します。
 5. 変換後のテキストを任意の場所にペースト（Ctrl+V）します。
 
 タイトルバーには「clipboard text converter」が表示されます。

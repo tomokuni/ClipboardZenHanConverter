@@ -1,10 +1,10 @@
 using Aprillz.MewUI.Controls;
-using EsUtil.ClipboardZenHanConverter.App.MewUI.Views;
+using EsUtil.ZenHanConverter.App.MewUI.Views;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 
-namespace EsUtil.ClipboardZenHanConverter.App.MewUI.Services;
+namespace EsUtil.ZenHanConverter.App.MewUI.Services;
 
 /// <summary>アプリケーション内のページ遷移を管理します。</summary>
 /// <remarks>

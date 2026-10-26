@@ -1,9 +1,9 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
-using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using EsUtil.ZenHanConverter.Presentation.ViewModels;
 
-namespace EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Views;
+namespace EsUtil.ZenHanConverter.App.AvaloniaUI.Views;
 
 /// <summary>設定画面を表示するビューです。</summary>
 /// <remarks>
@@ -53,7 +53,7 @@ public partial class SettingsView : UserControl
         var file = await storage.SaveFilePickerAsync(new FilePickerSaveOptions
         {
             Title = "設定のエクスポート",
-            SuggestedFileName = "ClipboardZenHanConverter_Settings.json",
+            SuggestedFileName = "ZenHanConverter_Settings.json",
             FileTypeChoices = [JsonFileType],
         });
 

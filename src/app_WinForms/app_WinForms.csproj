@@ -17,10 +17,10 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <RootNamespace>EsUtil.ClipboardZenHanConverter.App.WinForms</RootNamespace>
-    <AssemblyName>ClipboardZenHanConverter.App.WinForms</AssemblyName>
-    <Product>ClipboardZenHanConverter</Product>
-    <Description>ClipboardZenHanConverter (WinForms) - clipboard text converter</Description>
+    <RootNamespace>EsUtil.ZenHanConverter.App.WinForms</RootNamespace>
+    <AssemblyName>ZenHanConverter.App.WinForms</AssemblyName>
+    <Product>ZenHanConverter</Product>
+    <Description>ZenHanConverter (WinForms) - clipboard text converter</Description>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,7 +30,7 @@
 
   <ItemGroup>
     <!-- 検証ロジック（internal static）をテストから参照するため -->
-    <InternalsVisibleTo Include="ClipboardZenHanConverter.Tests.App.WinForms" />
+    <InternalsVisibleTo Include="ZenHanConverter.Tests.App.WinForms" />
   </ItemGroup>
 
   <ItemGroup>

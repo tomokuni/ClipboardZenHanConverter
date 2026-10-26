@@ -2,7 +2,7 @@
 setlocal
 
 rem ============================================================
-rem  ClipboardZenHanConverter (WinForms) 単一 exe ビルドスクリプト
+rem  ZenHanConverter (WinForms) 単一 exe ビルドスクリプト
 rem  Release / 自己完結 / 単一 exe を生成する
 rem
 rem  注意: WinForms は Native AOT に未対応で、トリミングも
@@ -16,7 +16,7 @@ pushd "%~dp0.."
 rem ターゲットランタイム（既定: win-x64）
 if "%~1"=="" (set "RID=win-x64") else (set "RID=%~1")
 
-set "APP_NAME=ClipboardZenHanConverter.App.WinForms.exe"
+set "APP_NAME=ZenHanConverter.App.WinForms.exe"
 
 rem 最終的な出力先（他 UI の出力先と分ける）
 set "OUTDIR=%CD%\publish\winforms-%RID%-single"

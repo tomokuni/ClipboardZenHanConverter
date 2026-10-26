@@ -2,11 +2,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.IO;
 
-namespace EsUtil.ClipboardZenHanConverter.Core.Models;
+namespace EsUtil.ZenHanConverter.Core.Models;
 
 /// <summary>アプリケーションのウィンドウ設定を管理します。</summary>
 /// <remarks>ウィンドウの位置・サイズ情報とクリップボード連携の有効/無効を JSON ファイルに自動保存・復元します。<br/>
-/// 保存先: %LOCALAPPDATA%\ClipboardZenHanConverter\AppSetting.json<br/>
+/// 保存先: %LOCALAPPDATA%\ZenHanConverter\AppSetting.json<br/>
 /// 最適化手法: <br/>
 /// - SettingsPersistenceBase によるデバウンス付き自動保存（300ms）<br/>
 /// - System.Text.Json ソースジェネレーターによる高速シリアライズ</remarks>
@@ -41,10 +41,7 @@ public partial class AppSetting : SettingsPersistenceBase<AppSetting>
     /// <summary>AppSetting の新しいインスタンスを初期化します。自動保存先を %LOCALAPPDATA% 配下に設定します。</summary>
     public AppSetting()
     {
-        AutoSaveFileName = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "ClipboardZenHanConverter",
-            "AppSetting.json");
+        AutoSaveFileName = AppPaths.GetFilePath("AppSetting.json");
     }
 
     /// <summary>読み込んだ設定を現在のインスタンスに適用します。</summary>

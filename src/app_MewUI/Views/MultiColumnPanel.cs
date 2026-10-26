@@ -4,7 +4,7 @@ using EsUtil.Feature.ColumnPacking;
 using System;
 using System.Collections.Generic;
 
-namespace EsUtil.ClipboardZenHanConverter.App.MewUI.Views;
+namespace EsUtil.ZenHanConverter.App.MewUI.Views;
 
 /// <summary>子要素を縦方向の複数列へ配置するパネル。</summary>
 /// <remarks>提供機能: <br/>

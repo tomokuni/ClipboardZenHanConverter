@@ -2,7 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using System;
 
-namespace EsUtil.ClipboardZenHanConverter.App.WinUI.Converters;
+namespace EsUtil.ZenHanConverter.App.WinUI.Converters;
 
 /// <summary>空文字列でない場合に Visible にするコンバーターです。</summary>
 /// <remarks>文字列が null または空の場合は Collapsed、それ以外は Visible を返します。<br/>

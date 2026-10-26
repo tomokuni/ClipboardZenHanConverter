@@ -1,15 +1,15 @@
-using EsUtil.ClipboardZenHanConverter.Core.Icons;
+using EsUtil.ZenHanConverter.Core.Icons;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 
-namespace EsUtil.ClipboardZenHanConverter.App.WinUI.Helpers;
+namespace EsUtil.ZenHanConverter.App.WinUI.Helpers;
 
 /// <summary>アプリで使用する Fluent Icons のアイコン形状を提供する静的クラス。</summary>
 /// <remarks>提供機能: <br/>
 /// - Core の FluentIconData（SVG のパスデータ）から生成した WinUI のアイコン形状の提供<br/><br/>
 /// 特徴: <br/>
 /// - パスデータは Core が単一所有し、WinUI の形状への変換のみを担う<br/>
-/// - MewUI 版（`ClipboardZenHanConverter.App.MewUI.Helpers.FluentIcons`）と同じ SVG を共有するため、両 UI のアイコンが一致する<br/>
+/// - MewUI 版（`ZenHanConverter.App.MewUI.Helpers.FluentIcons`）と同じ SVG を共有するため、両 UI のアイコンが一致する<br/>
 /// - 生成は初回アクセスの一度だけ行い、以降は生成済みの形状を返却</remarks>
 public static class FluentIcons
 {

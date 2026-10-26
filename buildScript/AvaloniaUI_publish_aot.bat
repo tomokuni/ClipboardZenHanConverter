@@ -2,7 +2,7 @@
 setlocal
 
 rem ============================================================
-rem  ClipboardZenHanConverter (Avalonia UI) AOT ビルドスクリプト
+rem  ZenHanConverter (Avalonia UI) AOT ビルドスクリプト
 rem  Release / Native AOT / 自己完結でビルドする（単一 exe にはしない）
 rem
 rem  方式: Native AOT + SkiaSharp のネイティブ DLL（exe 1 個 + DLL 3 個）
@@ -22,7 +22,7 @@ pushd "%~dp0.."
 rem ターゲットランタイム（既定: win-x64）
 if "%~1"=="" (set "RID=win-x64") else (set "RID=%~1")
 
-set "APP_NAME=ClipboardZenHanConverter.App.AvaloniaUI.exe"
+set "APP_NAME=ZenHanConverter.App.AvaloniaUI.exe"
 
 rem 最終的な出力先（MewUI 版 / WinUI 3 版と分ける）
 set "OUTDIR=%CD%\publish\avaloniaui-%RID%-aot"

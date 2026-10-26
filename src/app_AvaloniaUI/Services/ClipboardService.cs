@@ -1,11 +1,11 @@
 using Avalonia.Threading;
-using EsUtil.ClipboardZenHanConverter.Core.Interfaces;
-using EsUtil.ClipboardZenHanConverter.Core.Logic;
+using EsUtil.ZenHanConverter.Core.Interfaces;
+using EsUtil.ZenHanConverter.Core.Logic;
 using EsUtil.Platform.Core.Native.Win;
 using System;
 using System.Threading.Tasks;
 
-namespace EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Services;
+namespace EsUtil.ZenHanConverter.App.AvaloniaUI.Services;
 
 /// <summary>システムクリップボードの読み書きと内容変更監視を提供します。</summary>
 /// <remarks>

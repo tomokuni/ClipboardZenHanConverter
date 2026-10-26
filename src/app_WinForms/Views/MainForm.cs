@@ -1,16 +1,16 @@
-using EsUtil.ClipboardZenHanConverter.App.WinForms.Helpers;
-using EsUtil.ClipboardZenHanConverter.App.WinForms.ViewModels;
+using EsUtil.ZenHanConverter.App.WinForms.Helpers;
+using EsUtil.ZenHanConverter.App.WinForms.ViewModels;
 using EsUtil.Platform.Core.Geometry;
-using EsUtil.ClipboardZenHanConverter.Core.Helpers;
-using EsUtil.ClipboardZenHanConverter.Core.Models;
-using EsUtil.ClipboardZenHanConverter.Core.Native;
+using EsUtil.ZenHanConverter.Core.Helpers;
+using EsUtil.ZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.Core.Native;
 using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace EsUtil.ClipboardZenHanConverter.App.WinForms.Views;
+namespace EsUtil.ZenHanConverter.App.WinForms.Views;
 
 /// <summary>アプリケーションのメインウィンドウを表します。</summary>
 /// <remarks>

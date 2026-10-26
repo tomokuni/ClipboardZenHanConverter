@@ -1,7 +1,7 @@
 using Avalonia.Controls;
-using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using EsUtil.ZenHanConverter.Presentation.ViewModels;
 
-namespace EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Views;
+namespace EsUtil.ZenHanConverter.App.AvaloniaUI.Views;
 
 /// <summary>プリセットの保存・削除を行うダイアログです。</summary>
 /// <remarks>

@@ -1,4 +1,4 @@
-# ClipboardZenHanConverter.Presentation
+# ZenHanConverter.Presentation
 
 4 つの UI 実装（MewUI 版 / WinUI 3 版 / Avalonia UI 版 / WinForms 版）が共有する**UI フレームワーク非依存のプレゼンテーション層**です。
 

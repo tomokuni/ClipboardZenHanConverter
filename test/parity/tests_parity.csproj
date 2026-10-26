@@ -6,8 +6,8 @@
     <IsPackable>false</IsPackable>
     <UseWinUI>true</UseWinUI>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-    <RootNamespace>EsUtil.ClipboardZenHanConverter.Tests.Parity</RootNamespace>
-    <AssemblyName>ClipboardZenHanConverter.Tests.Parity</AssemblyName>
+    <RootNamespace>EsUtil.ZenHanConverter.Tests.Parity</RootNamespace>
+    <AssemblyName>ZenHanConverter.Tests.Parity</AssemblyName>
     <!-- app_WinUI3（自己完結型）を参照するため Windows App SDK のビルド要件を満たす -->
     <Platforms>x64</Platforms>
     <SelfContained>true</SelfContained>

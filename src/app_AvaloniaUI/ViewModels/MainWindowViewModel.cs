@@ -1,12 +1,12 @@
 using Avalonia.Controls;
-using EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Helpers;
-using EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Services;
-using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.App.AvaloniaUI.Helpers;
+using EsUtil.ZenHanConverter.App.AvaloniaUI.Services;
+using EsUtil.ZenHanConverter.Core.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
-using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using EsUtil.ZenHanConverter.Presentation.ViewModels;
 using System.Collections.Generic;
 
-namespace EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.ViewModels;
+namespace EsUtil.ZenHanConverter.App.AvaloniaUI.ViewModels;
 
 /// <summary>メインウィンドウのデータを管理します。</summary>
 /// <remarks>

@@ -1,11 +1,11 @@
-using EsUtil.ClipboardZenHanConverter.App.WinForms.Views;
+using EsUtil.ZenHanConverter.App.WinForms.Views;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace EsUtil.ClipboardZenHanConverter.App.WinForms.Services;
+namespace EsUtil.ZenHanConverter.App.WinForms.Services;
 
 /// <summary>アプリケーション内の画面遷移を管理します。</summary>
 /// <remarks>

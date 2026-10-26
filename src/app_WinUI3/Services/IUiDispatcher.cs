@@ -1,6 +1,6 @@
 using System;
 
-namespace EsUtil.ClipboardZenHanConverter.App.WinUI.Services;
+namespace EsUtil.ZenHanConverter.App.WinUI.Services;
 
 /// <summary>UI スレッドへ処理を委譲する抽象化を提供します。</summary>
 /// <remarks>DIP に従い、ViewModels はこのインターフェースを通じて UI スレッドへ処理を依頼します。<br/>

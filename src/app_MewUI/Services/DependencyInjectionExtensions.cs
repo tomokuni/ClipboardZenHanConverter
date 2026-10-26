@@ -1,12 +1,12 @@
-using EsUtil.ClipboardZenHanConverter.App.MewUI.ViewModels;
-using EsUtil.ClipboardZenHanConverter.App.MewUI.Views;
-using EsUtil.ClipboardZenHanConverter.Core.Interfaces;
-using EsUtil.ClipboardZenHanConverter.Core.Logic;
-using EsUtil.ClipboardZenHanConverter.Core.Models;
-using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using EsUtil.ZenHanConverter.App.MewUI.ViewModels;
+using EsUtil.ZenHanConverter.App.MewUI.Views;
+using EsUtil.ZenHanConverter.Core.Interfaces;
+using EsUtil.ZenHanConverter.Core.Logic;
+using EsUtil.ZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.Presentation.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EsUtil.ClipboardZenHanConverter.App.MewUI.Services;
+namespace EsUtil.ZenHanConverter.App.MewUI.Services;
 
 /// <summary>依存性注入（DI）コンテナへのサービス登録を提供する拡張メソッドクラス。</summary>
 /// <remarks>Program.cs での責務を分離し、サービス登録ロジックを専用クラスに抽出します。<br/>
@@ -15,7 +15,7 @@ public static class DependencyInjectionExtensions
 {
     /// <summary>アプリケーションの全サービスを DI コンテナに登録します。</summary>
     /// <param name="services">サービスコレクション。</param>
-    public static IServiceCollection AddClipboardZenHanConverterServices(this IServiceCollection services)
+    public static IServiceCollection AddZenHanConverterServices(this IServiceCollection services)
     {
         // サービス
         services.AddSingleton<INavigationService, NavigationService>();

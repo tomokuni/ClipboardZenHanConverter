@@ -1,9 +1,9 @@
-using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using EsUtil.ZenHanConverter.Presentation.ViewModels;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace EsUtil.ClipboardZenHanConverter.App.WinForms.Views;
+namespace EsUtil.ZenHanConverter.App.WinForms.Views;
 
 /// <summary>排他選択をインラインのボタン列として表示するセグメント用ラジオボタンです。</summary>
 /// <remarks>

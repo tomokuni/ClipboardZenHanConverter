@@ -1,8 +1,8 @@
 using EsUtil.Platform.Core.Geometry;
-using EsUtil.ClipboardZenHanConverter.Core.Helpers;
+using EsUtil.ZenHanConverter.Core.Helpers;
 using Xunit;
 
-namespace EsUtil.ClipboardZenHanConverter.Tests.Core.Helpers;
+namespace EsUtil.ZenHanConverter.Tests.Core.Helpers;
 
 /// <summary><see cref="WindowPlacement"/> の表示領域内への補正ロジックを検証します。</summary>
 public sealed class WindowPlacementTests

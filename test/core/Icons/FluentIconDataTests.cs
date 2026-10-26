@@ -1,7 +1,7 @@
-using EsUtil.ClipboardZenHanConverter.Core.Icons;
+using EsUtil.ZenHanConverter.Core.Icons;
 using Xunit;
 
-namespace EsUtil.ClipboardZenHanConverter.Tests.Core.Icons;
+namespace EsUtil.ZenHanConverter.Tests.Core.Icons;
 
 /// <summary><see cref="FluentIconData"/> の SVG パスデータ提供を検証します。</summary>
 public sealed class FluentIconDataTests

@@ -1,14 +1,14 @@
 using Avalonia;
 using Avalonia.Controls;
-using EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Services;
-using EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.ViewModels;
+using EsUtil.ZenHanConverter.App.AvaloniaUI.Services;
+using EsUtil.ZenHanConverter.App.AvaloniaUI.ViewModels;
 using EsUtil.Platform.Core.Geometry;
-using EsUtil.ClipboardZenHanConverter.Core.Helpers;
-using EsUtil.ClipboardZenHanConverter.Core.Models;
-using EsUtil.ClipboardZenHanConverter.Core.Native;
+using EsUtil.ZenHanConverter.Core.Helpers;
+using EsUtil.ZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.Core.Native;
 using System;
 
-namespace EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Views;
+namespace EsUtil.ZenHanConverter.App.AvaloniaUI.Views;
 
 /// <summary>アプリケーションのメインウィンドウを表します。</summary>
 /// <remarks>

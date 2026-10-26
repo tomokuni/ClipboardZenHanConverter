@@ -4,10 +4,10 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <RootNamespace>EsUtil.ClipboardZenHanConverter.App.MewUI</RootNamespace>
-    <AssemblyName>ClipboardZenHanConverter.App.MewUI</AssemblyName>
-    <Product>ClipboardZenHanConverter</Product>
-    <Description>ClipboardZenHanConverter (MewUI) - clipboard text converter</Description>
+    <RootNamespace>EsUtil.ZenHanConverter.App.MewUI</RootNamespace>
+    <AssemblyName>ZenHanConverter.App.MewUI</AssemblyName>
+    <Product>ZenHanConverter</Product>
+    <Description>ZenHanConverter (MewUI) - clipboard text converter</Description>
   </PropertyGroup>
 
   <ItemGroup>

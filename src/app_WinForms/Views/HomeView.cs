@@ -1,9 +1,9 @@
-using EsUtil.ClipboardZenHanConverter.App.WinForms.ViewModels;
-using EsUtil.ClipboardZenHanConverter.Core.Helpers;
+using EsUtil.ZenHanConverter.App.WinForms.ViewModels;
+using EsUtil.ZenHanConverter.Core.Helpers;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace EsUtil.ClipboardZenHanConverter.App.WinForms.Views;
+namespace EsUtil.ZenHanConverter.App.WinForms.Views;
 
 /// <summary>ホーム画面を表示するビューです。</summary>
 /// <remarks>

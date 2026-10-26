@@ -1,6 +1,6 @@
 using Avalonia.Media;
 
-namespace EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.ViewModels;
+namespace EsUtil.ZenHanConverter.App.AvaloniaUI.ViewModels;
 
 /// <summary>ナビゲーションペインの項目を表します。</summary>
 /// <param name="Tag">ページタグ（"Home" / "Settings"）。</param>

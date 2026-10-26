@@ -1,9 +1,9 @@
-using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using EsUtil.ZenHanConverter.Presentation.ViewModels;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace EsUtil.ClipboardZenHanConverter.App.WinForms.Views;
+namespace EsUtil.ZenHanConverter.App.WinForms.Views;
 
 /// <summary>設定画面を表示するビューです。</summary>
 /// <remarks>
@@ -28,7 +28,7 @@ public sealed class SettingsView : UserControl
     private const string JsonFilter = "JSON ファイル (*.json)|*.json|すべてのファイル (*.*)|*.*";
 
     /// <summary>エクスポート時の既定ファイル名。</summary>
-    private const string DefaultExportFileName = "ClipboardZenHanConverter_Settings.json";
+    private const string DefaultExportFileName = "ZenHanConverter_Settings.json";
 
     /// <summary>設定画面の ViewModel を取得します。</summary>
     public SettingsViewModel ViewModel { get; }

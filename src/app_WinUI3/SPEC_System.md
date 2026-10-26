@@ -1,4 +1,4 @@
-# ClipboardZenHanConverter.App.WinUI システム仕様書
+# ZenHanConverter.App.WinUI システム仕様書
 
 本ドキュメントは `src/app_WinUI3`（WinUI 3 アプリ）のシステム仕様（概要・技術スタック・アーキテクチャ・構成・動作仕様）を記載します。
 メソッド内部のコードは記載しません。
@@ -27,7 +27,7 @@ UI フレームワークとして WinUI 3（Windows App SDK）を使用します
 仕様は `../core/SPEC_ExtFunc.md` と `../core/SPEC_System.md` を参照してください。
 
 WinUI アプリは `src/core` と `src/core_presentation` のみを参照し、`src/app_MewUI`（MewUI 版）とは相互依存しません。
-両アプリは同一の設定ファイル（`%LOCALAPPDATA%\ClipboardZenHanConverter`）を共有します。
+両アプリは同一の設定ファイル（`%LOCALAPPDATA%\ZenHanConverter`）を共有します。
 
 ```mermaid
 flowchart LR
@@ -53,7 +53,7 @@ Windows App Runtime のインストールは不要で、同梱した DLL を reg
 ### 単一 exe
 
 `buildScript/` の `WinUI3_publish_single.bat`（ビルド）と `WinUI3_run_publish.bat`（ビルドして起動）で、自己完結の単一 exe を
-`publish\winui3-<RID>-single\ClipboardZenHanConverter.App.WinUI3.exe` に出力します（既定 RID は `win-x64`）。
+`publish\winui3-<RID>-single\ZenHanConverter.App.WinUI3.exe` に出力します（既定 RID は `win-x64`）。
 スクリプトはリポジトリルートを基準に動作します。
 
 単一 exe 化に必要なプロパティは次のとおりです。
@@ -81,7 +81,7 @@ Windows App Runtime のインストールは不要で、同梱した DLL を reg
 本アプリは AI / ML / Search / Widgets / WebView2 を使用しないため、除外による機能低下はありません（動作確認済み）。
 単一 exe で 約 234 MB → 約 179 MB（約 55 MB 削減）。
 
-初回起動時に依存ファイルを `%TEMP%\.net\ClipboardZenHanConverter.App.WinUI3\` へ展開するため、初回のみ起動に時間がかかります。  
+初回起動時に依存ファイルを `%TEMP%\.net\ZenHanConverter.App.WinUI3\` へ展開するため、初回のみ起動に時間がかかります。  
 また、展開先が破損・残留していると起動に失敗する場合があります。その場合は展開先フォルダを削除してから再起動します。  
 
 発行はリポジトリ外の一時領域（`%TEMP%\czhc-single-winui-<RID>`）で行い、単一 exe のみを出力先へ配置します。  

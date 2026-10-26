@@ -1,13 +1,13 @@
-using EsUtil.ClipboardZenHanConverter.App.MewUI.ViewModels;
-using EsUtil.ClipboardZenHanConverter.Core.Enums;
-using EsUtil.ClipboardZenHanConverter.Core.Interfaces;
-using EsUtil.ClipboardZenHanConverter.Core.Logic;
-using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.App.MewUI.ViewModels;
+using EsUtil.ZenHanConverter.Core.Enums;
+using EsUtil.ZenHanConverter.Core.Interfaces;
+using EsUtil.ZenHanConverter.Core.Logic;
+using EsUtil.ZenHanConverter.Core.Models;
 using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace EsUtil.ClipboardZenHanConverter.Tests.App.MewUI.ViewModels;
+namespace EsUtil.ZenHanConverter.Tests.App.MewUI.ViewModels;
 
 /// <summary><see cref="HomeViewModel"/> の表示変換とクリップボード連携を検証します。</summary>
 public sealed class HomeViewModelTests : IDisposable

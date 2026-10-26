@@ -1,10 +1,10 @@
-using EsUtil.ClipboardZenHanConverter.Core.Enums;
-using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.Core.Enums;
+using EsUtil.ZenHanConverter.Core.Models;
 using System;
 using System.IO;
 using Xunit;
 
-namespace EsUtil.ClipboardZenHanConverter.Tests.Core.Models;
+namespace EsUtil.ZenHanConverter.Tests.Core.Models;
 
 /// <summary><see cref="ConvertConfig"/> の設定・プリセット・入出力を検証します。</summary>
 /// <remarks>ファイルを書き込むテストでは、実ユーザーの設定ファイルを汚さないよう<br/>

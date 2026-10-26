@@ -1,7 +1,7 @@
-using EsUtil.ClipboardZenHanConverter.App.MewUI.Helpers;
+using EsUtil.ZenHanConverter.App.MewUI.Helpers;
 using Xunit;
 
-namespace EsUtil.ClipboardZenHanConverter.Tests.App.MewUI.Helpers;
+namespace EsUtil.ZenHanConverter.Tests.App.MewUI.Helpers;
 
 /// <summary><see cref="FluentIcons"/> のアイコン形状生成を検証します。</summary>
 /// <remarks>Core の SVG パスデータから MewUI の形状が生成できることを確認します。</remarks>

@@ -98,7 +98,7 @@ MTP モードではテスト対象を `--solution` / `--project` で指定しま
 
 | キー | 内容 | 例 |
 | --- | --- | --- |
-| `product` | リリース名とアセットのタイトルに使う表示名 | `"ClipboardZenHanConverter"` |
+| `product` | リリース名とアセットのタイトルに使う表示名 | `"ZenHanConverter"` |
 | `versionFile` | バージョン（`<Version>`）を記載するファイル（リポジトリルートからの相対パス） | `"Directory.Build.props"` |
 | `solutionFile` | ビルド・テストの対象となるソリューション ファイル（リポジトリルートからの相対パス） | `"ZenHanConverter.slnx"` |
 | `gateWorkflow` | リリースの前提（ゲート）となるワークフローのファイル名 | `"build.yml"` |
@@ -114,7 +114,7 @@ MTP モードではテスト対象を `--solution` / `--project` で指定しま
 | `name` | アーティファクト名（ジョブの表示にも使う） |
 | `script` | publish スクリプト（リポジトリルートからの相対パス。例: `buildScript/MewUI_publish_singleaot.bat`） |
 | `output` | publish の出力パス（複数ファイルの場合はフォルダ） |
-| `asset` | Release に添付するファイル名（zip する場合は作成後の名前。例: `ClipboardZenHanConverter.App.MewUI.zip`） |
+| `asset` | Release に添付するファイル名（zip する場合は作成後の名前。例: `ZenHanConverter.App.MewUI.zip`） |
 | `zip` | 配布前に zip 化する場合は `true`。`output` が単一ファイル（exe）でもフォルダ（exe + ネイティブ DLL）でも同じ指定で扱える |
 
 **UI を増やす場合はこの配列に要素を追加します。** ワークフローとスクリプトの変更は不要です。

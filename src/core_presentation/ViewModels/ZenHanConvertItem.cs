@@ -1,5 +1,5 @@
-using EsUtil.ClipboardZenHanConverter.Core.Enums;
-using EsUtil.ClipboardZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.Core.Enums;
+using EsUtil.ZenHanConverter.Core.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 
-namespace EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+namespace EsUtil.ZenHanConverter.Presentation.ViewModels;
 
 /// <summary>設定画面の変換項目を表す ViewModel クラスです。</summary>
 /// <remarks>

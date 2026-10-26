@@ -2,7 +2,7 @@
 setlocal
 
 rem ============================================================
-rem  ClipboardZenHanConverter (WinUI 3) Release ビルド&実行スクリプト
+rem  ZenHanConverter (WinUI 3) Release ビルド&実行スクリプト
 rem  Release 構成でビルドし、生成された exe を実行する
 rem  （publish を行わないため、単一ファイル化は適用されない）
 rem ============================================================
@@ -12,7 +12,7 @@ pushd "%~dp0.."
 
 set "PROJECT=src\app_WinUI3\app_WinUI3.csproj"
 set "TFM=net10.0-windows10.0.26100.0"
-set "APP_NAME=ClipboardZenHanConverter.App.WinUI3.exe"
+set "APP_NAME=ZenHanConverter.App.WinUI3.exe"
 
 rem WinUI 3 は自己完結（SelfContained）のため、出力は TFM 配下の RID フォルダになる
 set "APPDIR=%CD%\src\app_WinUI3\bin\Release\%TFM%"

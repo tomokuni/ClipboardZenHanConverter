@@ -1,13 +1,13 @@
-using EsUtil.ClipboardZenHanConverter.App.WinUI.ViewModels;
-using EsUtil.ClipboardZenHanConverter.App.WinUI.Views;
-using EsUtil.ClipboardZenHanConverter.Core.Interfaces;
-using EsUtil.ClipboardZenHanConverter.Core.Logic;
-using EsUtil.ClipboardZenHanConverter.Core.Models;
-using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
+using EsUtil.ZenHanConverter.App.WinUI.ViewModels;
+using EsUtil.ZenHanConverter.App.WinUI.Views;
+using EsUtil.ZenHanConverter.Core.Interfaces;
+using EsUtil.ZenHanConverter.Core.Logic;
+using EsUtil.ZenHanConverter.Core.Models;
+using EsUtil.ZenHanConverter.Presentation.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Dispatching;
 
-namespace EsUtil.ClipboardZenHanConverter.App.WinUI.Services;
+namespace EsUtil.ZenHanConverter.App.WinUI.Services;
 
 /// <summary>依存性注入（DI）コンテナへのサービス登録を提供する拡張メソッドクラス。</summary>
 /// <remarks>App.xaml.cs での責務を分離し、サービス登録ロジックを専用クラスに抽出します。<br/>
@@ -18,7 +18,7 @@ public static class DependencyInjectionExtensions
     /// <param name="services">サービスコレクション。</param>
     /// <remarks>登録対象: ナビゲーションサービス、クリップボードサービス、コアロジック（CharConverter）、
     /// モデル（AppSetting、ConvertConfig）、ViewModels（MainWindow/Home/Settings）、Views（MainWindow/HomePage/SettingsPage）</remarks>
-    public static IServiceCollection AddClipboardZenHanConverterServices(this IServiceCollection services)
+    public static IServiceCollection AddZenHanConverterServices(this IServiceCollection services)
     {
         // サービス
         services.AddSingleton<INavigationService, NavigationService>();

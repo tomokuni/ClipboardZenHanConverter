@@ -1,4 +1,4 @@
-# ClipboardZenHanConverter.Core システム仕様書
+# ZenHanConverter.Core システム仕様書
 
 本ドキュメントは `src/core` プロジェクトのシステム仕様（概要・アーキテクチャ・構成・変換フロー）を記載します。
 メソッド内部のコードは記載しません。
@@ -142,7 +142,7 @@ flowchart TD
 ## 設定の自動保存
 
 `SettingsPersistenceBase<T>` がプロパティ変更を監視し、300ms のデバウンス後に JSON ファイルへ保存します。
-保存先は `%LOCALAPPDATA%\ClipboardZenHanConverter\` 配下（`Settings.json` / `AppSetting.json`）。
+保存先は `%LOCALAPPDATA%\ZenHanConverter\` 配下（`Settings.json` / `AppSetting.json`）。
 
 ## テスト
 

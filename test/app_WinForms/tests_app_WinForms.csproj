@@ -6,8 +6,8 @@
     <IsPackable>false</IsPackable>
     <!-- 参照先の app_WinForms が WinForms を使用するため、テスト側でも同じフレームワーク参照が必要 -->
     <UseWindowsForms>true</UseWindowsForms>
-    <RootNamespace>EsUtil.ClipboardZenHanConverter.Tests.App.WinForms</RootNamespace>
-    <AssemblyName>ClipboardZenHanConverter.Tests.App.WinForms</AssemblyName>
+    <RootNamespace>EsUtil.ZenHanConverter.Tests.App.WinForms</RootNamespace>
+    <AssemblyName>ZenHanConverter.Tests.App.WinForms</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

@@ -2,7 +2,7 @@
 setlocal
 
 rem ============================================================
-rem  ClipboardZenHanConverter (MewUI) 単一 exe ビルド&実行スクリプト
+rem  ZenHanConverter (MewUI) 単一 exe ビルド&実行スクリプト
 rem  MewUI_publish_singleaot.bat で Native AOT build し、実行する
 rem ============================================================
 
@@ -14,7 +14,7 @@ if "%~1"=="" (set "RID=win-x64") else (set "RID=%~1")
 
 rem 出力先は MewUI_publish_singleaot.bat と揃える（絶対パス）
 set "OUTDIR=%CD%\publish\mewui-%RID%-singleaot"
-set "APP_EXE=%OUTDIR%\ClipboardZenHanConverter.App.MewUI.exe"
+set "APP_EXE=%OUTDIR%\ZenHanConverter.App.MewUI.exe"
 
 rem ビルドを実行（同じフォルダにある publish スクリプトを呼ぶ）
 call "%~dp0MewUI_publish_singleaot.bat" %RID%
