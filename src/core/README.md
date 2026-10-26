@@ -10,17 +10,17 @@
 - `Models/` — `ConvertConfig`, `ReplacePair`, `SegmentItem`, `SegmentDefinitions`, `AppSetting`, `SettingsPersistenceBase`
 - `Interfaces/` — `IClipboardService`, `ITextConverter`
 - `Logic/` — `CharConverter`（変換ロジック）, `ClipboardChangeDetector`（クリップボード変更検出）
-- `Helpers/` — `ZenHanConverterExtension`（変換ペア解決拡張）, `WindowPlacement`（ウィンドウ位置補正）
-- `Geometry/` — DIP 座標の幾何型（`PointD`, `SizeD`, `RectD`）
-- `Native/` — Win32 API ラッパー（`Win32Clipboard`, `Win32Display`, `PixelBounds`）
+- `Helpers/` — `ZenHanConverterExtension`（変換ペア解決拡張）, `WindowPlacement`（ウィンドウ位置補正）, `SplitLayout`（上下 2 分割の比率）
+- `Native/` — 仮想画面と DIP ⇔ 物理ピクセルの換算（`ScreenVisibleArea`）
 - `Icons/` — Fluent Icons の SVG アセットとパスデータ提供（`FluentIconData`）
 
 ## 依存
 
 - `CommunityToolkit.Mvvm` — ObservableProperty 生成・変更通知
-- `EsUtil.Text.ZenHanConverter` — 全角/半角変換ペア
+- `EsUtil.Feature.ZenHan.Core`（プロジェクト参照）— 全角/半角変換ペア
+- `EsUtil.Platform.Core`（プロジェクト参照）— 幾何型（`EsPoint` / `EsSize` / `EsRect`）・DPI 換算・クリップボードと仮想画面の Win32 実装
 
-UI フレームワークおよび Win32 以外の OS API には依存しません。
+UI フレームワークには依存しません。 Win32 API の呼び出しは `EsUtil.Platform.Core` の `Native.Win` が単一所有します。
 
 ## 主なクラス
 
@@ -28,7 +28,6 @@ UI フレームワークおよび Win32 以外の OS API には依存しませ�
 - `SegmentDefinitions` — 設定画面の変換カテゴリ定義（ラベル・セグメント項目・バインド先）
 - `CharConverter` — テキスト変換の実行
 - `ClipboardChangeDetector` — シーケンス番号によるクリップボード内容変更の検出
-- `WindowPlacement` — 保存位置の表示領域内への補正
-- `Win32Clipboard` — クリップボードの読み書きとシーケンス番号取得
-- `Win32Display` — 仮想画面（全モニタの外接矩形）の取得
+- `WindowPlacement` — 保存位置の表示領域内への補正（DIP の幾何型は `EsUtil.Platform.Core`）
+- `ScreenVisibleArea` — 仮想画面の取得（`EsUtil.Platform.Core` の `WinVirtualScreen`）と DIP ⇔ 物理ピクセルの換算
 - `FluentIconData` — Fluent Icons の SVG パスデータ（MewUI / WinUI3 の双方で利用可能）

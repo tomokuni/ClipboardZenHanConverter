@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Services;
 using EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.ViewModels;
-using EsUtil.ClipboardZenHanConverter.Core.Geometry;
+using EsUtil.Platform.Core.Geometry;
 using EsUtil.ClipboardZenHanConverter.Core.Helpers;
 using EsUtil.ClipboardZenHanConverter.Core.Models;
 using EsUtil.ClipboardZenHanConverter.Core.Native;
@@ -127,7 +127,7 @@ public partial class MainWindow : Window
 
         var scale = CurrentScale();
         var target = ScreenVisibleArea.Clamp(
-            new PointD(savedX, savedY), new SizeD(ClientSize.Width, ClientSize.Height), scale);
+            new EsPoint(savedX, savedY), new EsSize(ClientSize.Width, ClientSize.Height), scale);
         Position = new PixelPoint(
             ScreenVisibleArea.ToPhysical(target.X, scale),
             ScreenVisibleArea.ToPhysical(target.Y, scale));

@@ -12,7 +12,12 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.*" />
-    <PackageReference Include="EsUtil.Text.ZenHanConverter" Version="1.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- EsUtil は隣のリポジトリをプロジェクト参照で使う（型の変更が即座に反映されるため）。 -->
+    <ProjectReference Include="..\..\..\EsUtil\EsUtil\Feature.ZenHan.Core\src\EsUtil.Feature.ZenHan.Core.csproj" />
+    <ProjectReference Include="..\..\..\EsUtil\EsUtil\Platform.Core\src\EsUtil.Platform.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

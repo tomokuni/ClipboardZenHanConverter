@@ -61,7 +61,7 @@
 
 #### `MultiColumnPanel : Panel`
 
-子要素を縦方向の複数列へ配置するパネル。列ごとに子要素を積み、最大列高さを最小化します。
+子要素を縦方向の複数列へ配置するパネル。列ごとに子要素を積み、最大列高さを最小化します（計算は `EsUtil.Feature.ColumnPacking.Core` の `ColumnPacker` へ委譲）。
 列幅はエンジンが列ごとに算出します（列幅 = その列の最大アイテム幅）。子要素の幅が揃っていれば各列の幅も揃います。
 
 - `double RowSpace` — 行間スペース（DIP、既定 4）
@@ -75,7 +75,7 @@
 #### `ClipboardService : IClipboardService`
 
 クリップボードの読み書きと変更監視。Win32 の `GetClipboardSequenceNumber` ポーリングで変更を検出します。
-Win32 API の呼び出しは `EsUtil.ClipboardZenHanConverter.Core.Native.Win32Clipboard`、変更検出は `EsUtil.ClipboardZenHanConverter.Core.Logic.ClipboardChangeDetector` へ委譲します。
+Win32 API の呼び出しは `EsUtil.Platform.Core` の `WinClipboard`、変更検出は `EsUtil.ClipboardZenHanConverter.Core.Logic.ClipboardChangeDetector` へ委譲します。
 ポーリングは `DispatcherTimer` で行い、`ContentChanged` を UI スレッドで発行します（購読側がバインド済みプロパティを更新するため）。
 
 - `event EventHandler<object>? ContentChanged`

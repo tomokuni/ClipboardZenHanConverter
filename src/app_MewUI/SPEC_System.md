@@ -16,8 +16,8 @@ UI フレームワークとして MewUI（コードファースト・NativeAOT �
 - MewUI（`Aprillz.MewUI.Windows` 0.*）
 - CommunityToolkit.Mvvm 8.*（変換設定・ViewModel）
 - Microsoft.Extensions.Hosting 10.*（DI）
-- EsUtil.Text.ZenHanConverter（変換ペア、`src/core` 経由）
-- EsUtil.Algorithm.MultiColumnLayoutEngine 1.*（マルチカラム配置の計算）
+- EsUtil.Feature.ZenHan.Core（変換ペア。`src/core` のプロジェクト参照経由）
+- EsUtil.Feature.ColumnPacking.Core（プロジェクト参照。マルチカラム配置の計算）
 
 ## アーキテクチャ
 
@@ -38,7 +38,7 @@ src/app_MewUI
 │   ├── MainWindow.cs
 │   ├── HomeView.cs
 │   ├── SettingsView.cs
-│   ├── MultiColumnPanel.cs  マルチカラム配置パネル
+│   ├── MultiColumnPanel.cs  マルチカラム配置パネル（計算は EsUtil.Feature.ColumnPacking.Core）
 │   ├── SegmentItems.cs      セグメント構築ヘルパー
 │   ├── ViewExtensions.cs    選択・置換行バインディングヘルパー
 │   └── Global.cs            メインウィンドウへのアクセサ
@@ -56,7 +56,7 @@ src/app_MewUI
 flowchart LR
     App[src/app_MewUI (MewUI)] -->|参照| Core[src/core (UI 非依存)]
     AppWin[src/app_WinUI3 (WinUI 3)] -->|参照| Core
-    Core -->|PackageReference| EsUtil[EsUtil.Text.ZenHanConverter]
+    Core -->|ProjectReference| EsUtil[EsUtil.Feature.ZenHan.Core]
     App -->|PackageReference| MewUI[Aprillz.MewUI.Windows]
 ```
 
@@ -66,14 +66,14 @@ flowchart LR
 
 | コンポーネント | 責務 |
 | --- | --- |
-| `ClipboardService` | クリップボード読み書き・変更監視（ポーリング）。Win32 P/Invoke は Core.Native、変更検出は Core.Logic の ClipboardChangeDetector へ委譲 |
-| `Win32Clipboard` / `Win32Display`（Core.Native） | Win32 P/Invoke（クリップボードの読み書き・シーケンス番号取得・仮想画面取得）。UI フレームワーク非依存のため Core 層に配置 |
+| `ClipboardService` | クリップボード読み書き・変更監視（ポーリング）。Win32 P/Invoke は `EsUtil.Platform.Core` の `WinClipboard`、変更検出は Core.Logic の ClipboardChangeDetector へ委譲 |
+| `WinClipboard` / `WinVirtualScreen`（`EsUtil.Platform.Core`） | クリップボードの読み書き・シーケンス番号取得・仮想画面取得。Win32 P/Invoke は EsUtil が単一所有 |
 | `INavigationService` | ナビゲーションの抽象（`ResolveView`） |
 | `NavigationService` | NavigationView のコンテンツ解決・ビューキャッシュ |
 | `HomeViewModel` | クリップボードイベント受信→変換→書き戻し（クリップボード変換の有効/無効に従う） |
 | `SettingsViewModel` | 変換設定の編集・プリセット管理・JSON 入出力（プリセット選択の単一所有元） |
 | `FluentIcons` | Core のパスデータから MewUI のアイコン形状を生成（初回のみ） |
-| `MultiColumnPanel` | 子要素を縦方向の複数列へ配置するパネル（配置計算は MultiColumnLayoutEngine へ委譲） |
+| `MultiColumnPanel` | 子要素を縦方向の複数列へ配置するパネル（配置計算は `EsUtil.Feature.ColumnPacking.Core` の `ColumnPacker` へ委譲） |
 | `MainWindow` | ウィンドウ（カスタムタイトルバー: アプリ名 + クリップボード変換スイッチ + プリセット選択 + ウィンドウ操作ボタン）・NavigationView によるナビゲーションシェル |
 | `HomeView` / `SettingsView` | 各画面のコードファースト UI |
 
@@ -146,7 +146,7 @@ MewUI 側の `FluentIcons` がそのパスデータを `PathGeometry.Parse` で�
 ## 設定画面のマルチカラム
 
 記号の変換は項目数が多いため、`MultiColumnPanel` でマルチカラム表示します（項目数が少ない他のカテゴリは単一列）。
-`MultiColumnPanel` は子要素を列ごとに縦へ積み、最大列高さを最小化する配置を UI 非依存の `MultiColumnLayoutEngine` に解かせ、算出された各アイテムの座標とサイズをそのまま配置へ反映します。
+`MultiColumnPanel` は子要素を列ごとに縦へ積み、最大列高さを最小化する配置を UI 非依存の `EsUtil.Feature.ColumnPacking.Core` の `ColumnPacker` に解かせ、算出された各アイテムの座標とサイズをそのまま配置へ反映します。
 測定で得た子要素サイズを入力とし、配置時は測定結果を再利用するため再計算は行いません。
 列幅はエンジンが列ごとに算出します（列幅 = その列の最大アイテム幅）。変換項目行の幅は名称の長さに依存するため、列ごとに必要な幅が割り当てられ、列幅は列ごとに異なります。
 
@@ -182,12 +182,12 @@ MewUI 側の `FluentIcons` がそのパスデータを `PathGeometry.Parse` で�
 なお `Window.RestoreBounds` は OS 起点の最大化で最大化後の値を返すため採用せず、通常状態の値（`ClientSizeChanged` と `WindowStateChanged`、およびドラッグ移動の完了時）を自前で追跡します。
 
 保存位置が表示領域外の場合は `ScreenVisibleArea.Clamp`（Core の Win32 依存を吸収したヘルパー）で補正します。  
-呼び出し側で MewUI の `Point` / `Size` / `Rect` を Core の `PointD` / `SizeD` / `RectD`（DIP 座標）へ変換します。
+呼び出し側で MewUI の `Point` / `Size` / `Rect` を `EsUtil.Platform.Core.Geometry` の `EsPoint` / `EsSize` / `EsRect`（DIP 座標）へ変換します。
 
 - 一部が表示領域外: はみ出した辺を表示領域の内側へ詰めて表示（ウィンドウ全体が見える位置へ移動）
 - 完全に表示領域外: 原点（プライマリモニタの左上）へ移動
 
-表示領域は仮想画面（全モニタの外接矩形）を `Win32Display` が物理ピクセルで取得し、ウィンドウの DPI スケールで DIP へ換算したものです。このためマルチモニタ構成でも、いずれかのモニタが見えていればその位置を維持します。
+表示領域は仮想画面（全モニタの外接矩形）を `EsUtil.Platform.Core` の `WinVirtualScreen` が物理ピクセルで取得し、ウィンドウの DPI スケールで DIP へ換算したものです。このためマルチモニタ構成でも、いずれかのモニタが見えていればその位置を維持します。
 
 ## クリップボード変換
 

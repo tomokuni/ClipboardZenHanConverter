@@ -105,7 +105,7 @@
 
 #### `ClipboardService : IClipboardService`
 
-クリップボードの読み書きと変更監視。読み書きは Core の `Win32Clipboard`、変更検出は Core の `ClipboardChangeDetector` へ委譲し、`DispatcherTimer` でポーリングします。
+クリップボードの読み書きと変更監視。読み書きは `EsUtil.Platform.Core` の `WinClipboard`、変更検出は Core の `ClipboardChangeDetector` へ委譲し、`DispatcherTimer` でポーリングします。
 
 - `event EventHandler<object>? ContentChanged` — 内容変更イベント（UI スレッドで発行）
 - `Task<string?> GetTextAsync()` / `void SetText(string text)` / `void Flush()`

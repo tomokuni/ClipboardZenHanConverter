@@ -1,6 +1,6 @@
 using EsUtil.ClipboardZenHanConverter.App.WinUI.Helpers;
 using EsUtil.ClipboardZenHanConverter.App.WinUI.ViewModels;
-using EsUtil.ClipboardZenHanConverter.Core.Geometry;
+using EsUtil.Platform.Core.Geometry;
 using EsUtil.ClipboardZenHanConverter.Core.Models;
 using EsUtil.ClipboardZenHanConverter.Core.Native;
 using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
@@ -138,7 +138,7 @@ public sealed partial class MainWindow : Window
             return;
 
         var target = ScreenVisibleArea.Clamp(
-            new PointD(savedX, savedY), new SizeD(AppSetting.WindowWidth, AppSetting.WindowHeight), dpiScale);
+            new EsPoint(savedX, savedY), new EsSize(AppSetting.WindowWidth, AppSetting.WindowHeight), dpiScale);
         AppWindow.Move(new PointInt32((int)(target.X * dpiScale), (int)(target.Y * dpiScale)));
     }
 

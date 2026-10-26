@@ -3,7 +3,7 @@ using Aprillz.MewUI.Controls;
 using Aprillz.MewUI.Rendering;
 using EsUtil.ClipboardZenHanConverter.App.MewUI.Helpers;
 using EsUtil.ClipboardZenHanConverter.App.MewUI.Services;
-using EsUtil.ClipboardZenHanConverter.Core.Geometry;
+using EsUtil.Platform.Core.Geometry;
 using EsUtil.ClipboardZenHanConverter.Core.Models;
 using EsUtil.ClipboardZenHanConverter.Core.Native;
 using EsUtil.ClipboardZenHanConverter.Presentation.ViewModels;
@@ -174,7 +174,7 @@ public sealed class MainWindow : Window
             return;
 
         var clamped = ScreenVisibleArea.Clamp(
-            new PointD(savedX, savedY), new SizeD(ClientSize.Width, ClientSize.Height), DpiScale);
+            new EsPoint(savedX, savedY), new EsSize(ClientSize.Width, ClientSize.Height), DpiScale);
 
         Position = new Point(clamped.X, clamped.Y);
     }

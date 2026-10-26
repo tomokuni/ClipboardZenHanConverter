@@ -1,9 +1,8 @@
 using Avalonia.Threading;
 using EsUtil.ClipboardZenHanConverter.Core.Interfaces;
 using EsUtil.ClipboardZenHanConverter.Core.Logic;
-using EsUtil.ClipboardZenHanConverter.Core.Native;
+using EsUtil.Platform.Core.Native.Win;
 using System;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Services;
@@ -16,7 +15,7 @@ namespace EsUtil.ClipboardZenHanConverter.App.AvaloniaUI.Services;
 /// - 書き戻し後のフラッシュ（アプリ終了後も内容を保持）<br/><br/>
 /// 特徴: <br/>
 /// - IClipboardService インターフェース実装（DIP）<br/>
-/// - 読み書きは Core.Native の Win32Clipboard、変更検出は Core.Logic の ClipboardChangeDetector へ委譲<br/>
+/// - 読み書きは EsUtil.Platform.Core の WinClipboard、変更検出は Core.Logic の ClipboardChangeDetector へ委譲<br/>
 /// - DispatcherTimer によるポーリングでクリップボード変更を検出<br/>
 /// - アクセス拒否時などは握り潰してアプリ動作を継続<br/><br/>
 /// 注意点: <br/>
@@ -57,18 +56,9 @@ public sealed class ClipboardService : IClipboardService
             ContentChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    /// <summary>クリップボードシーケンス番号を安全に取得します。失敗時は 0 を返します。</summary>
-    private static uint SafeGetSequence()
-    {
-        try
-        {
-            return Win32Clipboard.GetClipboardSequenceNumber();
-        }
-        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or ExternalException)
-        {
-            return 0;
-        }
-    }
+    /// <summary>クリップボードシーケンス番号を取得します。</summary>
+    /// <remarks>取得は例外を投げません（失敗時は 0 を返す）。</remarks>
+    private static uint SafeGetSequence() => WinClipboard.SequenceNumber;
 
     /// <summary>テスト用に ContentChanged イベントを発行します。</summary>
     public void RaiseContentChanged() => ContentChanged?.Invoke(this, EventArgs.Empty);
@@ -76,30 +66,12 @@ public sealed class ClipboardService : IClipboardService
     /// <summary>クリップボードからテキストを非同期に取得します。</summary>
     /// <returns>取得したテキスト。取得できない場合は null。</returns>
     public Task<string?> GetTextAsync()
-    {
-        try
-        {
-            return Task.FromResult(Win32Clipboard.GetText());
-        }
-        catch (ExternalException)
-        {
-            return Task.FromResult<string?>(null);
-        }
-    }
+        => Task.FromResult(WinClipboard.TryReadText(out var text) ? text : null);
 
     /// <summary>指定されたテキストをクリップボードに設定します。</summary>
     /// <param name="text">設定するテキスト。</param>
-    public void SetText(string text)
-    {
-        try
-        {
-            Win32Clipboard.SetText(text);
-        }
-        catch (ExternalException)
-        {
-            // バックグラウンド時などクリップボードアクセスが拒否されるケースは想定内の通常動作。
-        }
-    }
+    /// <remarks>バックグラウンド時などクリップボードへ書き込めない場合は何もしません（想定内の通常動作）。</remarks>
+    public void SetText(string text) => _ = WinClipboard.TryWriteText(text);
 
     /// <summary>クリップボードの内容をフラッシュ（永続化）します。</summary>
     /// <remarks>CF_UNICODETEXT は SetClipboardData 時点で永続化されるため、明示的なフラッシュ操作は不要です。</remarks>

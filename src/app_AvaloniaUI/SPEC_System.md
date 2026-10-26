@@ -17,7 +17,7 @@ UI フレームワークとして Avalonia UI（クロスプラットフォー�
 - AvaloniaUI.DiagnosticsSupport 2.*（Debug 構成のみ。廃止された `Avalonia.Diagnostics` は使用しません）
 - CommunityToolkit.Mvvm 8.*（変換設定・ViewModel）
 - Microsoft.Extensions.Hosting 10.*（DI）
-- EsUtil.Text.ZenHanConverter（変換ペア、`src/core` 経由）
+- EsUtil.Feature.ZenHan.Core（変換ペア。`src/core` のプロジェクト参照経由）
 
 ## 共有コア
 
@@ -32,7 +32,7 @@ flowchart LR
     AppMewUI[src/app_MewUI (MewUI)] -->|参照| Core[src/core (UI 非依存)]
     AppWinUI3[src/app_WinUI3 (WinUI 3)] -->|参照| Core
     AppAvalonia[src/app_AvaloniaUI (Avalonia UI)] -->|参照| Core
-    Core -->|PackageReference| EsUtil[EsUtil.Text.ZenHanConverter]
+    Core -->|ProjectReference| EsUtil[EsUtil.Feature.ZenHan.Core]
     AppAvalonia -->|PackageReference| Avalonia[Avalonia UI]
 ```
 
@@ -268,7 +268,7 @@ Avalonia 側の `FluentIcons` がそのパスデータを `Geometry.Parse` で�
 - 一部が表示領域外: はみ出した辺を表示領域の内側へ詰めて表示
 - 完全に表示領域外: 原点（プライマリモニタの左上）へ移動
 
-表示領域は仮想画面（全モニタの外接矩形）を `Win32Display` が物理ピクセルで取得し、DPI スケールで DIP へ換算したものです。
+表示領域は仮想画面（全モニタの外接矩形）を `EsUtil.Platform.Core` の `WinVirtualScreen` が物理ピクセルで取得し、DPI スケールで DIP へ換算したものです。
 このためマルチモニタ構成でも、いずれかのモニタが見えていればその位置を維持します。
 
 ### 実装上の注意（Avalonia 固有）

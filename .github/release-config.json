@@ -1,7 +1,7 @@
 {
   "product": "ClipboardZenHanConverter",
   "versionFile": "Directory.Build.props",
-  "solutionFile": "ClipboardZenHanConverter.slnx",
+  "solutionFile": "ZenHanConverter.slnx",
   "gateWorkflow": "build.yml",
   "releaseBranches": [
     "main",

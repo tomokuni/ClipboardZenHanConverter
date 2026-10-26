@@ -15,11 +15,11 @@ UI フレームワークとして WinUI 3（Windows App SDK）を使用します
 - CommunityToolkit.Mvvm 8.*（変換設定・ViewModel）
 - CommunityToolkit.WinUI.Controls.*（Segmented / SettingsControls / Primitives）
 - CommunityToolkit.WinUI.UI.Controls.DataGrid 7.*
-- EsUtil.Algorithm.MultiColumnLayoutEngine 1.*（マルチカラム配置の計算）
+- EsUtil.Ui.WinUI3.ColumnPacking（プロジェクト参照。マルチカラム配置パネル `ColumnPackingPanel`）
 - Microsoft.Extensions.Hosting 10.*（DI）
 
-マルチカラム配置パネル `MultiColumnPanel` は `Views/Controls` に同梱ソースとして保持し、パッケージ参照を持ちません。
-配置計算のみ UI 非依存の `EsUtil.Algorithm.MultiColumnLayoutEngine` へ委譲します。
+マルチカラム配置パネルは `EsUtil.Ui.WinUI3.ColumnPacking` の `ColumnPackingPanel` を使います（同梱ソースは持ちません）。
+配置計算は UI 非依存の `EsUtil.Feature.ColumnPacking.Core` が単一所有し、パネルはその結果を要素の配置へ写します。
 
 ## 共有コア
 
@@ -435,29 +435,19 @@ DI コンテナへのサービス登録拡張メソッド。
 
 ---
 
-### src/app_WinUI3/Views/Controls/MultiColumnPanel.cs
-
-#### `MultiColumnPanel` sealed class
+### マルチカラム配置パネル（`EsUtil.Ui.WinUI3.ColumnPacking.ColumnPackingPanel`）
 
 子要素を縦方向の複数列へ配置し、配置に必要なサイズを算出するパネル。`ItemsControl` の `ItemsPanel` を置き換えられます。
-
-**基本クラス**: `DualSourceItemsPanel`（`abstract`）— `ItemsSource` と XAML 直接追加の子要素を併用可能にする基底クラス。
-子要素の状態は `DualSourceItemsManager` が単一所有し、パネル側は DependencyProperty のプロキシに徹します。
+**同梱ソースは持たず**、EsUtil のパネルをプロジェクト参照で使います（配置計算は `EsUtil.Feature.ColumnPacking.Core` が単一所有）。
 
 **プロパティ**:
 
 - `double RowSpace` — 行間スペース（ピクセル、既定値 8.0）
 - `double ColumnSpace` — 列間スペース（ピクセル、既定値 8.0）
 - `int ColumnLimit` — 最大列数（既定値 10）
-- `Method Method` — 配置アルゴリズム（`DynamicProgramming` / `BinarySearch` / `Greedy`、既定値 `BinarySearch`）
-- `double? LayoutUsedWidth` / `double? LayoutMinHeight` / `int? LayoutColumnCount` / `string? LayoutColumnSegments` — 直近の配置結果（読み取り専用、未計算時は null）
-
-**処理フロー**:
-
-1. `MeasureOverride` で子要素を無限サイズで測定し、自然サイズを取得
-2. 測定結果をアイテムサイズとして `MultiColumnLayoutEngine.Solve()` へ渡し、使用幅と最大列高さを算出
-3. 算出した使用幅と最大列高さを必要サイズとして返し、配置結果を上記プロパティへ公開
-4. `ArrangeOverride` で配置結果の座標とサイズをそのまま子要素へ反映
+- `ColumnPacker.Method Method` — 配置アルゴリズム（`DynamicProgramming` / `BinarySearch` / `Greedy`、既定値 `BinarySearch`）
+- `object? ItemsSource` / `DataTemplate? ItemTemplate` — `ItemsControl` 互換の項目指定
+- 直近の配置結果（読み取り専用、未計算時は null）
 
 **使用箇所**:
 
@@ -529,7 +519,7 @@ bool 値をチェックマーク文字列に変換（IValueConverter）。
 - 一部が表示領域外: はみ出した辺を表示領域の内側へ詰めて表示
 - 完全に表示領域外: 原点（プライマリモニタの左上）へ移動
 
-表示領域は仮想画面（全モニタの外接矩形）を `Win32Display` が物理ピクセルで取得し、ウィンドウの DPI スケールで DIP へ換算したものです。
+表示領域は仮想画面（全モニタの外接矩形）を `EsUtil.Platform.Core` の `WinVirtualScreen` が物理ピクセルで取得し、ウィンドウの DPI スケールで DIP へ換算したものです。
 WinUI の `AppWindow.Position` / `Size` は物理ピクセルを扱うため、保存・復元の両方向で `GetDpiForWindow` による換算を行います。
 
 ## クリップボード変換
@@ -564,7 +554,7 @@ test/
     └── Views/
         ├── SettingsPagePresetValidationTests.cs
         └── Controls/
-            └── DualSourceItemsManager.Tests.cs
+            └── (パネルは EsUtil.Ui.WinUI3.ColumnPacking を使うため、同梱のテストは持たない)
 ```
 
 ---

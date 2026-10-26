@@ -16,7 +16,7 @@ UI フレームワークに **Windows Forms**（.NET 10）を使用します。
 - Windows Forms（`UseWindowsForms` / `net10.0-windows`）
 - CommunityToolkit.Mvvm 8.*（変換設定・ViewModel）
 - Microsoft.Extensions.Hosting 10.*（DI）
-- EsUtil.Text.ZenHanConverter（変換ペア、`src/core` 経由）
+- EsUtil.Feature.ZenHan.Core（変換ペア。`src/core` のプロジェクト参照経由）
 
 ## 共有コア
 
@@ -278,7 +278,7 @@ sequenceDiagram
 
 - 変更検出は `System.Windows.Forms.Timer`（250ms）で `GetClipboardSequenceNumber` をポーリングし、Core の `ClipboardChangeDetector` に判定を委譲します。
 - タイマーは UI スレッドで動くため `ContentChanged` は常に UI スレッドで発行されます。`HomeViewModel` は生成時に捕捉した `SynchronizationContext` を持ち、UI スレッド以外からの通知を UI スレッドへ委譲します。
-- 読み書きは Core の `Win32Clipboard` へ委譲し、アクセス拒否時は例外を握り潰して動作を継続します。
+- 読み書きは `EsUtil.Platform.Core` の `WinClipboard` へ委譲し、書き込めない場合は何もせず動作を継続します。
 
 ## テストプロジェクト
 

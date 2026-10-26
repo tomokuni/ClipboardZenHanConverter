@@ -5,15 +5,16 @@
 
 ## システム概要
 
-`src/core` はクリップボードの全角/半角自動変換のコアロジック・データモデル・Win32 API ラッパーを提供するライブラリです。
+`src/core` はクリップボードの全角/半角自動変換のコアロジック・データモデル・ウィンドウ復元の補正を提供するライブラリです。
 **MewUI にも WinUI3 にも依存しない**ため、WinUI 3 版・MewUI 版の双方で共有できます。
 
 ## 技術スタック
 
 - .NET 10
 - CommunityToolkit.Mvvm 8.*
-- EsUtil.Text.ZenHanConverter 1.*（全角/半角変換ペア）
-- Win32 API（`user32.dll` の P/Invoke。UI フレームワーク非依存）
+- EsUtil.Feature.ZenHan.Core（プロジェクト参照。全角/半角変換ペア）
+- EsUtil.Platform.Core（プロジェクト参照。幾何型・DPI 換算・Win32 のクリップボード／仮想画面）
+- Win32 API（P/Invoke は EsUtil.Platform.Core が単一所有。UI フレームワーク非依存）
 - Fluent Icons の SVG アセット（埋め込みリソース。パスデータは UI フレームワーク非依存の文字列として提供）
 
 ## アーキテクチャ
@@ -25,13 +26,12 @@ src/core
 ├── Interfaces/   抽象化（DIP 用）
 ├── Logic/        変換ロジック（CharConverter）と変更検出（ClipboardChangeDetector）
 ├── Helpers/      変換ペア解決拡張、ウィンドウ位置補正、上下分割比率
-├── Geometry/     DIP 座標の幾何型（UI フレームワーク非依存）
-├── Native/       Win32 API ラッパー（UI フレームワーク非依存）
+├── Native/       仮想画面と DIP ⇔ 物理ピクセルの換算（Win32 の呼び出しは EsUtil.Platform.Core）
 └── Icons/        Fluent Icons の SVG アセットとパスデータ提供
 ```
 
-依存方向は単一方向（Helpers → Enums/Models/Geometry、Logic → Enums/Models/Helpers/Interfaces/Native、Native → Geometry、Icons → なし）です。
-UI（`src/app_MewUI`）は `Interfaces` と `Logic`・`Models`・`Helpers`・`Geometry`・`Native`・`Icons` を参照します（`INavigationService` は UI 要素を返すため App 層に配置）。
+依存方向は単一方向（Helpers → Enums/Models/EsUtil.Platform.Core、Logic → Enums/Models/Helpers/Interfaces、Native → EsUtil.Platform.Core、Icons → なし）です。
+UI（`src/app_MewUI`）は `Interfaces` と `Logic`・`Models`・`Helpers`・`Native`・`Icons` を参照します（`INavigationService` は UI 要素を返すため App 層に配置）。
 
 ## クラス図
 
@@ -99,22 +99,12 @@ classDiagram
         +SaveToJsonFile(string) void
         +LoadFromJsonFile(string) void
     }
-    class Win32Clipboard {
+    class ScreenVisibleArea {
         <<static>>
-        +GetClipboardSequenceNumber() uint
-        +SetText(string) void
-        +GetText() string?
-    }
-    class Win32Display {
-        <<static>>
-        +GetVirtualScreenBounds() PixelBounds
-    }
-    class PixelBounds {
-        <<record struct>>
-        +X int
-        +Y int
-        +Width int
-        +Height int
+        +GetVisibleArea(double) EsRect
+        +Clamp(EsPoint, EsSize, double) EsPoint
+        +ToPhysical(double, double) int
+        +ToDip(int, double) double
     }
     class FluentIconData {
         <<static>>
@@ -125,7 +115,6 @@ classDiagram
     ConvertConfig --|> SettingsPersistenceBase~T~
     CharConverter --> ConvertConfig
     CharConverter ..> ReplacePair
-    Win32Display ..> PixelBounds
     SegmentDefinitions ..> SegmentDefine
     SegmentDefine ..> ModePropDef
     SegmentDefine ..> SegmentItem
@@ -172,13 +161,10 @@ flowchart TD
 | `Helpers/ZenHanConverterExtensionTests` | モード別の変換ペア解決 |
 | `Helpers/WindowPlacementTests` | 表示領域内への位置補正（純粋ロジック） |
 | `Helpers/SplitLayoutTests` | 上下分割比率の換算と上下限の補正（純粋ロジック） |
-| `Geometry/PointDTests` / `SizeDTests` / `RectDTests` | DIP 幾何型の値の保持と端座標の算出 |
 | `Logic/ClipboardChangeDetectorTests` | シーケンス番号による変更検出 |
-| `Native/Win32DisplayTests` | 仮想画面の取得（正の幅・高さ） |
-| `Native/Win32ClipboardTests` | クリップボードシーケンス番号の取得 |
 | `Icons/FluentIconDataTests` | SVG パスデータの抽出とキャッシュ |
 
-`SetText` は実ユーザーのクリップボード内容を破壊するため、単体テストでは検証しません。
+クリップボードと仮想画面の Win32 実装（`EsUtil.Platform.Core`）は、EsUtil 側の `WinClipboardTests` が検証します。
 
 ## 例外処理ポリシー
 

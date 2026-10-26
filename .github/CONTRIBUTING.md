@@ -11,7 +11,7 @@
 ClipboardZenHanConverter/
 ├── Directory.Build.props           # 共通プロパティ（LangVersion / Nullable / ImplicitUsings / リリースバージョン）
 ├── global.json                     # .NET SDK のバージョンとテスト ランナー（ワークフローでは指定しない）
-├── ClipboardZenHanConverter.slnx
+├── ZenHanConverter.slnx
 ├── .github/
 │   ├── CONTRIBUTING.md            # 本ドキュメント（開発者向け）
 │   ├── RELEASE.md                 # リリース手順
@@ -74,7 +74,7 @@ ClipboardZenHanConverter/
 ## ビルド
 
 ```powershell
-dotnet build ClipboardZenHanConverter.slnx
+dotnet build ZenHanConverter.slnx
 ```
 
 ### 名前空間と using
@@ -90,7 +90,7 @@ dotnet build ClipboardZenHanConverter.slnx
 
 - メジャーが上がる変更（破壊的変更を含む）は自動では取り込まれません。手動で更新します。
 - **浮動指定（`12.*` など）は復元時に同一メジャーの最新版を解決します。** そのため更新が必要になるのはメジャーが上がったときだけです。
-  更新の有無は `dotnet list ClipboardZenHanConverter.slnx package --outdated` で確認できます（プレリリースも見る場合は `--include-prerelease`）。
+  更新の有無は `dotnet list ZenHanConverter.slnx package --outdated` で確認できます（プレリリースも見る場合は `--include-prerelease`）。
 - **推移依存（`SkiaSharp` など）は親パッケージが指定する範囲の最小版が選ばれます。** 直接参照で強制すると
   （例: Avalonia 12 に対する `SkiaSharp` 4 系・`HarfBuzzSharp` 14 系）描画や Native AOT が壊れる恐れがあるため、更新しません。
 - テストは **xunit.v3 4 系**（Microsoft.Testing.Platform）を使用します。VSTest 専用の `Microsoft.NET.Test.Sdk` / `xunit.runner.visualstudio` / `coverlet.collector` は参照しません。
@@ -112,7 +112,7 @@ dotnet build ClipboardZenHanConverter.slnx
 
 ```powershell
 # ソリューション全体（7 テストプロジェクト、449 件）
-dotnet test --solution ClipboardZenHanConverter.slnx
+dotnet test --solution ZenHanConverter.slnx
 
 # 個別に実行する場合（プロジェクトは --project で指定する）
 dotnet test --project test\core\tests_core.csproj
@@ -125,7 +125,7 @@ dotnet test --project test\parity\tests_parity.csproj
 ```
 
 **対象の指定には `--solution` / `--project` を使ってください。** xunit.v3 4 系は Microsoft.Testing.Platform（MTP）で
-実行され、位置引数（`dotnet test ClipboardZenHanConverter.slnx`）はテスト アプリへの引数として扱われて
+実行され、位置引数（`dotnet test ZenHanConverter.slnx`）はテスト アプリへの引数として扱われて
 **0 件・終了コード 5** になります（実行基盤の指定は `global.json` の `test.runner` が単一所有します）。
 
 **WinUI 3 を参照するテスト（`test/app_WinUI3` / `test/parity`）から WinRT（Windows App SDK）を起動しないでください。**
@@ -227,7 +227,7 @@ publish と同等の条件（クリーンな状態）で事前確認する場合
 
 ```powershell
 git clean -xdf -- src test
-dotnet restore ClipboardZenHanConverter.slnx
-dotnet build ClipboardZenHanConverter.slnx -c Release --no-restore
-dotnet test --solution ClipboardZenHanConverter.slnx -c Release --no-build
+dotnet restore ZenHanConverter.slnx
+dotnet build ZenHanConverter.slnx -c Release --no-restore
+dotnet test --solution ZenHanConverter.slnx -c Release --no-build
 ```

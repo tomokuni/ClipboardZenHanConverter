@@ -19,8 +19,11 @@
     <PackageReference Include="Aprillz.MewUI.Windows" Version="0.*" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.*" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.*" />
-    <!-- マルチカラム配置の計算は UI 非依存のアルゴリズムへ委譲する（WinUI3 版 MultiColumnPanel と同じ土台） -->
-    <PackageReference Include="EsUtil.Algorithm.MultiColumnLayoutEngine" Version="1.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- マルチカラム配置の計算は UI 非依存の EsUtil.Feature.ColumnPacking.Core へ委譲する -->
+    <ProjectReference Include="..\..\..\EsUtil\EsUtil\Feature.ColumnPacking.Core\src\EsUtil.Feature.ColumnPacking.Core.csproj" />
   </ItemGroup>
 
 </Project>

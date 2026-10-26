@@ -1,4 +1,4 @@
-using EsUtil.ClipboardZenHanConverter.Core.Geometry;
+using EsUtil.Platform.Core.Geometry;
 using System;
 
 namespace EsUtil.ClipboardZenHanConverter.Core.Helpers;
@@ -9,12 +9,12 @@ namespace EsUtil.ClipboardZenHanConverter.Core.Helpers;
 /// - 完全に表示領域外のウィンドウを原点へ戻す補正<br/><br/>
 /// 特徴: <br/>
 /// - UI フレームワークに依存しない純粋関数として提供し、ヘッドレスで単体テスト可能<br/>
-/// - 座標は DIP（<see cref="PointD"/> / <see cref="SizeD"/> / <see cref="RectD"/>）で扱う<br/>
+/// - 座標は DIP（<see cref="EsPoint"/> / <see cref="EsSize"/> / <see cref="EsRect"/>）で扱う<br/>
 /// - モニタ構成の違いは呼び出し側が表示領域（全モニタの外接矩形）として与える</remarks>
 public static class WindowPlacement
 {
     /// <summary>ウィンドウを移動させる原点（プライマリモニタの左上）。</summary>
-    private static readonly PointD Origin = new(0, 0);
+    private static readonly EsPoint Origin = new(0, 0);
 
     /// <summary>保存された位置を表示領域内へ補正します。</summary>
     /// <param name="saved">保存されたウィンドウ左上の位置（画面座標・DIP）。</param>
@@ -27,14 +27,14 @@ public static class WindowPlacement
     /// 3. 重なる場合は、はみ出した辺を表示領域の内側へ詰めて返却<br/><br/>
     /// 注意点: <br/>
     /// - ウィンドウが表示領域より大きい場合は、その軸の表示領域先頭へ寄せます</remarks>
-    public static PointD ClampToVisibleArea(PointD saved, SizeD windowSize, RectD visibleArea)
+    public static EsPoint ClampToVisibleArea(EsPoint saved, EsSize windowSize, EsRect visibleArea)
     {
         if (!Intersects(saved, windowSize, visibleArea))
             return Origin;
 
-        return new PointD(
-            ClampAxis(saved.X, visibleArea.Left, visibleArea.Right, windowSize.Width),
-            ClampAxis(saved.Y, visibleArea.Top, visibleArea.Bottom, windowSize.Height));
+        return new EsPoint(
+            ClampAxis(saved.X, visibleArea.X, visibleArea.Right, windowSize.Width),
+            ClampAxis(saved.Y, visibleArea.Y, visibleArea.Bottom, windowSize.Height));
     }
 
     /// <summary>ウィンドウが表示領域と重なるかを判定します。</summary>
@@ -42,11 +42,11 @@ public static class WindowPlacement
     /// <param name="size">ウィンドウのサイズ。</param>
     /// <param name="area">表示領域の外接矩形。</param>
     /// <returns>僅かでも重なる場合は true。</returns>
-    private static bool Intersects(PointD position, SizeD size, RectD area)
+    private static bool Intersects(EsPoint position, EsSize size, EsRect area)
         => position.X < area.Right
-        && position.X + size.Width > area.Left
+        && position.X + size.Width > area.X
         && position.Y < area.Bottom
-        && position.Y + size.Height > area.Top;
+        && position.Y + size.Height > area.Y;
 
     /// <summary>指定された軸の座標を表示領域内へ収まるように補正します。</summary>
     /// <param name="value">補正する座標。</param>

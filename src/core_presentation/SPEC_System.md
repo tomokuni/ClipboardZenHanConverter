@@ -35,7 +35,7 @@ UI フレームワークの型を一切参照せず、`src/core` と `CommunityT
 ┌───────────────────────────▼──────────────────────────────────┐
 │ Core 層（UI フレームワーク非依存）                            │
 │   ConvertConfig / SegmentDefinitions / CharConverter          │
-│   Win32Clipboard / WindowPlacement / ScreenVisibleArea ほか   │
+│   WindowPlacement / ScreenVisibleArea / CharConverter ほか    │
 └──────────────────────────────────────────────────────────────┘
 ```
 

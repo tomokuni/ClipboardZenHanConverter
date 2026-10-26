@@ -100,7 +100,7 @@ MTP モードではテスト対象を `--solution` / `--project` で指定しま
 | --- | --- | --- |
 | `product` | リリース名とアセットのタイトルに使う表示名 | `"ClipboardZenHanConverter"` |
 | `versionFile` | バージョン（`<Version>`）を記載するファイル（リポジトリルートからの相対パス） | `"Directory.Build.props"` |
-| `solutionFile` | ビルド・テストの対象となるソリューション ファイル（リポジトリルートからの相対パス） | `"ClipboardZenHanConverter.slnx"` |
+| `solutionFile` | ビルド・テストの対象となるソリューション ファイル（リポジトリルートからの相対パス） | `"ZenHanConverter.slnx"` |
 | `gateWorkflow` | リリースの前提（ゲート）となるワークフローのファイル名 | `"build.yml"` |
 | `releaseBranches` | **リリースを許可するブランチ**（完全一致とワイルドカード。未指定は `main` のみ。`release/` 配下は `release/<major>.<minor>` の形式に限定される） | `["main"]` / `["main", "release/**"]` |
 | `artifactRetentionDays` | アーティファクトの保持日数 | `30` |

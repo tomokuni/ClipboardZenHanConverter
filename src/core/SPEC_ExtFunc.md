@@ -186,12 +186,13 @@ UI セグメントコントロールの定義レコード。
 
 ### ウィンドウ位置補正（`EsUtil.ClipboardZenHanConverter.Core.Helpers`）
 
-UI フレームワークに依存しないため Core に配置しています。座標は DIP（`Geometry` の型）で扱います。
+UI フレームワークに依存しないため Core に配置しています。座標は DIP の幾何型で扱います
+（型は `EsUtil.Platform.Core.Geometry` の `EsPoint` / `EsSize` / `EsRect` を使います）。
 
 #### `WindowPlacement`
 | メンバー | 型 | 説明 |
 | --- | --- | --- |
-| `ClampToVisibleArea(PointD saved, SizeD windowSize, RectD visibleArea)` | `PointD` | 保存されたウィンドウ位置を表示領域内へ補正して返す |
+| `ClampToVisibleArea(EsPoint saved, EsSize windowSize, EsRect visibleArea)` | `EsPoint` | 保存されたウィンドウ位置を表示領域内へ補正して返す |
 
 補正内容は次のとおりです。
 
@@ -217,18 +218,6 @@ UI フレームワークに依存しないため Core に配置しています�
 
 `trackHeight` は上下 2 ペインの合計高さとし、分割バーの太さは含めません。
 
-### 幾何型（`EsUtil.ClipboardZenHanConverter.Core.Geometry`）
-
-DIP（デバイス非依存ピクセル）座標を表す `readonly record struct` です。物理ピクセルは `Native.PixelBounds` で扱います。
-
-| 型 | メンバー | 説明 |
-| --- | --- | --- |
-| `PointD` | `X` / `Y` | DIP 座標の点 |
-| `SizeD` | `Width` / `Height` | DIP 座標のサイズ |
-| `RectD` | `X` / `Y` / `Width` / `Height`、`Left` / `Right` / `Top` / `Bottom` | DIP 座標の矩形 |
-
-マルチモニタ構成では原点より左上のモニタが存在するため、負座標を含みます。
-
 ### 変更検出（`EsUtil.ClipboardZenHanConverter.Core.Logic`）
 
 #### `ClipboardChangeDetector`
@@ -241,46 +230,23 @@ DIP（デバイス非依存ピクセル）座標を表す `readonly record struc
 | `HasChanged()` | `bool` | 前回の確認から変化していれば true を返し、内部状態を更新する |
 | `RecommendedPollIntervalMs` | `int`（const） | 推奨するポーリング間隔（250 ミリ秒）。各 UI のクリップボード監視タイマーが共有する単一所有元 |
 
-### Win32 API（`EsUtil.ClipboardZenHanConverter.Core.Native`）
+### ウィンドウの復元（`EsUtil.ClipboardZenHanConverter.Core.Native`）
 
-UI フレームワークに依存しないため Core に配置しています。`user32.dll` を `LibraryImport`（ソース生成 P/Invoke）で呼び出します。
-
-#### `Win32Clipboard`
-
-| メンバー | 型 | 説明 |
-| --- | --- | --- |
-| `GetClipboardSequenceNumber()` | `uint` | クリップボードが変更されるたびに増加するシーケンス番号。値の変化で内容変更を検出する |
-| `SetText(string text)` | `void` | 指定テキストを `CF_UNICODETEXT` として設定。失敗時は `Win32Exception` |
-| `GetText()` | `string?` | クリップボードのテキスト。テキスト形式でない場合は `null` |
-
-#### `Win32Display`
-
-| メンバー | 型 | 説明 |
-| --- | --- | --- |
-| `GetVirtualScreenBounds()` | `PixelBounds` | 仮想画面（全モニタを包含する外接矩形）を物理ピクセルで取得 |
+UI フレームワークに依存しないため Core に配置しています。Win32 の P/Invoke は `EsUtil.Platform.Core` が単一所有します。
 
 #### `ScreenVisibleArea`
 
 仮想画面（全モニタの外接矩形）に基づくウィンドウ位置の補正を提供します。
-`Win32Display`（物理ピクセルの取得）と `WindowPlacement`（補正ロジック）を組み合わせ、各 UI のウィンドウ復元処理から重複を排除します。
+`EsUtil.Platform.Core` の `WinVirtualScreen`（物理ピクセルの取得）と `WindowPlacement`（補正ロジック）を
+組み合わせ、各 UI のウィンドウ復元処理から重複を排除します。 DPI スケールの正規化は
+`EsUtil.Platform.Core.Coord.DpiScaler.NormalizeScaling` が単一所有します。
 
 | メンバー | 型 | 説明 |
 | --- | --- | --- |
-| `GetVisibleArea(double scale)` | `RectD` | 仮想画面の外接矩形を DIP で取得。`scale` が 0 以下なら 100% とみなす |
-| `Clamp(PointD saved, SizeD windowSize, double scale)` | `PointD` | 保存されたウィンドウ位置を表示領域内へ補正して返す |
+| `GetVisibleArea(double scale)` | `EsRect` | 仮想画面の外接矩形を DIP で取得。`scale` が 0 以下なら 100% とみなす |
+| `Clamp(EsPoint saved, EsSize windowSize, double scale)` | `EsPoint` | 保存されたウィンドウ位置を表示領域内へ補正して返す |
 | `ToPhysical(double dip, double scale)` | `int` | DIP を物理ピクセルへ換算（四捨五入）。丸め規則を一元管理する |
 | `ToDip(int physical, double scale)` | `double` | 物理ピクセルを DIP へ換算 |
-
-#### `PixelBounds`（`readonly record struct`）
-
-物理ピクセル座標系の矩形。マルチモニタ構成では負座標を含みます。
-
-| メンバー | 型 | 説明 |
-| --- | --- | --- |
-| `X` / `Y` | `int` | 左上の座標（物理ピクセル） |
-| `Width` / `Height` | `int` | 幅・高さ（物理ピクセル） |
-
-DIP への換算は呼び出し側の DPI スケールで行います（Core は DPI スケールを知りません）。
 
 ### アイコンデータ（`EsUtil.ClipboardZenHanConverter.Core.Icons`）
 

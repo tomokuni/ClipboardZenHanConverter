@@ -1,6 +1,6 @@
 using Aprillz.MewUI;
 using Aprillz.MewUI.Controls;
-using EsUtil.Algorithm;
+using EsUtil.Feature.ColumnPacking;
 using System;
 using System.Collections.Generic;
 
@@ -11,7 +11,7 @@ namespace EsUtil.ClipboardZenHanConverter.App.MewUI.Views;
 /// - 子要素を列ごとに縦へ積み、最大列高さを最小化するマルチカラム配置<br/>
 /// - 行間（RowSpace）・列間（ColumnSpace）・列数上限（ColumnLimit）の指定<br/><br/>
 /// 特徴: <br/>
-/// - 配置計算は UI 非依存の MultiColumnLayoutEngine へ委譲し、実測した子要素サイズを入力とする<br/>
+/// - 配置計算は UI 非依存の EsUtil.Feature.ColumnPacking.Core の ColumnPacker へ委譲し、実測した子要素サイズを入力とする<br/>
 /// - 算出された各アイテムの座標とサイズをそのまま配置へ反映<br/>
 /// - 測定結果を保持し、配置時の再計算を排除</remarks>
 public sealed class MultiColumnPanel : Panel
@@ -89,7 +89,7 @@ public sealed class MultiColumnPanel : Panel
         if (!double.IsFinite(widthLimit) || widthLimit <= 0)
             widthLimit = GetMaxWidth(itemSizes);
 
-        var engine = new MultiColumnLayoutEngine(
+        var engine = new ColumnPacker(
             itemSizes,
             (Math.Max(0, RowSpace), Math.Max(0, ColumnSpace)),
             Math.Max(1, ColumnLimit));

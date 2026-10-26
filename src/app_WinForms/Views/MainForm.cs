@@ -1,6 +1,6 @@
 using EsUtil.ClipboardZenHanConverter.App.WinForms.Helpers;
 using EsUtil.ClipboardZenHanConverter.App.WinForms.ViewModels;
-using EsUtil.ClipboardZenHanConverter.Core.Geometry;
+using EsUtil.Platform.Core.Geometry;
 using EsUtil.ClipboardZenHanConverter.Core.Helpers;
 using EsUtil.ClipboardZenHanConverter.Core.Models;
 using EsUtil.ClipboardZenHanConverter.Core.Native;
@@ -554,8 +554,8 @@ public sealed class MainForm : Form
         }
 
         var clamped = ScreenVisibleArea.Clamp(
-            new PointD(savedX, savedY),
-            new SizeD(AppSetting.WindowWidth, AppSetting.WindowHeight),
+            new EsPoint(savedX, savedY),
+            new EsSize(AppSetting.WindowWidth, AppSetting.WindowHeight),
             scale);
 
         Location = new Point(
