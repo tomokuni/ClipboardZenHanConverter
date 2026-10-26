@@ -120,7 +120,7 @@ UI の追加・変更は **`release-config.json` の `uis[]` を編集します*
 
 | ワークフロー | 実行契機 | 内容 |
 | --- | --- | --- |
-| [`workflows/build.yml`](workflows/build.yml) | `main` への push、`main` 向け PR（**必ず実行**）、`release/**` への push、手動実行（dev など任意のブランチ） | 復元・ビルド・テスト（**配布物は作らない**） |
+| [`workflows/build.yml`](workflows/build.yml) | `main` への push（マージ後）、`main` 向け PR（**必ず実行**）、`dev` への push、手動実行（任意のブランチ） | 復元・ビルド・テスト（**配布物は作らない**） |
 | [`workflows/publish.yml`](workflows/publish.yml) | `workflow_call` | 全 UI の publish と保管の単一実装（`version` を受け取るとそのバージョンでビルドする） |
 | [`workflows/release.yml`](workflows/release.yml) | **手動実行のみ。 実行ブランチは `mode` に従う**（`dry-run` は `dryRunBranches`、公開は `releaseBranches`）。 `mode` で 2 段階（`dry-run` / `release`） | 検証 → SBOM → 全 UI の publish →（release のみ）**承認** → タグ + GitHub Release 作成 |
 
@@ -173,7 +173,6 @@ flowchart TD
 
 - **実行できるブランチは `release-config.json` の `dryRunBranches`（dry-run）と `releaseBranches`（公開）が決めます**（本リポジトリは dry-run が `["main", "dev"]`、公開が `["main"]`）。 **開発から dry-run までの確認は `dev` で行い、公開は `main` で行います**。
   `verify` ジョブが最初に実行ブランチを検証し、含まれない場合は失敗します。
-  `release/` 配下のブランチは **`release/<major>.<minor>`**（例: `release/0.1`）にしてください。
 - **`release` は、同じコミットの `dry-run` が成功していることを要求します**（実行名 `DryRun …` の成功実行を確認します）。
 - **版は自動採番しません**。入力 `version` は**確認用**であり、`Directory.Build.props` の `<Version>` と一致しなければ失敗します。
 - **タグは配布物の作成と承認が終わった後にだけ作ります**（作成に失敗しても、タグは消費されません）。
@@ -302,7 +301,7 @@ Get-MaxVersion -Versions @('1.0.0', '1.2.0')      # -> 1.2.0
 - `release.yml` は `actions: read`（ゲートと dry-run の参照）と `contents: write`（タグと Release）を使用します。
 - **`build.yml` は配布物を作成しません。** ゲートはビルドとテストの成功であり、配布物が作成できることはリリース実行時に初めて検証されます
   （publish の失敗はタグとバージョンを消費しません。上の「失敗した場合の復旧」を参照）。
-- `dev` への push では `build.yml` を実行しません。`dev` で検証する場合は `workflow_dispatch`（手動実行）を使用してください。
+- **`dev` への push でも `build.yml` を実行します**（作業ブランチの壊れを早く見つけるため）。 `main` 向け PR でも実行し、これが必須チェック `build` になります。
 - 配布物（アーティファクト）の保持期間は `release-config.json` の `artifactRetentionDays`（既定 30 日）です。
   保持期間を過ぎると `release.yml` の `release` ジョブが成果物を取得できなくなるため、リリースは publish の直後に完了させてください。
 - `release.yml` の `publish` と `release` は別ジョブのため、バージョンは 2 回適用されます（publish は作業ツリーのみ、release はコミット）。どちらも冪等で、同一の入力から同一の成果物になります。
