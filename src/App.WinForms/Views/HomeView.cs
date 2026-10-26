@@ -151,7 +151,7 @@ public sealed class HomeView : UserControl
     /// <param name="caption">入力欄の見出し。</param>
     /// <param name="textBox">配置するテキストボックス。</param>
     /// <returns>作成したペイン。</returns>
-    private Panel CreatePane(string caption, TextBox textBox)
+    private static Panel CreatePane(string caption, TextBox textBox)
     {
         var label = new Label
         {

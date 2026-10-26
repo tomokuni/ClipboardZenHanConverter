@@ -8,7 +8,7 @@ namespace EsUtil.ZenHanConverter.Tests.App.Core.Models;
 public sealed class SegmentItemTests
 {
     [Fact]
-    public void SegmentItem_既定では有効()
+    internal void SegmentItem_既定では有効()
     {
         var item = new SegmentItem("半角", ZenHanMode.ToHan);
 
@@ -16,7 +16,7 @@ public sealed class SegmentItemTests
     }
 
     [Fact]
-    public void SegmentItem_無効状態を保持する()
+    internal void SegmentItem_無効状態を保持する()
     {
         var item = new SegmentItem("半角", ZenHanMode.ToHan, IsEnabled: false);
 
@@ -24,7 +24,7 @@ public sealed class SegmentItemTests
     }
 
     [Fact]
-    public void SegmentItem_レコードの等価性()
+    internal void SegmentItem_レコードの等価性()
     {
         var a = new SegmentItem("半角", ZenHanMode.ToHan);
         var b = new SegmentItem("半角", ZenHanMode.ToHan);
@@ -35,7 +35,7 @@ public sealed class SegmentItemTests
     }
 
     [Fact]
-    public void SegmentDefine_既定値はセグメント未指定と自動高さ()
+    internal void SegmentDefine_既定値はセグメント未指定と自動高さ()
     {
         var def = new SegmentDefine("数字 の変換", ConvertConfig.Mode.Number);
 
@@ -46,7 +46,7 @@ public sealed class SegmentItemTests
     }
 
     [Fact]
-    public void SegmentDefine_セグメントと高さと有効状態を保持する()
+    internal void SegmentDefine_セグメントと高さと有効状態を保持する()
     {
         SegmentItem[] segments = [new("なし", ZenHanMode.None), new("半角", ZenHanMode.ToHan)];
 
@@ -59,7 +59,7 @@ public sealed class SegmentItemTests
     }
 
     [Fact]
-    public void SegmentDefine_Modeを通じて設定を読み書きできる()
+    internal void SegmentDefine_Modeを通じて設定を読み書きできる()
     {
         var config = TestHelper.CreateDefaultConfig();
         var def = new SegmentDefine("数字 の変換", ConvertConfig.Mode.Number);

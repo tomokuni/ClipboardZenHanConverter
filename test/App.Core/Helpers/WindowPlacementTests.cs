@@ -17,7 +17,7 @@ public sealed class WindowPlacementTests
     private static readonly EsSize s_defaultWindowSize = new(800, 600);
 
     [Fact]
-    public void ClampToVisibleArea_領域内の位置はそのまま返す()
+    internal void ClampToVisibleArea_領域内の位置はそのまま返す()
     {
         var result = WindowPlacement.ClampToVisibleArea(new EsPoint(100, 200), s_defaultWindowSize, s_primaryArea);
 
@@ -25,7 +25,7 @@ public sealed class WindowPlacementTests
     }
 
     [Fact]
-    public void ClampToVisibleArea_右にはみ出す場合は右端へ詰める()
+    internal void ClampToVisibleArea_右にはみ出す場合は右端へ詰める()
     {
         var result = WindowPlacement.ClampToVisibleArea(new EsPoint(1500, 100), s_defaultWindowSize, s_primaryArea);
 
@@ -33,7 +33,7 @@ public sealed class WindowPlacementTests
     }
 
     [Fact]
-    public void ClampToVisibleArea_下にはみ出す場合は下端へ詰める()
+    internal void ClampToVisibleArea_下にはみ出す場合は下端へ詰める()
     {
         var result = WindowPlacement.ClampToVisibleArea(new EsPoint(100, 900), s_defaultWindowSize, s_primaryArea);
 
@@ -41,7 +41,7 @@ public sealed class WindowPlacementTests
     }
 
     [Fact]
-    public void ClampToVisibleArea_左にはみ出す場合は左端へ詰める()
+    internal void ClampToVisibleArea_左にはみ出す場合は左端へ詰める()
     {
         var result = WindowPlacement.ClampToVisibleArea(new EsPoint(-100, 100), s_defaultWindowSize, s_primaryArea);
 
@@ -49,7 +49,7 @@ public sealed class WindowPlacementTests
     }
 
     [Fact]
-    public void ClampToVisibleArea_上にはみ出す場合は上端へ詰める()
+    internal void ClampToVisibleArea_上にはみ出す場合は上端へ詰める()
     {
         var result = WindowPlacement.ClampToVisibleArea(new EsPoint(100, -50), s_defaultWindowSize, s_primaryArea);
 
@@ -61,7 +61,7 @@ public sealed class WindowPlacementTests
     [InlineData(100, 1300)]
     [InlineData(-900, 100)]
     [InlineData(100, -700)]
-    public void ClampToVisibleArea_完全に領域外の場合は原点へ移動する(double x, double y)
+    internal void ClampToVisibleArea_完全に領域外の場合は原点へ移動する(double x, double y)
     {
         var result = WindowPlacement.ClampToVisibleArea(new EsPoint(x, y), s_defaultWindowSize, s_primaryArea);
 
@@ -72,7 +72,7 @@ public sealed class WindowPlacementTests
     [InlineData(1920, 100)]
     [InlineData(100, 1200)]
     [InlineData(-800, 100)]
-    public void ClampToVisibleArea_境界で接する場合は重なりとみなさない(double x, double y)
+    internal void ClampToVisibleArea_境界で接する場合は重なりとみなさない(double x, double y)
     {
         var result = WindowPlacement.ClampToVisibleArea(new EsPoint(x, y), s_defaultWindowSize, s_primaryArea);
 
@@ -80,7 +80,7 @@ public sealed class WindowPlacementTests
     }
 
     [Fact]
-    public void ClampToVisibleArea_ウィンドウが領域より大きい場合は先頭へ寄せる()
+    internal void ClampToVisibleArea_ウィンドウが領域より大きい場合は先頭へ寄せる()
     {
         var result = WindowPlacement.ClampToVisibleArea(new EsPoint(100, 100), new EsSize(2400, 1400), s_primaryArea);
 
@@ -88,7 +88,7 @@ public sealed class WindowPlacementTests
     }
 
     [Fact]
-    public void ClampToVisibleArea_負座標を含む領域内の位置はそのまま返す()
+    internal void ClampToVisibleArea_負座標を含む領域内の位置はそのまま返す()
     {
         var result = WindowPlacement.ClampToVisibleArea(new EsPoint(-1500, 100), s_defaultWindowSize, s_multiMonitorArea);
 
@@ -96,7 +96,7 @@ public sealed class WindowPlacementTests
     }
 
     [Fact]
-    public void ClampToVisibleArea_負座標を含む領域の右端へ詰める()
+    internal void ClampToVisibleArea_負座標を含む領域の右端へ詰める()
     {
         var result = WindowPlacement.ClampToVisibleArea(new EsPoint(1500, 100), s_defaultWindowSize, s_multiMonitorArea);
 

@@ -10,7 +10,7 @@ public sealed class FluentIconDataTests
     private const char MoveCommand = 'M';
 
     [Fact]
-    public void ConvertRange_SVGのパスデータを返す()
+    internal void ConvertRange_SVGのパスデータを返す()
     {
         var pathData = FluentIconData.ConvertRange;
 
@@ -20,7 +20,7 @@ public sealed class FluentIconDataTests
     }
 
     [Fact]
-    public void Settings_SVGのパスデータを返す()
+    internal void Settings_SVGのパスデータを返す()
     {
         var pathData = FluentIconData.Settings;
 
@@ -30,20 +30,20 @@ public sealed class FluentIconDataTests
     }
 
     [Fact]
-    public void ConvertRange_同一インスタンスを返す()
+    internal void ConvertRange_同一インスタンスを返す()
     {
         Assert.Same(FluentIconData.ConvertRange, FluentIconData.ConvertRange);
     }
 
     [Fact]
-    public void Settings_同一インスタンスを返す()
+    internal void Settings_同一インスタンスを返す()
     {
         Assert.Same(FluentIconData.Settings, FluentIconData.Settings);
     }
 
     [Fact]
-    public void アイコン毎に異なるパスデータを返す()
+    internal void アイコン毎に異なるパスデータを返す()
     {
-        Assert.NotEqual(FluentIconData.ConvertRange, FluentIconData.Settings);
+        Assert.NotEqual(FluentIconData.ConvertRange, FluentIconData.Settings, System.StringComparer.Ordinal);
     }
 }

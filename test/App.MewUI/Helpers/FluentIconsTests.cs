@@ -8,7 +8,7 @@ namespace EsUtil.ZenHanConverter.Tests.App.MewUI.Helpers;
 public sealed class FluentIconsTests
 {
     [Fact]
-    public void ConvertRange_Coreのパスデータから形状を生成できる()
+    internal void ConvertRange_Coreのパスデータから形状を生成できる()
     {
         var geometry = FluentIcons.ConvertRange;
 
@@ -16,7 +16,7 @@ public sealed class FluentIconsTests
     }
 
     [Fact]
-    public void Settings_Coreのパスデータから形状を生成できる()
+    internal void Settings_Coreのパスデータから形状を生成できる()
     {
         var geometry = FluentIcons.Settings;
 
@@ -24,13 +24,13 @@ public sealed class FluentIconsTests
     }
 
     [Fact]
-    public void ConvertRange_同一インスタンスを返す()
+    internal void ConvertRange_同一インスタンスを返す()
     {
         Assert.Same(FluentIcons.ConvertRange, FluentIcons.ConvertRange);
     }
 
     [Fact]
-    public void Settings_同一インスタンスを返す()
+    internal void Settings_同一インスタンスを返す()
     {
         Assert.Same(FluentIcons.Settings, FluentIcons.Settings);
     }

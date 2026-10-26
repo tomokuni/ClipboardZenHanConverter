@@ -20,7 +20,7 @@ namespace EsUtil.ZenHanConverter.App.AvaloniaUI.Views;
 /// - 装飾は <c>WindowDecorations="None"</c> としてアプリが描画し、タイトルバー領域には
 ///   <c>WindowDecorationProperties.ElementRole="TitleBar"</c> を指定してドラッグ移動とダブルクリック最大化を有効化<br/>
 /// - クリップボード変換スイッチは <see cref="AppSetting.IsClipboardConvertEnabled"/> を単一所有し、
-///   プリセット選択は <see cref="SettingsViewModel.SelectedPresetName"/> を単一所有元として設定画面と同期<br/>
+///   プリセット選択は <c>SettingsViewModel.SelectedPresetName</c> を単一所有元として設定画面と同期<br/>
 /// - 保存位置が表示領域外の場合は Core の <see cref="WindowPlacement"/> で見える位置へ補正<br/><br/>
 /// 注意点: <br/>
 /// - 最大化中に終了した場合は、通常状態での最後の位置とサイズを保存します（最大化状態を次回起動へ引き継がないため）

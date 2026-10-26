@@ -146,7 +146,7 @@ public partial class PresetEditDialogViewModel : ObservableObject
 
     /// <summary>組込みプリセットを除いたユーザー定義プリセット名の一覧を返します。</summary>
     /// <returns>ユーザー定義プリセット名の一覧。</returns>
-    private List<string> UserPresetNames()
+    private static List<string> UserPresetNames()
         => [.. ConvertConfig.GetPresetNames().Where(n => !ConvertConfig.IsBuiltInPreset(n))];
 
     /// <summary>ファイル名に使用できない文字が含まれているかを判定します。</summary>
@@ -155,13 +155,13 @@ public partial class PresetEditDialogViewModel : ObservableObject
     internal static bool ContainsInvalidFileNameChars(string name)
         => name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0;
 
-    /// <summary>半角小文字に変換した際に "built-in" または "builtin" が含まれるかを判定します。</summary>
+    /// <summary>半角大文字に変換した際に "BUILT-IN" または "BUILTIN" が含まれるかを判定します。</summary>
     /// <param name="name">判定する名前。</param>
     /// <returns>含まれる場合は true。</returns>
-    /// <remarks>NFKC 正規化で全角英数字を半角へ変換し、ToLowerInvariant で小文字化した上で判定します。</remarks>
+    /// <remarks>NFKC 正規化で全角英数字を半角へ変換し、ToUpperInvariant で大文字化した上で判定します（CA1308）。</remarks>
     internal static bool ContainsBuiltInKeyword(string name)
     {
-        var normalized = name.Normalize(NormalizationForm.FormKC).ToLowerInvariant();
-        return normalized.Contains("built-in") || normalized.Contains("builtin");
+        var normalized = name.Normalize(NormalizationForm.FormKC).ToUpperInvariant();
+        return normalized.Contains("BUILT-IN", StringComparison.Ordinal) || normalized.Contains("BUILTIN", StringComparison.Ordinal);
     }
 }

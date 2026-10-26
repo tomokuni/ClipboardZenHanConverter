@@ -40,7 +40,7 @@ public record ReplacePair(string Search, string Replace, bool IsRegex = false)
         {
             try
             {
-                _ = new Regex(search);
+                _ = new Regex(search, RegexOptions.None, RegexSettings.MatchTimeout);
             }
             catch (ArgumentException)
             {

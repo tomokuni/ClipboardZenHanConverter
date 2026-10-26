@@ -9,14 +9,6 @@ using System.Text.Json;
 
 namespace EsUtil.ZenHanConverter.App.Core.Models;
 
-/// <summary>モードプロパティの単一定義。</summary>
-/// <remarks>Get/Set デリゲートのペアで、ConvertConfig のモードプロパティを型安全にアクセスします。<br/>
-/// ToZenValue に値が設定されている場合、そのプロパティは「全力会計」プリセットで全角設定の対象となります。<br/>
-/// UI 側はこの定義を直接参照することで、プロパティ名文字列による実行時名前解決を避けます（AOT 互換）。</remarks>
-public sealed record ModePropDef(
-    Func<ConvertConfig, object> Get,
-    Action<ConvertConfig, object> Set,
-    object? ToZenValue);           // null → 全角設定対象外
 
 /// <summary>全角/半角変換の設定を管理します。</summary>
 /// <remarks>
@@ -59,59 +51,108 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
         public static readonly ModePropDef IsEnabledZenHan = new(c => c.IsEnabledZenHan, (c, v) => c.IsEnabledZenHan = (bool)v, null);
 
         // 数値・英字は会計帳票でも半角が必須のため、全角設定の対象外（ToZenValue = null）とします。
+        /// <summary>数値 の変換モードの定義。</summary>
         public static readonly ModePropDef Number = new(c => c.ConvertModeNumber, (c, v) => c.ConvertModeNumber = (ZenHanMode)v, null);
+        /// <summary>英字 の変換モードの定義。</summary>
         public static readonly ModePropDef Alphabet = new(c => c.ConvertModeAlphabet, (c, v) => c.ConvertModeAlphabet = (ZenHanMode)v, null);
 
+        /// <summary>丸括弧 の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolParenthesis = new(c => c.ConvertModeSymbolParenthesis, (c, v) => c.ConvertModeSymbolParenthesis = (ZenHanMode)v, null);
+        /// <summary>角括弧 の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolSquareBracket = new(c => c.ConvertModeSymbolSquareBracket, (c, v) => c.ConvertModeSymbolSquareBracket = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>波括弧 の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolCurlyBracket = new(c => c.ConvertModeSymbolCurlyBracket, (c, v) => c.ConvertModeSymbolCurlyBracket = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>二重引用符 の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolDoubleQuote = new(c => c.ConvertModeSymbolDoubleQuote, (c, v) => c.ConvertModeSymbolDoubleQuote = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>単一引用符 の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolSingleQuote = new(c => c.ConvertModeSymbolSingleQuote, (c, v) => c.ConvertModeSymbolSingleQuote = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>カンマ の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolComma = new(c => c.ConvertModeSymbolComma, (c, v) => c.ConvertModeSymbolComma = (ZenHanMode)v, null);
+        /// <summary>ピリオド の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolPeriod = new(c => c.ConvertModeSymbolPeriod, (c, v) => c.ConvertModeSymbolPeriod = (ZenHanMode)v, null);
+        /// <summary>コロン の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolColon = new(c => c.ConvertModeSymbolColon, (c, v) => c.ConvertModeSymbolColon = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>セミコロン の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolSemicolon = new(c => c.ConvertModeSymbolSemicolon, (c, v) => c.ConvertModeSymbolSemicolon = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>小なり記号 の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolLessThan = new(c => c.ConvertModeSymbolLessThan, (c, v) => c.ConvertModeSymbolLessThan = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>等号 の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolEqual = new(c => c.ConvertModeSymbolEqual, (c, v) => c.ConvertModeSymbolEqual = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>大なり記号 の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolGreaterThan = new(c => c.ConvertModeSymbolGreaterThan, (c, v) => c.ConvertModeSymbolGreaterThan = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>加算記号 の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolPlus = new(c => c.ConvertModeSymbolPlus, (c, v) => c.ConvertModeSymbolPlus = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>ハイフン・マイナス の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolHyphenMinus = new(c => c.ConvertModeSymbolHyphenMinus, (c, v) => c.ConvertModeSymbolHyphenMinus = (ZenHanMode)v, null);
+        /// <summary>感嘆符 の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolExclamation = new(c => c.ConvertModeSymbolExclamation, (c, v) => c.ConvertModeSymbolExclamation = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>番号記号 の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolSharp = new(c => c.ConvertModeSymbolSharp, (c, v) => c.ConvertModeSymbolSharp = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>ドル記号 の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolDollar = new(c => c.ConvertModeSymbolDollar, (c, v) => c.ConvertModeSymbolDollar = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>パーセント の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolPercent = new(c => c.ConvertModeSymbolPercent, (c, v) => c.ConvertModeSymbolPercent = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>アンパサンド の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolAmpersand = new(c => c.ConvertModeSymbolAmpersand, (c, v) => c.ConvertModeSymbolAmpersand = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>アスタリスク の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolAsterisk = new(c => c.ConvertModeSymbolAsterisk, (c, v) => c.ConvertModeSymbolAsterisk = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>斜線 の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolSlash = new(c => c.ConvertModeSymbolSlash, (c, v) => c.ConvertModeSymbolSlash = (ZenHanMode)v, null);
+        /// <summary>疑問符 の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolQuestion = new(c => c.ConvertModeSymbolQuestion, (c, v) => c.ConvertModeSymbolQuestion = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>アットマーク の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolAt = new(c => c.ConvertModeSymbolAt, (c, v) => c.ConvertModeSymbolAt = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>キャレット の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolCaret = new(c => c.ConvertModeSymbolCaret, (c, v) => c.ConvertModeSymbolCaret = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>アンダーバー の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolUnderBar = new(c => c.ConvertModeSymbolUnderBar, (c, v) => c.ConvertModeSymbolUnderBar = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>バッククォート の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolBackquote = new(c => c.ConvertModeSymbolBackquote, (c, v) => c.ConvertModeSymbolBackquote = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>縦棒 の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolVerticalBar = new(c => c.ConvertModeSymbolVerticalBar, (c, v) => c.ConvertModeSymbolVerticalBar = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>チルダ の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolTilde = new(c => c.ConvertModeSymbolTilde, (c, v) => c.ConvertModeSymbolTilde = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>空白 の変換モードの定義。</summary>
         public static readonly ModePropDef SymbolSpace = new(c => c.ConvertModeSymbolSpace, (c, v) => c.ConvertModeSymbolSpace = (ZenHanMode)v, null);
 
+        /// <summary>かなから半角カナ の変換モードの定義。</summary>
         public static readonly ModePropDef KanaHan = new(c => c.ConvertModeKanaHan, (c, v) => c.ConvertModeKanaHan = (ZenHanKanaMode)v, null);
+        /// <summary>かなから全角カタカナ の変換モードの定義。</summary>
         public static readonly ModePropDef KanaZenKata = new(c => c.ConvertModeKanaZenKata, (c, v) => c.ConvertModeKanaZenKata = (ZenHanKanaMode)v, null);
+        /// <summary>かなから全角ひらがな の変換モードの定義。</summary>
         public static readonly ModePropDef KanaZenHira = new(c => c.ConvertModeKanaZenHira, (c, v) => c.ConvertModeKanaZenHira = (ZenHanKanaMode)v, null);
 
+        /// <summary>かなの濁点 の変換モードの定義。</summary>
         public static readonly ModePropDef EtcKanaVoice = new(c => c.ConvertModeEtcKanaVoice, (c, v) => c.ConvertModeEtcKanaVoice = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>かなの半濁点 の変換モードの定義。</summary>
         public static readonly ModePropDef EtcKanaSemiVoice = new(c => c.ConvertModeEtcKanaSemiVoice, (c, v) => c.ConvertModeEtcKanaSemiVoice = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>かなの中点 の変換モードの定義。</summary>
         public static readonly ModePropDef EtcKanaMiddleDot = new(c => c.ConvertModeEtcKanaMiddleDot, (c, v) => c.ConvertModeEtcKanaMiddleDot = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>かなの左かぎ括弧 の変換モードの定義。</summary>
         public static readonly ModePropDef EtcKanaLeftCornerBracket = new(c => c.ConvertModeEtcKanaLeftCornerBracket, (c, v) => c.ConvertModeEtcKanaLeftCornerBracket = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>かなの右かぎ括弧 の変換モードの定義。</summary>
         public static readonly ModePropDef EtcKanaRightCornerBracket = new(c => c.ConvertModeEtcKanaRightCornerBracket, (c, v) => c.ConvertModeEtcKanaRightCornerBracket = (ZenHanMode)v, ZenHanMode.ToZen);
+        /// <summary>かなの長音 の変換モードの定義。</summary>
         public static readonly ModePropDef EtcKanaProlong = new(c => c.ConvertModeEtcKanaProlong, (c, v) => c.ConvertModeEtcKanaProlong = (ZenHanEtcZenHanAsciiMode)v, null);
+        /// <summary>かなの句点 の変換モードの定義。</summary>
         public static readonly ModePropDef EtcKanaPeriod = new(c => c.ConvertModeEtcKanaPeriod, (c, v) => c.ConvertModeEtcKanaPeriod = (ZenHanEtcZenHanAsciiMode)v, null);
+        /// <summary>かなの読点 の変換モードの定義。</summary>
         public static readonly ModePropDef EtcKanaComma = new(c => c.ConvertModeEtcKanaComma, (c, v) => c.ConvertModeEtcKanaComma = (ZenHanEtcZenHanAsciiMode)v, null);
 
+        /// <summary>逆斜線から半角 の変換モードの定義。</summary>
         public static readonly ModePropDef EtcBSlashHan = new(c => c.ConvertModeEtcBSlashHan, (c, v) => c.ConvertModeEtcBSlashHan = (ZenHanEtcYenMode)v, null);
+        /// <summary>逆斜線から全角 の変換モードの定義。</summary>
         public static readonly ModePropDef EtcBSlashZen = new(c => c.ConvertModeEtcBSlashZen, (c, v) => c.ConvertModeEtcBSlashZen = (ZenHanEtcYenMode)v, null);
+        /// <summary>円記号から半角 の変換モードの定義。</summary>
         public static readonly ModePropDef EtcYenHan = new(c => c.ConvertModeEtcYenHan, (c, v) => c.ConvertModeEtcYenHan = (ZenHanEtcYenMode)v, null);
+        /// <summary>円記号から全角 の変換モードの定義。</summary>
         public static readonly ModePropDef EtcYenZen = new(c => c.ConvertModeEtcYenZen, (c, v) => c.ConvertModeEtcYenZen = (ZenHanEtcYenMode)v, null);
 
+        /// <summary>タブから空白 の変換モードの定義。</summary>
         public static readonly ModePropDef EtcTabSpace = new(c => c.ConvertModeEtcTabSpace, (c, v) => c.ConvertModeEtcTabSpace = (ZenHanEtcSpecial)v, null);
+        /// <summary>改行 の変換モードの定義。</summary>
         public static readonly ModePropDef EtcNewline = new(c => c.ConvertModeEtcNewline, (c, v) => c.ConvertModeEtcNewline = (ZenHanEtcSpecial)v, null);
+        /// <summary>連続スペース の変換モードの定義。</summary>
         public static readonly ModePropDef EtcMultiSpace = new(c => c.ConvertModeEtcMultiSpace, (c, v) => c.ConvertModeEtcMultiSpace = (ZenHanEtcSpecial)v, null);
 
         /// <summary>全モードプロパティの定義集合。コピー・比較・全角設定の一括適用に使用します。</summary>
@@ -385,11 +426,11 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
 
     /// <summary>組み込みプリセット定義。FrozenDictionary による高速・不変なルックアップ。</summary>
     private static readonly FrozenDictionary<string, Action<ConvertConfig>> BuiltInPresets =
-        new Dictionary<string, Action<ConvertConfig>>
+        new Dictionary<string, Action<ConvertConfig>>(StringComparer.Ordinal)
         {
             [BuiltInPresetAccountingPower] = ApplyAccountingPowerPreset,
             [BuiltInPresetAlphanumericHanKanaZen] = ApplyAlphanumericHanKanaZenPreset,
-        }.ToFrozenDictionary();
+        }.ToFrozenDictionary(StringComparer.Ordinal);
 
     /// <summary>組み込みプリセット「英数記号半角、かな全角」を適用します。</summary>
     /// <param name="c">設定を適用する ConvertConfig インスタンス。</param>
@@ -547,11 +588,13 @@ public partial class ConvertConfig : SettingsPersistenceBase<ConvertConfig>
         names.AddRange(BuiltInPresets.Keys.OrderBy(n => n, StringComparer.Ordinal));
         var dir = PresetDirectory;
         if (Directory.Exists(dir))
+        {
             names.AddRange(
                 Directory.GetFiles(dir, "*.json")
                     .Select(Path.GetFileNameWithoutExtension)
                     .OfType<string>()
                     .OrderBy(n => n, StringComparer.Ordinal));
+        }
         return [.. names];
     }
 

@@ -50,18 +50,11 @@ public sealed class MainForm : Form
 
     /// <summary>プリセット選択ドロップダウンの文字幅に加える付加幅（矢印・余白、論理ピクセル）。</summary>
     private const int PresetComboChromeWidth = 32;
-
-    /// <summary>アプリ名の直後に確保する余白（論理ピクセル）。</summary>
-    private const int TitleBarGroupSpacing = 24;
-
     /// <summary>ナビゲーション項目のアイコンサイズ（論理ピクセル）。</summary>
     private const int NavIconSize = 16;
 
     /// <summary>ナビゲーションの開閉ボタンに表示するグリフ。</summary>
     private const string NavToggleGlyph = "☰";
-
-    /// <summary>ナビゲーション開閉ボタンのツールチップ。</summary>
-    private const string NavToggleToolTip = "ナビゲーションの表示/非表示";
 
     /// <summary>最大化時に表示するグリフ。</summary>
     private const string MaximizeGlyph = "□";
@@ -70,7 +63,7 @@ public sealed class MainForm : Form
     private const string RestoreGlyph = "❐";
 
     /// <summary>折り返しの基準となる設計時のフォント寸法。</summary>
-    /// <remarks><see cref="Form.AutoScaleDimensions"/> と名前が衝突しないよう別名にしています。</remarks>
+    /// <remarks><c>Form.AutoScaleDimensions</c> と名前が衝突しないよう別名にしています。</remarks>
     private static readonly SizeF s_designAutoScaleDimensions = new(7F, 15F);
 
     /// <summary>ウィンドウプロパティを設定するためのメッセージ。</summary>
@@ -214,18 +207,18 @@ public sealed class MainForm : Form
         _clipboardToggleLabel.Text = ClipboardToggleLabelText;
         _clipboardToggleLabel.AutoSize = true;
 
-        ConfigureCaptionButton(_minimizeButton, "—", "最小化");
+        ConfigureCaptionButton(_minimizeButton, "—");
         _minimizeButton.Click += (_, _) => WindowState = FormWindowState.Minimized;
 
-        ConfigureCaptionButton(_maximizeButton, MaximizeGlyph, "最大化/復元");
+        ConfigureCaptionButton(_maximizeButton, MaximizeGlyph);
         _maximizeButton.Click += (_, _) => WindowState = WindowState == FormWindowState.Maximized
             ? FormWindowState.Normal
             : FormWindowState.Maximized;
 
-        ConfigureCaptionButton(_closeButton, "✕", "閉じる");
+        ConfigureCaptionButton(_closeButton, "✕");
         _closeButton.Click += (_, _) => Close();
 
-        ConfigureCaptionButton(_navToggleButton, NavToggleGlyph, NavToggleToolTip);
+        ConfigureCaptionButton(_navToggleButton, NavToggleGlyph);
         _navToggleButton.Click += (_, _) => ToggleNavigationPane();
 
         _titleBar.Controls.Add(_navToggleButton);
@@ -276,8 +269,7 @@ public sealed class MainForm : Form
     /// <summary>ウィンドウ操作ボタンの外観と基本設定を行います。</summary>
     /// <param name="button">設定するボタン。</param>
     /// <param name="glyph">表示する文字。</param>
-    /// <param name="toolTip">ツールチップの文言。</param>
-    private static void ConfigureCaptionButton(Button button, string glyph, string toolTip)
+    private static void ConfigureCaptionButton(Button button, string glyph)
     {
         button.Text = glyph;
         button.AutoSize = false;
@@ -472,7 +464,7 @@ public sealed class MainForm : Form
     /// <param name="e">変更されたプロパティ名を含むイベントデータ。</param>
     private void OnAppSettingPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName != nameof(AppSetting.IsClipboardConvertEnabled)) return;
+        if (!string.Equals(e.PropertyName, nameof(AppSetting.IsClipboardConvertEnabled), StringComparison.Ordinal)) return;
 
         _isUpdatingUi = true;
         try

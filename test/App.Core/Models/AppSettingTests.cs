@@ -10,6 +10,7 @@ public sealed class AppSettingTests : IDisposable
 {
     private readonly string _tempDirectory = TestHelper.CreateTempDirectory();
 
+    /// <summary>テストで生成した一時ファイルとインスタンスを破棄します。</summary>
     public void Dispose()
     {
         if (Directory.Exists(_tempDirectory))
@@ -22,13 +23,15 @@ public sealed class AppSettingTests : IDisposable
     /// <returns>自動保存先を差し替えた AppSetting。</returns>
     private AppSetting CreateSetting()
     {
-        var setting = new AppSetting();
-        setting.AutoSaveFileName = Path.Combine(_tempDirectory, "AppSetting.json");
+        var setting = new AppSetting
+        {
+            AutoSaveFileName = Path.Combine(_tempDirectory, "AppSetting.json")
+        };
         return setting;
     }
 
     [Fact]
-    public void Constructor_既定値()
+    internal void Constructor_既定値()
     {
         var setting = new AppSetting();
 
@@ -37,11 +40,11 @@ public sealed class AppSettingTests : IDisposable
         Assert.Null(setting.WindowX);
         Assert.Null(setting.WindowY);
         Assert.True(setting.IsClipboardConvertEnabled);
-        Assert.Contains("AppSetting.json", setting.AutoSaveFileName);
+        Assert.Contains("AppSetting.json", setting.AutoSaveFileName, StringComparison.Ordinal);
     }
 
     [Fact]
-    public void ウィンドウの位置とサイズを保持する()
+    internal void ウィンドウの位置とサイズを保持する()
     {
         var setting = CreateSetting();
 
@@ -57,7 +60,7 @@ public sealed class AppSettingTests : IDisposable
     }
 
     [Fact]
-    public void LoadFromJsonFile_保存した値を復元する()
+    internal void LoadFromJsonFile_保存した値を復元する()
     {
         var source = CreateSetting();
         source.WindowWidth = 1280;
@@ -79,7 +82,7 @@ public sealed class AppSettingTests : IDisposable
     }
 
     [Fact]
-    public void LoadFromJsonFile_位置が未保存のJSONでは位置はnullのまま()
+    internal void LoadFromJsonFile_位置が未保存のJSONでは位置はnullのまま()
     {
         var file = Path.Combine(_tempDirectory, "no-position.json");
         File.WriteAllText(file, """{ "WindowWidth": 800, "WindowHeight": 600 }""");
@@ -93,7 +96,7 @@ public sealed class AppSettingTests : IDisposable
     }
 
     [Fact]
-    public void LoadFromJsonFile_存在しないファイルは設定を維持する()
+    internal void LoadFromJsonFile_存在しないファイルは設定を維持する()
     {
         var setting = CreateSetting();
         setting.WindowWidth = 1111;
@@ -104,7 +107,7 @@ public sealed class AppSettingTests : IDisposable
     }
 
     [Fact]
-    public void LoadFromJsonFile_不正なJSONは設定を維持する()
+    internal void LoadFromJsonFile_不正なJSONは設定を維持する()
     {
         var setting = CreateSetting();
         setting.WindowWidth = 1111;

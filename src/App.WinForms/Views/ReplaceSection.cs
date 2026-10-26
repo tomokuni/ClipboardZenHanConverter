@@ -115,7 +115,7 @@ internal sealed class ReplaceSection : TableLayoutPanel
 
     /// <summary>列見出しの行を作成します。</summary>
     /// <returns>作成した列見出し行。</returns>
-    private Control CreateColumnHeaderRow()
+    private static Control CreateColumnHeaderRow()
     {
         var columns = CreateRowLayout();
 
@@ -201,7 +201,7 @@ internal sealed class ReplaceSection : TableLayoutPanel
         };
         item.PropertyChanged += (_, e) =>
         {
-            if (e.PropertyName != nameof(ReplacePairItem.ErrorMessage)) return;
+            if (!string.Equals(e.PropertyName, nameof(ReplacePairItem.ErrorMessage), System.StringComparison.Ordinal)) return;
             error.Text = item.ErrorMessage ?? string.Empty;
             error.Visible = !string.IsNullOrEmpty(item.ErrorMessage);
         };

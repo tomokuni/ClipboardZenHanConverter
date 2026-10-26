@@ -10,33 +10,25 @@ namespace EsUtil.ZenHanConverter.App.Core.Presentation.ViewModels;
 /// 2. 選択肢を 1 つのコントロールで表す UI（セグメントコントロール等）は
 ///    親の <see cref="ZenHanConvertItem.SelectedLabel"/> を参照します。
 /// </remarks>
-public sealed partial class SegmentOption : ObservableObject
+/// <param name="content">表示テキスト（「なし」「半角」「全角」などの表示ラベル）。</param>
+/// <param name="groupName">排他選択のグループ名（同じ行内で同一、行間で異なる値）。</param>
+/// <param name="isEnabled">この選択肢が有効かどうか（変換対象外などで選択できない場合は false）。</param>
+public sealed partial class SegmentOption(string content, string groupName, bool isEnabled = true) : ObservableObject
 {
     /// <summary>表示テキストを取得します。</summary>
     /// <value>「なし」「半角」「全角」などの表示ラベル。</value>
-    public string Content { get; }
+    public string Content { get; } = content;
 
     /// <summary>排他選択のグループ名を取得します。</summary>
     /// <value>同じ行内の選択肢で同一、行間では異なる値。</value>
     /// <remarks>ラジオボタンのグループ名に指定し、行ごとに独立した排他選択にします。</remarks>
-    public string GroupName { get; }
+    public string GroupName { get; } = groupName;
 
     /// <summary>この選択肢が有効かどうかを取得します。</summary>
     /// <value>変換対象外などで選択できない場合は false。</value>
-    public bool IsEnabled { get; }
+    public bool IsEnabled { get; } = isEnabled;
 
     /// <summary>この選択肢が選択されているかどうかを取得または設定します。</summary>
     [ObservableProperty]
     public partial bool IsSelected { get; set; }
-
-    /// <summary>SegmentOption の新しいインスタンスを初期化します。</summary>
-    /// <param name="content">表示テキスト。</param>
-    /// <param name="groupName">排他選択のグループ名。</param>
-    /// <param name="isEnabled">この選択肢が有効かどうか。</param>
-    public SegmentOption(string content, string groupName, bool isEnabled = true)
-    {
-        Content = content;
-        GroupName = groupName;
-        IsEnabled = isEnabled;
-    }
 }

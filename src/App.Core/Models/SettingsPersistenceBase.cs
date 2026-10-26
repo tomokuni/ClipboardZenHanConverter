@@ -8,10 +8,6 @@ using System.Threading.Tasks;
 
 namespace EsUtil.ZenHanConverter.App.Core.Models;
 
-/// <summary>シリアライズに使用する JsonSerializerContext と型を保持するレコード。</summary>
-/// <param name="Context">ソース生成された JsonSerializerContext</param>
-/// <param name="Type">シリアライズ対象の型</param>
-public sealed record SerializableTypeInfo(JsonSerializerContext Context, Type Type);
 
 /// <summary>設定のJSONファイルへの自動永続化を提供する基底クラス。</summary>
 /// <remarks>

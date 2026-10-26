@@ -63,7 +63,7 @@ internal sealed class PresetComboBox : ComboBox
     /// <param name="e">変更されたプロパティ名を含むイベントデータ。</param>
     private void OnViewModelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        if (e.PropertyName != nameof(SettingsViewModel.SelectedPresetName)) return;
+        if (!string.Equals(e.PropertyName, nameof(SettingsViewModel.SelectedPresetName), StringComparison.Ordinal)) return;
         SyncItemsFromViewModel();
     }
 
@@ -84,7 +84,7 @@ internal sealed class PresetComboBox : ComboBox
         try
         {
             var names = _viewModel.PresetNames.ToArray();
-            if (!names.SequenceEqual(Items.Cast<string>()))
+            if (!names.SequenceEqual(Items.Cast<string>(), StringComparer.Ordinal))
             {
                 BeginUpdate();
                 Items.Clear();

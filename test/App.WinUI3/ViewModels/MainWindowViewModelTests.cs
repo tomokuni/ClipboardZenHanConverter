@@ -4,21 +4,24 @@ using Xunit;
 
 namespace EsUtil.ZenHanConverter.Tests.App.WinUI3.ViewModels;
 
+/// <summary>MainWindowViewModelTests の検証項目を表します。</summary>
 public class MainWindowViewModelTests
 {
     [Fact]
-    public void Constructor_SelectedPageはnull()
+    internal void Constructor_SelectedPageはnull()
     {
         var vm = new MainWindowViewModel(new TestNavigationService());
         Assert.Null(vm.SelectedPage);
     }
 
     [Fact]
-    public void SelectedPage_変更でナビゲーションが呼ばれる()
+    internal void SelectedPage_変更でナビゲーションが呼ばれる()
     {
         var nav = new TestNavigationService();
-        var vm = new MainWindowViewModel(nav);
-        vm.SelectedPage = "Settings";
+        _ = new MainWindowViewModel(nav)
+        {
+            SelectedPage = "Settings"
+        };
         Assert.Equal("Settings", nav.LastPage);
     }
 
@@ -28,6 +31,6 @@ public class MainWindowViewModelTests
 
         public void Initialize() { }
         public void NavigateTo(object? page) => LastPage = page;
-        public void PreloadSettingsAsync() { }
+        public void PreloadSettings() { }
     }
 }

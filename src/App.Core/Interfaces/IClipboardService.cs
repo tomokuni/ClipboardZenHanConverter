@@ -10,7 +10,7 @@ namespace EsUtil.ZenHanConverter.App.Core.Interfaces;
 public interface IClipboardService : IDisposable
 {
     /// <summary>クリップボード内容変更イベント。</summary>
-    event EventHandler<object>? ContentChanged;
+    event EventHandler<EventArgs>? ContentChanged;
 
     /// <summary>クリップボードからテキストを非同期に取得します。</summary>
     /// <returns>取得したテキスト。取得できない場合は null</returns>

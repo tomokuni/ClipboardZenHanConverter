@@ -37,6 +37,7 @@ public sealed class WinFormsParityTests : IDisposable
     private readonly WinUIHomeViewModel _winViewModel;
     private readonly WinFormsHomeViewModel _formsViewModel;
 
+    /// <summary>テスト クラスの新しいインスタンスを初期化します。</summary>
     public WinFormsParityTests()
     {
         _mewViewModel = new MewUIHomeViewModel(
@@ -53,6 +54,7 @@ public sealed class WinFormsParityTests : IDisposable
         };
     }
 
+    /// <summary>テストで生成した一時ファイルとインスタンスを破棄します。</summary>
     public void Dispose()
     {
         _mewViewModel.Dispose();
@@ -68,7 +70,7 @@ public sealed class WinFormsParityTests : IDisposable
     [InlineData(ConvertConfig.BuiltInPresetAlphanumericHanKanaZen, "（株）ＡＢＣ商事「設定」２０２４年", "(株)ABC商事｢設定｣2024年")]
     [InlineData(ConvertConfig.BuiltInPresetAlphanumericHanKanaZen, "ＴＥＬ：０３−１２３４−５６７８（代表）", "TEL:03-1234-5678(代表)")]
     [InlineData(ConvertConfig.BuiltInPresetAlphanumericHanKanaZen, "ﾀﾞｲｽｷﾅﾗｰﾒﾝ! ﾏｲｳｪｲ!", "ダイスキナラーメン! マイウェイ!")]
-    public async Task 表示用変換が3実装で一致する(string presetName, string input, string expected)
+    internal async Task 表示用変換が3実装で一致する(string presetName, string input, string expected)
     {
         _config.LoadPreset(presetName);
 
@@ -84,7 +86,7 @@ public sealed class WinFormsParityTests : IDisposable
     [InlineData("ABC")]
     [InlineData("ＡＢＣ")]
     [InlineData("漢字かな")]
-    public async Task 変化しない入力では3実装とも変換不要を表示する(string input)
+    internal async Task 変化しない入力では3実装とも変換不要を表示する(string input)
     {
         // 変換モードを全て None にし、変化しない入力を与えます。
         _config.ConvertModeNumber = ZenHanMode.None;
@@ -98,7 +100,7 @@ public sealed class WinFormsParityTests : IDisposable
     }
 
     [Fact]
-    public async Task 全角半角変換は3実装とも常に有効()
+    internal async Task 全角半角変換は3実装とも常に有効()
     {
         // 変換の実行可否を切り替える UI は 3 実装とも持ちません（IsEnabledZenHan は参照しません）。
         _config.IsEnabledZenHan = false;
@@ -113,7 +115,7 @@ public sealed class WinFormsParityTests : IDisposable
     }
 
     [Fact]
-    public async Task クリップボード書き戻しの内容が3実装で一致する()
+    internal async Task クリップボード書き戻しの内容が3実装で一致する()
     {
         _config.ConvertModeAlphabet = ZenHanMode.ToHan;
         _config.ConvertModeNumber = ZenHanMode.ToHan;
@@ -144,7 +146,7 @@ public sealed class WinFormsParityTests : IDisposable
     /// <returns>待機タスク。</returns>
     private async Task WaitAllConvertedTextAsync(string expected)
         => await TestHelper.WaitUntilAsync(
-            () => _mewViewModel.ConvertedText == expected
-                && _winViewModel.ConvertedText == expected
-                && _formsViewModel.ConvertedText == expected);
+            () => string.Equals(_mewViewModel.ConvertedText, expected
+, StringComparison.Ordinal) && string.Equals(_winViewModel.ConvertedText, expected
+, StringComparison.Ordinal) && string.Equals(_formsViewModel.ConvertedText, expected, StringComparison.Ordinal));
 }

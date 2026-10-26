@@ -100,7 +100,7 @@ public sealed partial class MainWindow : Window
             var selected = _settingsViewModel.SelectedPresetName;
             PresetComboBox.SelectedItem = selected is null
                 ? null
-                : _settingsViewModel.PresetNames.FirstOrDefault(name => name == selected);
+                : _settingsViewModel.PresetNames.FirstOrDefault(name => string.Equals(name, selected, System.StringComparison.Ordinal));
         }
         finally
         {
@@ -169,6 +169,7 @@ public sealed partial class MainWindow : Window
     /// <returns>DPI 値（例: 96, 120, 144）</returns>
 #pragma warning disable SYSLIB1054 // AllowUnsafeBlocks 不要のため DllImport を使用
     [DllImport("User32.dll")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static extern int GetDpiForWindow(nint hwnd);
 #pragma warning restore SYSLIB1054
 

@@ -1,5 +1,6 @@
 using EsUtil.ZenHanConverter.App.Core.Models;
 using Xunit;
+using System;
 
 namespace EsUtil.ZenHanConverter.Tests.App.Core.Models;
 
@@ -7,7 +8,7 @@ namespace EsUtil.ZenHanConverter.Tests.App.Core.Models;
 public sealed class ReplacePairTests
 {
     [Fact]
-    public void TryValidate_有効な通常文字列()
+    internal void TryValidate_有効な通常文字列()
     {
         var result = ReplacePair.TryValidate("abc", "xyz", false, out var error);
 
@@ -16,7 +17,7 @@ public sealed class ReplacePairTests
     }
 
     [Fact]
-    public void TryValidate_有効な正規表現()
+    internal void TryValidate_有効な正規表現()
     {
         var result = ReplacePair.TryValidate(@"\d+", "NUM", true, out var error);
 
@@ -27,7 +28,7 @@ public sealed class ReplacePairTests
     [Theory]
     [InlineData("")]
     [InlineData(null)]
-    public void TryValidate_検索文字列が空またはnull(string? search)
+    internal void TryValidate_検索文字列が空またはnull(string? search)
     {
         var result = ReplacePair.TryValidate(search!, "xyz", false, out var error);
 
@@ -36,7 +37,7 @@ public sealed class ReplacePairTests
     }
 
     [Fact]
-    public void TryValidate_置換文字列が空()
+    internal void TryValidate_置換文字列が空()
     {
         var result = ReplacePair.TryValidate("abc", "", false, out var error);
 
@@ -48,7 +49,7 @@ public sealed class ReplacePairTests
     [InlineData("[invalid")]
     [InlineData("(unclosed")]
     [InlineData("a{2,1}")]
-    public void TryValidate_不正な正規表現(string pattern)
+    internal void TryValidate_不正な正規表現(string pattern)
     {
         var result = ReplacePair.TryValidate(pattern, "x", true, out var error);
 
@@ -57,7 +58,7 @@ public sealed class ReplacePairTests
     }
 
     [Fact]
-    public void TryValidate_正規表現フラグ無効時はパターンを検証しない()
+    internal void TryValidate_正規表現フラグ無効時はパターンを検証しない()
     {
         var result = ReplacePair.TryValidate("[invalid", "x", false, out var error);
 
@@ -66,7 +67,7 @@ public sealed class ReplacePairTests
     }
 
     [Fact]
-    public void レコードの等価性()
+    internal void レコードの等価性()
     {
         var a = new ReplacePair("abc", "xyz", true);
         var b = new ReplacePair("abc", "xyz", true);
@@ -77,17 +78,17 @@ public sealed class ReplacePairTests
     }
 
     [Fact]
-    public void IsRegexの既定値はfalse()
+    internal void IsRegexの既定値はfalse()
     {
         Assert.False(new ReplacePair("abc", "xyz").IsRegex);
     }
 
     [Fact]
-    public void レコードのToString()
+    internal void レコードのToString()
     {
         var pair = new ReplacePair("abc", "xyz");
 
-        Assert.Contains("abc", pair.ToString());
-        Assert.Contains("xyz", pair.ToString());
+        Assert.Contains("abc", pair.ToString(), StringComparison.Ordinal);
+        Assert.Contains("xyz", pair.ToString(), StringComparison.Ordinal);
     }
 }

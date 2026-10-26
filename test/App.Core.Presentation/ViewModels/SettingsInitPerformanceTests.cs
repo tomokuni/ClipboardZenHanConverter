@@ -14,14 +14,10 @@ namespace EsUtil.ZenHanConverter.Tests.App.Core.Presentation.ViewModels;
 /// これらのテストは BenchmarkDotNet の代替として各処理の実行時間を計測し、
 /// 初回設定画面遷移の遅延原因を特定することを目的としています。
 /// </remarks>
-public class SettingsInitPerformanceTests
+/// <remarks>テスト クラスの新しいインスタンスを初期化します。</remarks>
+public class SettingsInitPerformanceTests(ITestOutputHelper output)
 {
-    private readonly ITestOutputHelper _output;
-
-    public SettingsInitPerformanceTests(ITestOutputHelper output)
-    {
-        _output = output;
-    }
+    private readonly ITestOutputHelper _output = output;
 
     /// <summary>ZenHanConvertItem の静的初期化が走る初回インスタンス生成のコストを計測。</summary>
     /// <remarks>
@@ -29,7 +25,7 @@ public class SettingsInitPerformanceTests
     /// Expression.Compile による getter/setter デリゲート生成が100回実行される。
     /// </remarks>
     [Fact]
-    public void FirstZenHanConvertItemCreation_Perf()
+    internal void FirstZenHanConvertItemCreation_Perf()
     {
         var config = new ConvertConfig();
 
@@ -43,7 +39,7 @@ public class SettingsInitPerformanceTests
 
     /// <summary>ZenHanConvertItem の2回目以降（静的コンストラクタ済み）の生成コストを計測。</summary>
     [Fact]
-    public void SecondZenHanConvertItemCreation_Perf()
+    internal void SecondZenHanConvertItemCreation_Perf()
     {
         var config = new ConvertConfig();
         // 1回目で静的コンストラクタを実行
@@ -61,7 +57,7 @@ public class SettingsInitPerformanceTests
 
     /// <summary>Expression.Compile 全プロパティ分のコストを計測。</summary>
     [Fact]
-    public void ExpressionCompileAllProperties_Perf()
+    internal void ExpressionCompileAllProperties_Perf()
     {
         var sw = Stopwatch.StartNew();
         var props = typeof(ConvertConfig).GetProperties(BindingFlags.Public | BindingFlags.Instance);
@@ -85,7 +81,7 @@ public class SettingsInitPerformanceTests
 
     /// <summary>SettingsViewModel コンストラクタ全体のコストを計測。</summary>
     [Fact]
-    public void SettingsViewModelConstructor_Perf()
+    internal void SettingsViewModelConstructor_Perf()
     {
         var config = new ConvertConfig();
         // 事前に静的コンストラクタを実行させておく
@@ -101,7 +97,7 @@ public class SettingsInitPerformanceTests
 
     /// <summary>SettingsViewModel コンストラクタ（静的初期化含む初回）のコストを計測。</summary>
     [Fact]
-    public void SettingsViewModelConstructor_FirstTime_Perf()
+    internal void SettingsViewModelConstructor_FirstTime_Perf()
     {
         // 新しい AppDomain 相当をシミュレートはできないが、
         // ZenHanConvertItem の静的コンストラクタが未実行の状態を作るため、
@@ -118,7 +114,7 @@ public class SettingsInitPerformanceTests
 
     /// <summary>FindMatchingPreset のコストを計測。（プリセットファイルが無い状態）</summary>
     [Fact]
-    public void FindMatchingPreset_NoPresetFiles_Perf()
+    internal void FindMatchingPreset_NoPresetFiles_Perf()
     {
         var config = new ConvertConfig();
 
@@ -134,7 +130,7 @@ public class SettingsInitPerformanceTests
 
     /// <summary>ConvertConfig.Initialize のコストを計測。</summary>
     [Fact]
-    public void ConvertConfigInitialize_Perf()
+    internal void ConvertConfigInitialize_Perf()
     {
         var config = new ConvertConfig();
 
@@ -148,14 +144,14 @@ public class SettingsInitPerformanceTests
     /// <summary>SettingsViewModel + ConvertConfig.Initialize のトータルコストを計測。</summary>
     /// <remarks>実際の起動シーケンスに近い形で計測。</remarks>
     [Fact]
-    public void TotalInitSequence_Perf()
+    internal void TotalInitSequence_Perf()
     {
         var sw = Stopwatch.StartNew();
 
         // App.OnLaunched のシーケンスを模擬
         var config = new ConvertConfig();
         config.Initialize();
-        var vm = new SettingsViewModel(config);
+        _ = new SettingsViewModel(config);
 
         sw.Stop();
 
@@ -164,7 +160,7 @@ public class SettingsInitPerformanceTests
 
     /// <summary>ZenHanConvertItem 静的コンストラクタを RunClassConstructor で強制実行した場合のコスト。</summary>
     [Fact]
-    public void RunClassConstructor_Perf()
+    internal void RunClassConstructor_Perf()
     {
         var sw = Stopwatch.StartNew();
         RuntimeHelpers.RunClassConstructor(typeof(ZenHanConvertItem).TypeHandle);

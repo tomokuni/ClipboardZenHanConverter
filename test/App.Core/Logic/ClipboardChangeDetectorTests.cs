@@ -10,7 +10,7 @@ public sealed class ClipboardChangeDetectorTests
     private uint _sequence;
 
     [Fact]
-    public void HasChanged_構築直後の同じ値ではfalseを返す()
+    internal void HasChanged_構築直後の同じ値ではfalseを返す()
     {
         var detector = new ClipboardChangeDetector(() => _sequence);
 
@@ -18,7 +18,7 @@ public sealed class ClipboardChangeDetectorTests
     }
 
     [Fact]
-    public void HasChanged_値が変わるとtrueを返す()
+    internal void HasChanged_値が変わるとtrueを返す()
     {
         var detector = new ClipboardChangeDetector(() => _sequence);
 
@@ -28,7 +28,7 @@ public sealed class ClipboardChangeDetectorTests
     }
 
     [Fact]
-    public void HasChanged_変化の検出は一度だけtrueを返す()
+    internal void HasChanged_変化の検出は一度だけtrueを返す()
     {
         var detector = new ClipboardChangeDetector(() => _sequence);
         _sequence = 10;
@@ -38,7 +38,7 @@ public sealed class ClipboardChangeDetectorTests
     }
 
     [Fact]
-    public void HasChanged_複数回の変化を順に検出する()
+    internal void HasChanged_複数回の変化を順に検出する()
     {
         var detector = new ClipboardChangeDetector(() => _sequence);
 
@@ -54,7 +54,7 @@ public sealed class ClipboardChangeDetectorTests
     }
 
     [Fact]
-    public void HasChanged_構築時の値を初期値として扱う()
+    internal void HasChanged_構築時の値を初期値として扱う()
     {
         _sequence = 42;
 

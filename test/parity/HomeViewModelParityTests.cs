@@ -40,6 +40,7 @@ public sealed class HomeViewModelParityTests : IDisposable
     private readonly MewUIHomeViewModel _mewViewModel;
     private readonly WinUIHomeViewModel _winViewModel;
 
+    /// <summary>テスト クラスの新しいインスタンスを初期化します。</summary>
     public HomeViewModelParityTests()
     {
         _mewViewModel = new MewUIHomeViewModel(new CharConverter(_config), _mewClipboard, _mewAppSetting);
@@ -49,6 +50,7 @@ public sealed class HomeViewModelParityTests : IDisposable
         };
     }
 
+    /// <summary>テストで生成した一時ファイルとインスタンスを破棄します。</summary>
     public void Dispose()
     {
         _mewViewModel.Dispose();
@@ -64,7 +66,7 @@ public sealed class HomeViewModelParityTests : IDisposable
     [InlineData(ConvertConfig.BuiltInPresetAlphanumericHanKanaZen, "ＴＥＬ：０３−１２３４−５６７８（代表）", "TEL:03-1234-5678(代表)")]
     [InlineData(ConvertConfig.BuiltInPresetAlphanumericHanKanaZen, "当社の製品「Ｗｉｄｇｅｔ」は￥１，２００です。", "当社の製品｢Widget｣は¥1,200です。")]
     [InlineData(ConvertConfig.BuiltInPresetAlphanumericHanKanaZen, "ﾀﾞｲｽｷﾅﾗｰﾒﾝ! ﾏｲｳｪｲ!", "ダイスキナラーメン! マイウェイ!")]
-    public async Task 表示用変換が一致する(string presetName, string input, string expected)
+    internal async Task 表示用変換が一致する(string presetName, string input, string expected)
     {
         _config.LoadPreset(presetName);
 
@@ -79,7 +81,7 @@ public sealed class HomeViewModelParityTests : IDisposable
     [InlineData("abc")]
     [InlineData("ＡＢＣ")]
     [InlineData("漢字かな")]
-    public async Task 変化しない入力では両実装とも変換不要を表示する(string input)
+    internal async Task 変化しない入力では両実装とも変換不要を表示する(string input)
     {
         // 変換モードを全て None にし、変化しない入力を与えます。
         _config.ConvertModeNumber = ZenHanMode.None;
@@ -94,7 +96,7 @@ public sealed class HomeViewModelParityTests : IDisposable
     [Theory]
     [InlineData("１２３", ZenHanMode.ToHan, "123")]
     [InlineData("123", ZenHanMode.ToZen, "１２３")]
-    public async Task 個別モードの変換も一致する(string input, ZenHanMode mode, string expected)
+    internal async Task 個別モードの変換も一致する(string input, ZenHanMode mode, string expected)
     {
         _config.ConvertModeNumber = mode;
 
@@ -106,7 +108,7 @@ public sealed class HomeViewModelParityTests : IDisposable
     }
 
     [Fact]
-    public async Task 全角半角変換は両実装とも常に有効()
+    internal async Task 全角半角変換は両実装とも常に有効()
     {
         // 変換の実行可否を切り替える UI は両実装とも持ちません（IsEnabledZenHan は参照しません）。
         _config.IsEnabledZenHan = false;
@@ -120,7 +122,7 @@ public sealed class HomeViewModelParityTests : IDisposable
     }
 
     [Fact]
-    public async Task クリップボード変更時の書き戻しが一致する()
+    internal async Task クリップボード変更時の書き戻しが一致する()
     {
         _config.ConvertModeAlphabet = ZenHanMode.ToHan;
 
@@ -136,7 +138,7 @@ public sealed class HomeViewModelParityTests : IDisposable
     }
 
     [Fact]
-    public async Task 変化しない場合はクリップボードへ書き戻さない()
+    internal async Task 変化しない場合はクリップボードへ書き戻さない()
     {
         _config.ConvertModeAlphabet = ZenHanMode.None;
 
@@ -150,7 +152,7 @@ public sealed class HomeViewModelParityTests : IDisposable
     }
 
     [Fact]
-    public async Task 変換前テキストは両実装ともクリップボードの内容になる()
+    internal async Task 変換前テキストは両実装ともクリップボードの内容になる()
     {
         _config.ConvertModeAlphabet = ZenHanMode.ToHan;
         const string input = "ＡＢＣ";
@@ -163,7 +165,7 @@ public sealed class HomeViewModelParityTests : IDisposable
     }
 
     [Fact]
-    public async Task クリップボード変換が無効の場合は両実装とも読み書きしない()
+    internal async Task クリップボード変換が無効の場合は両実装とも読み書きしない()
     {
         _config.ConvertModeAlphabet = ZenHanMode.ToHan;
         _mewAppSetting.IsClipboardConvertEnabled = false;
@@ -193,5 +195,5 @@ public sealed class HomeViewModelParityTests : IDisposable
     /// <remarks>タイムアウトした場合も後続の Assert で差分が報告されます。</remarks>
     private async Task WaitBothConvertedTextAsync(string expected)
         => await TestHelper.WaitUntilAsync(
-            () => _mewViewModel.ConvertedText == expected && _winViewModel.ConvertedText == expected);
+            () => string.Equals(_mewViewModel.ConvertedText, expected, StringComparison.Ordinal) && string.Equals(_winViewModel.ConvertedText, expected, StringComparison.Ordinal));
 }

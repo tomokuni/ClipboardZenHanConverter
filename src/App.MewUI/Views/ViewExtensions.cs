@@ -2,6 +2,7 @@ using Aprillz.MewUI;
 using Aprillz.MewUI.Controls;
 using EsUtil.ZenHanConverter.App.Core.Presentation.ViewModels;
 using System.Collections.Generic;
+using System;
 
 namespace EsUtil.ZenHanConverter.App.MewUI.Views;
 
@@ -35,9 +36,11 @@ internal static class ViewExtensions
         // ViewModel → ComboBox（プリセット連動/一致検出など）
         viewModel.PropertyChanged += (_, e) =>
         {
-            if (e.PropertyName == nameof(SettingsViewModel.SelectedPresetName) ||
-                e.PropertyName == nameof(SettingsViewModel.PresetNames))
+            if (string.Equals(e.PropertyName, nameof(SettingsViewModel.SelectedPresetName), StringComparison.Ordinal)
+                || string.Equals(e.PropertyName, nameof(SettingsViewModel.PresetNames), StringComparison.Ordinal))
+            {
                 comboBox.SelectedIndex = FindIndex(viewModel.PresetNames, viewModel.SelectedPresetName);
+            }
         };
 
         return comboBox;
@@ -49,7 +52,7 @@ internal static class ViewExtensions
         if (selected is null) return -1;
         for (var i = 0; i < names.Count; i++)
         {
-            if (names[i] == selected) return i;
+            if (string.Equals(names[i], selected, System.StringComparison.Ordinal)) return i;
         }
         return -1;
     }

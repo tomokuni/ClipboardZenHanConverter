@@ -1,6 +1,7 @@
 using EsUtil.ZenHanConverter.App.Core.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -146,7 +147,7 @@ public partial class SettingsViewModel : ObservableObject
     /// <remarks>エラーメッセージ自身の変更では再検証しないことで無限ループを防ぎます。</remarks>
     private void OnReplaceItemPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(ReplacePairItem.ErrorMessage)) return;
+        if (string.Equals(e.PropertyName, nameof(ReplacePairItem.ErrorMessage), StringComparison.Ordinal)) { return; }
         if (sender is not ReplacePairItem item) return;
 
         ValidateItemAndSync(item);
@@ -279,7 +280,7 @@ public partial class SettingsViewModel : ObservableObject
         if (string.IsNullOrEmpty(name)) return;
         ConvertConfig.DeletePreset(name);
         RefreshPresets();
-        if (SelectedPresetName == name)
+        if (string.Equals(SelectedPresetName, name, StringComparison.Ordinal))
             SelectedPresetName = null;
     }
 }

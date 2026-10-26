@@ -11,6 +11,7 @@ public sealed class SettingsPersistenceBaseTests : IDisposable
 {
     private readonly string _tempDirectory = TestHelper.CreateTempDirectory();
 
+    /// <summary>テストで生成した一時ファイルとインスタンスを破棄します。</summary>
     public void Dispose()
     {
         if (Directory.Exists(_tempDirectory))
@@ -23,19 +24,21 @@ public sealed class SettingsPersistenceBaseTests : IDisposable
     /// <returns>自動保存先を差し替えた AppSetting。</returns>
     private AppSetting CreateSetting()
     {
-        var setting = new AppSetting();
-        setting.AutoSaveFileName = Path.Combine(_tempDirectory, "AppSetting.json");
+        var setting = new AppSetting
+        {
+            AutoSaveFileName = Path.Combine(_tempDirectory, "AppSetting.json")
+        };
         return setting;
     }
 
     [Fact]
-    public void IsAutoSave_初期状態はfalse()
+    internal void IsAutoSave_初期状態はfalse()
     {
         Assert.False(CreateSetting().IsAutoSave);
     }
 
     [Fact]
-    public void SaveToJsonFile_インデント付きJSONを書き出す()
+    internal void SaveToJsonFile_インデント付きJSONを書き出す()
     {
         var setting = CreateSetting();
         setting.WindowWidth = 1234;
@@ -44,12 +47,12 @@ public sealed class SettingsPersistenceBaseTests : IDisposable
         setting.SaveToJsonFile(file);
 
         var json = File.ReadAllText(file);
-        Assert.Contains("WindowWidth", json);
-        Assert.Contains(Environment.NewLine, json);
+        Assert.Contains("WindowWidth", json, StringComparison.Ordinal);
+        Assert.Contains(Environment.NewLine, json, StringComparison.Ordinal);
     }
 
     [Fact]
-    public void SaveToJsonFile_存在しないディレクトリでも例外を送出しない()
+    internal void SaveToJsonFile_存在しないディレクトリでも例外を送出しない()
     {
         var setting = CreateSetting();
         var file = Path.Combine(_tempDirectory, "missing-dir", "saved.json");
@@ -60,7 +63,7 @@ public sealed class SettingsPersistenceBaseTests : IDisposable
     }
 
     [Fact]
-    public void CancelPendingSave_保留が無くても例外を送出しない()
+    internal void CancelPendingSave_保留が無くても例外を送出しない()
     {
         var setting = CreateSetting();
 
@@ -70,7 +73,7 @@ public sealed class SettingsPersistenceBaseTests : IDisposable
     }
 
     [Fact]
-    public void CancelPendingSave_複数回呼び出しても例外を送出しない()
+    internal void CancelPendingSave_複数回呼び出しても例外を送出しない()
     {
         var setting = CreateSetting();
         setting.CancelPendingSave();
@@ -81,7 +84,7 @@ public sealed class SettingsPersistenceBaseTests : IDisposable
     }
 
     [Fact]
-    public void Dispose_複数回呼び出しても例外を送出しない()
+    internal void Dispose_複数回呼び出しても例外を送出しない()
     {
         var setting = CreateSetting();
         setting.Dispose();
@@ -92,7 +95,7 @@ public sealed class SettingsPersistenceBaseTests : IDisposable
     }
 
     [Fact]
-    public void Dispose後もプロパティ変更で例外を送出しない()
+    internal void Dispose後もプロパティ変更で例外を送出しない()
     {
         var setting = CreateSetting();
         setting.Dispose();

@@ -12,7 +12,7 @@ public sealed class StringNotEmptyToBoolConverterTests
     private readonly StringNotEmptyToBoolConverter _converter = StringNotEmptyToBoolConverter.Instance;
 
     [Fact]
-    public void Instanceは共有インスタンスを返す()
+    internal void Instanceは共有インスタンスを返す()
     {
         Assert.Same(StringNotEmptyToBoolConverter.Instance, StringNotEmptyToBoolConverter.Instance);
     }
@@ -21,19 +21,19 @@ public sealed class StringNotEmptyToBoolConverterTests
     [InlineData("abc", true)]
     [InlineData(" ", true)]
     [InlineData("", false)]
-    public void Convert_空文字のみfalseを返す(string value, bool expected)
+    internal void Convert_空文字のみfalseを返す(string value, bool expected)
         => Assert.Equal(expected, _converter.Convert(value, typeof(bool), null, CultureInfo.InvariantCulture));
 
     [Fact]
-    public void Convert_nullはfalseを返す()
+    internal void Convert_nullはfalseを返す()
         => Assert.Equal(false, _converter.Convert(null, typeof(bool), null, CultureInfo.InvariantCulture));
 
     [Fact]
-    public void Convert_文字列以外はfalseを返す()
+    internal void Convert_文字列以外はfalseを返す()
         => Assert.Equal(false, _converter.Convert(123, typeof(bool), null, CultureInfo.InvariantCulture));
 
     [Fact]
-    public void ConvertBack_サポートしない()
+    internal void ConvertBack_サポートしない()
         => Assert.Throws<NotSupportedException>(
             () => _converter.ConvertBack(true, typeof(string), null, CultureInfo.InvariantCulture));
 }

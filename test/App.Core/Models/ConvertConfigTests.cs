@@ -13,6 +13,7 @@ public sealed class ConvertConfigTests : IDisposable
 {
     private readonly string _tempDirectory = TestHelper.CreateTempDirectory();
 
+    /// <summary>テストで生成した一時ファイルとインスタンスを破棄します。</summary>
     public void Dispose()
     {
         if (Directory.Exists(_tempDirectory))
@@ -32,7 +33,7 @@ public sealed class ConvertConfigTests : IDisposable
     }
 
     [Fact]
-    public void Constructor_既定値は全てNoneで置換ルールは空()
+    internal void Constructor_既定値は全てNoneで置換ルールは空()
     {
         var config = TestHelper.CreateDefaultConfig();
 
@@ -47,7 +48,7 @@ public sealed class ConvertConfigTests : IDisposable
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public void Mode_全角半角変換の有効フラグのGetとSetが往復する(bool value)
+    internal void Mode_全角半角変換の有効フラグのGetとSetが往復する(bool value)
     {
         var config = TestHelper.CreateDefaultConfig();
 
@@ -58,14 +59,14 @@ public sealed class ConvertConfigTests : IDisposable
     }
 
     [Fact]
-    public void Mode_その他の記号は全角設定の対象になる()
+    internal void Mode_その他の記号は全角設定の対象になる()
     {
         Assert.Equal(ZenHanMode.ToZen, ConvertConfig.Mode.SymbolExclamation.ToZenValue);
         Assert.Equal(ZenHanMode.ToZen, ConvertConfig.Mode.SymbolTilde.ToZenValue);
     }
 
     [Fact]
-    public void Mode_全角設定の対象外はToZenValueがnullになる()
+    internal void Mode_全角設定の対象外はToZenValueがnullになる()
     {
         Assert.Null(ConvertConfig.Mode.Number.ToZenValue);
         Assert.Null(ConvertConfig.Mode.Alphabet.ToZenValue);
@@ -77,7 +78,7 @@ public sealed class ConvertConfigTests : IDisposable
     [InlineData(ZenHanMode.ToZen)]
     [InlineData(ZenHanMode.ToHan)]
     [InlineData(ZenHanMode.None)]
-    public void Mode_数値モードのGetとSetが往復する(ZenHanMode value)
+    internal void Mode_数値モードのGetとSetが往復する(ZenHanMode value)
     {
         var config = TestHelper.CreateDefaultConfig();
 
@@ -88,7 +89,7 @@ public sealed class ConvertConfigTests : IDisposable
     }
 
     [Fact]
-    public void Mode_特殊文字モードのGetとSetが往復する()
+    internal void Mode_特殊文字モードのGetとSetが往復する()
     {
         var config = TestHelper.CreateDefaultConfig();
 
@@ -99,7 +100,7 @@ public sealed class ConvertConfigTests : IDisposable
     }
 
     [Fact]
-    public void ExportToFile_ファイルが生成される()
+    internal void ExportToFile_ファイルが生成される()
     {
         var config = CreateConfig();
         config.ConvertModeNumber = ZenHanMode.ToHan;
@@ -108,11 +109,11 @@ public sealed class ConvertConfigTests : IDisposable
         config.ExportToFile(file);
 
         Assert.True(File.Exists(file));
-        Assert.Contains("ConvertModeNumber", File.ReadAllText(file));
+        Assert.Contains("ConvertModeNumber", File.ReadAllText(file), StringComparison.Ordinal);
     }
 
     [Fact]
-    public void ImportFromFile_全設定と置換ルールが反映される()
+    internal void ImportFromFile_全設定と置換ルールが反映される()
     {
         var source = CreateConfig("source.json");
         source.ConvertModeNumber = ZenHanMode.ToZen;
@@ -131,7 +132,7 @@ public sealed class ConvertConfigTests : IDisposable
     }
 
     [Fact]
-    public void ImportFromFile_置換ルールは複製される()
+    internal void ImportFromFile_置換ルールは複製される()
     {
         var source = CreateConfig("source.json");
         source.ReplacePairs = [new ReplacePair("aaa", "bbb")];
@@ -145,7 +146,7 @@ public sealed class ConvertConfigTests : IDisposable
     }
 
     [Fact]
-    public void ImportFromFile_存在しないファイルはfalseを返す()
+    internal void ImportFromFile_存在しないファイルはfalseを返す()
     {
         var config = CreateConfig();
 
@@ -155,7 +156,7 @@ public sealed class ConvertConfigTests : IDisposable
     }
 
     [Fact]
-    public void ImportFromFile_不正なJSONはfalseを返し設定を維持する()
+    internal void ImportFromFile_不正なJSONはfalseを返し設定を維持する()
     {
         var config = CreateConfig();
         config.ConvertModeNumber = ZenHanMode.ToHan;
@@ -169,7 +170,7 @@ public sealed class ConvertConfigTests : IDisposable
     }
 
     [Fact]
-    public void IsBuiltInPreset_組み込みプリセットを判定する()
+    internal void IsBuiltInPreset_組み込みプリセットを判定する()
     {
         Assert.True(ConvertConfig.IsBuiltInPreset(ConvertConfig.BuiltInPresetAccountingPower));
         Assert.True(ConvertConfig.IsBuiltInPreset(ConvertConfig.BuiltInPresetAlphanumericHanKanaZen));
@@ -177,16 +178,16 @@ public sealed class ConvertConfigTests : IDisposable
     }
 
     [Fact]
-    public void GetPresetNames_組み込みプリセットを含む()
+    internal void GetPresetNames_組み込みプリセットを含む()
     {
         var names = ConvertConfig.GetPresetNames();
 
-        Assert.Contains(ConvertConfig.BuiltInPresetAccountingPower, names);
-        Assert.Contains(ConvertConfig.BuiltInPresetAlphanumericHanKanaZen, names);
+        Assert.Contains(ConvertConfig.BuiltInPresetAccountingPower, names, StringComparer.Ordinal);
+        Assert.Contains(ConvertConfig.BuiltInPresetAlphanumericHanKanaZen, names, StringComparer.Ordinal);
     }
 
     [Fact]
-    public void LoadPreset_英数記号半角かな全角プリセットを適用する()
+    internal void LoadPreset_英数記号半角かな全角プリセットを適用する()
     {
         var config = TestHelper.CreateDefaultConfig();
 
@@ -200,7 +201,7 @@ public sealed class ConvertConfigTests : IDisposable
     }
 
     [Fact]
-    public void LoadPreset_全力会計プリセットを適用する()
+    internal void LoadPreset_全力会計プリセットを適用する()
     {
         var config = TestHelper.CreateDefaultConfig();
 
@@ -215,7 +216,7 @@ public sealed class ConvertConfigTests : IDisposable
     }
 
     [Fact]
-    public void LoadPreset_全力会計は数値と英字を半角に保つ()
+    internal void LoadPreset_全力会計は数値と英字を半角に保つ()
     {
         // 後段の _toZenSymbolSetters ループ（その他の記号 → 全角）が数値・英字を
         // 巻き込まないことを検証します。会計帳票では数値・英字の半角が必須です。
@@ -228,7 +229,7 @@ public sealed class ConvertConfigTests : IDisposable
     }
 
     [Fact]
-    public void LoadPreset_全力会計は一部記号とその他の記号を正しく振り分ける()
+    internal void LoadPreset_全力会計は一部記号とその他の記号を正しく振り分ける()
     {
         var config = TestHelper.CreateDefaultConfig();
 
@@ -244,7 +245,7 @@ public sealed class ConvertConfigTests : IDisposable
     [Theory]
     [InlineData(ConvertConfig.BuiltInPresetAccountingPower)]
     [InlineData(ConvertConfig.BuiltInPresetAlphanumericHanKanaZen)]
-    public void LoadPreset_組み込みプリセットは全角半角変換を有効にする(string presetName)
+    internal void LoadPreset_組み込みプリセットは全角半角変換を有効にする(string presetName)
     {
         var config = TestHelper.CreateDefaultConfig();
 
@@ -254,7 +255,7 @@ public sealed class ConvertConfigTests : IDisposable
     }
 
     [Fact]
-    public void LoadPreset_存在しないプリセットはfalseを返す()
+    internal void LoadPreset_存在しないプリセットはfalseを返す()
     {
         var config = TestHelper.CreateDefaultConfig();
 
@@ -264,7 +265,7 @@ public sealed class ConvertConfigTests : IDisposable
     }
 
     [Fact]
-    public void LoadPreset_空文字はfalseを返す()
+    internal void LoadPreset_空文字はfalseを返す()
     {
         var config = TestHelper.CreateDefaultConfig();
 
@@ -273,7 +274,7 @@ public sealed class ConvertConfigTests : IDisposable
     }
 
     [Fact]
-    public void DeletePreset_組み込みプリセットは削除できない()
+    internal void DeletePreset_組み込みプリセットは削除できない()
     {
         var ex = Record.Exception(() => ConvertConfig.DeletePreset(ConvertConfig.BuiltInPresetAccountingPower));
 
@@ -282,7 +283,7 @@ public sealed class ConvertConfigTests : IDisposable
     }
 
     [Fact]
-    public void SavePreset_空文字は何もしない()
+    internal void SavePreset_空文字は何もしない()
     {
         var config = TestHelper.CreateDefaultConfig();
         var before = ConvertConfig.GetPresetNames();
@@ -294,7 +295,7 @@ public sealed class ConvertConfigTests : IDisposable
     }
 
     [Fact]
-    public void FindMatchingPreset_組み込みプリセット適用後に一致する名前を返す()
+    internal void FindMatchingPreset_組み込みプリセット適用後に一致する名前を返す()
     {
         var config = TestHelper.CreateDefaultConfig();
         config.LoadPreset(ConvertConfig.BuiltInPresetAlphanumericHanKanaZen);

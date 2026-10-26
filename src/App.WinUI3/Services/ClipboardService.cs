@@ -13,25 +13,27 @@ namespace EsUtil.ZenHanConverter.App.WinUI3.Services;
 public partial class ClipboardService : IClipboardService
 {
     /// <summary>クリップボード内容変更イベント。</summary>
-    public event EventHandler<object>? ContentChanged;
+    public event EventHandler<EventArgs>? ContentChanged;
 
     /// <summary>ClipboardService の新しいインスタンスを初期化します。システムクリップボードの変更監視を開始します。</summary>
     public ClipboardService()
     {
-        Clipboard.ContentChanged += OnClipboardContentChanged;
+        Clipboard.ContentChanged += OnSystemClipboardChanged;
     }
 
     /// <summary>ContentChanged イベントを発行します。テスト用に public 公開。</summary>
     public void RaiseContentChanged() => ContentChanged?.Invoke(this, EventArgs.Empty);
 
-    /// <summary>システムクリップボードの内容変更時に呼び出されます。</summary>
-    private void OnClipboardContentChanged(object? sender, object e)
-        => ContentChanged?.Invoke(this, e);
+    /// <summary>システム クリップボードの内容変更（Windows の <see cref="object"/> のイベント）を受けます。</summary>
+    /// <param name="sender">イベント ソース。</param>
+    /// <param name="e">イベント データ（Windows は object を渡すため、そのまま <see cref="EventArgs.Empty"/> として扱う）。</param>
+    private void OnSystemClipboardChanged(object? sender, object e)
+        => ContentChanged?.Invoke(this, EventArgs.Empty);
 
     /// <summary>リソースを解放します。Clipboard.ContentChanged の購読を解除します。</summary>
     public void Dispose()
     {
-        Clipboard.ContentChanged -= OnClipboardContentChanged;
+        Clipboard.ContentChanged -= OnSystemClipboardChanged;
         GC.SuppressFinalize(this);
     }
 

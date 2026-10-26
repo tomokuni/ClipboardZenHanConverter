@@ -67,7 +67,7 @@ public partial class ZenHanConvertItem : ObservableObject, IDisposable
         }
         set
         {
-            var match = _segments.FirstOrDefault(x => x.Content == value);
+            var match = _segments.FirstOrDefault(x => string.Equals(x.Content, value, StringComparison.Ordinal));
             if (match is not null && match.IsEnabled)
             {
                 var current = _def.Mode.Get(_config);
@@ -111,7 +111,7 @@ public partial class ZenHanConvertItem : ObservableObject, IDisposable
     /// <param name="e">変更されたプロパティ名を含むイベントデータ。</param>
     private void OnOptionPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (_isSyncing || e.PropertyName != nameof(SegmentOption.IsSelected)) return;
+        if (_isSyncing || !string.Equals(e.PropertyName, nameof(SegmentOption.IsSelected), StringComparison.Ordinal)) { return; }
         if (sender is not SegmentOption option || !option.IsSelected) return;
 
         SelectedLabel = option.Content;
@@ -137,7 +137,7 @@ public partial class ZenHanConvertItem : ObservableObject, IDisposable
         {
             var current = SelectedLabel;
             foreach (var option in Options)
-                option.IsSelected = option.Content == current;
+                option.IsSelected = string.Equals(option.Content, current, StringComparison.Ordinal);
         }
         finally
         {

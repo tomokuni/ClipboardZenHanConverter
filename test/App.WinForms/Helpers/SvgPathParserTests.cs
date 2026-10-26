@@ -19,7 +19,7 @@ public sealed class SvgPathParserTests
     /// <param name="pathData">検証する SVG パスデータ。</param>
     [Theory]
     [MemberData(nameof(IconPathData))]
-    public void Parse_アイコンのパスデータを解釈できる(string pathData)
+    internal void Parse_アイコンのパスデータを解釈できる(string pathData)
     {
         using var path = SvgPathParser.Parse(pathData);
 
@@ -28,7 +28,7 @@ public sealed class SvgPathParserTests
     }
 
     [Fact]
-    public void Parse_塗りつぶし規則は偶奇()
+    internal void Parse_塗りつぶし規則は偶奇()
     {
         // アイコンの抜き（歯車のリング・中央の輪）は部分パスの重なり回数で表現されているため、
         // 偶奇規則で描画する必要があります。
@@ -38,7 +38,7 @@ public sealed class SvgPathParserTests
     }
 
     [Fact]
-    public void Parse_四角形は4点1図形になる()
+    internal void Parse_四角形は4点1図形になる()
     {
         using var path = SvgPathParser.Parse("M0 0 L10 0 L10 10 L0 10 Z");
 
@@ -47,7 +47,7 @@ public sealed class SvgPathParserTests
     }
 
     [Fact]
-    public void Parse_水平垂直コマンドを解釈する()
+    internal void Parse_水平垂直コマンドを解釈する()
     {
         using var path = SvgPathParser.Parse("M1 2 H11 V22 Z");
 
@@ -61,7 +61,7 @@ public sealed class SvgPathParserTests
     }
 
     [Fact]
-    public void Parse_相対コマンドを現在点からの差分として解釈する()
+    internal void Parse_相対コマンドを現在点からの差分として解釈する()
     {
         using var path = SvgPathParser.Parse("m10 10 l5 0 l0 5 z");
 
@@ -75,7 +75,7 @@ public sealed class SvgPathParserTests
     }
 
     [Fact]
-    public void Parse_数値の区切りがない場合も解釈する()
+    internal void Parse_数値の区切りがない場合も解釈する()
     {
         // SVG は "M10 10L5 0" のようにコマンドと数値が密着していても有効です。
         using var path = SvgPathParser.Parse("M10 10L5 0");
@@ -85,7 +85,7 @@ public sealed class SvgPathParserTests
     }
 
     [Fact]
-    public void Parse_負の数値と小数を解釈する()
+    internal void Parse_負の数値と小数を解釈する()
     {
         using var path = SvgPathParser.Parse("M-1.5 -2.25L3.75 4");
 
@@ -96,7 +96,7 @@ public sealed class SvgPathParserTests
     }
 
     [Fact]
-    public void Parse_Mの後の数値のみの並びは直線として扱う()
+    internal void Parse_Mの後の数値のみの並びは直線として扱う()
     {
         // SVG の仕様により、M の後に続く座標のみの指定は L（直線）と解釈します。
         using var path = SvgPathParser.Parse("M0 0 10 0 20 0");
@@ -106,7 +106,7 @@ public sealed class SvgPathParserTests
     }
 
     [Fact]
-    public void Parse_三次ベジエは始点を含む4点になる()
+    internal void Parse_三次ベジエは始点を含む4点になる()
     {
         using var path = SvgPathParser.Parse("M0 0 C1 1 2 2 3 3");
 
@@ -118,7 +118,7 @@ public sealed class SvgPathParserTests
     }
 
     [Fact]
-    public void Parse_連続するSコマンドは制御点を反射する()
+    internal void Parse_連続するSコマンドは制御点を反射する()
     {
         // S は直前の 3 次ベジエの 2 番目の制御点を始点に対して反転した点を第 1 制御点にします。
         using var path = SvgPathParser.Parse("M0 0 C0 10 10 10 10 0 S20 -10 20 0");
@@ -132,7 +132,7 @@ public sealed class SvgPathParserTests
     }
 
     [Fact]
-    public void Parse_直前が三次ベジエでないSコマンドは制御点を始点と同一にする()
+    internal void Parse_直前が三次ベジエでないSコマンドは制御点を始点と同一にする()
     {
         using var path = SvgPathParser.Parse("M5 5 S10 10 15 5");
 
@@ -144,7 +144,7 @@ public sealed class SvgPathParserTests
     }
 
     [Fact]
-    public void Parse_複数の図形をそれぞれ開始する()
+    internal void Parse_複数の図形をそれぞれ開始する()
     {
         using var path = SvgPathParser.Parse("M0 0 L10 0 L10 10 Z M20 0 L30 0 L30 10 Z");
 
@@ -152,7 +152,7 @@ public sealed class SvgPathParserTests
     }
 
     [Fact]
-    public void Parse_円弧コマンドは未対応として通知する()
+    internal void Parse_円弧コマンドは未対応として通知する()
     {
         var exception = Assert.Throws<NotSupportedException>(() => SvgPathParser.Parse("M0 0 A5 5 0 0 1 10 10"));
 
@@ -160,19 +160,19 @@ public sealed class SvgPathParserTests
     }
 
     [Fact]
-    public void Parse_不正なコマンドは形式エラーとして通知する()
+    internal void Parse_不正なコマンドは形式エラーとして通知する()
     {
         Assert.Throws<FormatException>(() => SvgPathParser.Parse("X0 0"));
     }
 
     [Fact]
-    public void Parse_先頭がコマンドでない場合は形式エラーとして通知する()
+    internal void Parse_先頭がコマンドでない場合は形式エラーとして通知する()
     {
         Assert.Throws<FormatException>(() => SvgPathParser.Parse("0 0 L10 10"));
     }
 
     [Fact]
-    public void Parse_数値が不足している場合は形式エラーとして通知する()
+    internal void Parse_数値が不足している場合は形式エラーとして通知する()
     {
         Assert.Throws<FormatException>(() => SvgPathParser.Parse("M0 0 L10"));
     }
@@ -180,7 +180,7 @@ public sealed class SvgPathParserTests
     [Theory]
     [InlineData("")]
     [InlineData(null)]
-    public void Parse_空の入力は引数例外として通知する(string? pathData)
+    internal void Parse_空の入力は引数例外として通知する(string? pathData)
     {
         // null の場合は ArgumentNullException（ArgumentException の派生）になるため、派生型も許容します。
         Assert.ThrowsAny<ArgumentException>(() => SvgPathParser.Parse(pathData!));

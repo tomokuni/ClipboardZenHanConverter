@@ -1,3 +1,4 @@
+using EsUtil.ZenHanConverter.App.WinUI3.Views.Controls;
 using EsUtil.ZenHanConverter.App.WinUI3.ViewModels;
 using EsUtil.ZenHanConverter.App.Core.Helpers;
 using Microsoft.UI.Xaml;
@@ -34,11 +35,12 @@ public sealed partial class HomePage : Page
     }
 
     /// <summary>分割バーのドラッグ中に分割比率を更新します。</summary>
-    /// <param name="verticalChange">前回の通知からの垂直方向の移動量。</param>
-    private void OnSplitterDeltaChanged(double verticalChange)
+    /// <param name="sender">イベント ソース。</param>
+    /// <param name="e">移動量を持つイベント データ。</param>
+    private void OnSplitterDeltaChanged(object? sender, SplitterDeltaChangedEventArgs e)
     {
         var trackHeight = SplitGrid.ActualHeight - SplitterRegion.ActualHeight;
-        ApplyRatio(SplitLayout.RatioFromDrag(_splitRatio, verticalChange, trackHeight));
+        ApplyRatio(SplitLayout.RatioFromDrag(_splitRatio, e.VerticalChange, trackHeight));
     }
 
     /// <summary>分割比率を上下の行の重みへ反映します。</summary>

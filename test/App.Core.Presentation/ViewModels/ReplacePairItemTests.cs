@@ -9,7 +9,7 @@ namespace EsUtil.ZenHanConverter.Tests.App.Core.Presentation.ViewModels;
 public sealed class ReplacePairItemTests
 {
     [Fact]
-    public void 既定値は空文字と正規表現なし()
+    internal void 既定値は空文字と正規表現なし()
     {
         var item = new ReplacePairItem();
 
@@ -20,7 +20,7 @@ public sealed class ReplacePairItemTests
     }
 
     [Fact]
-    public void ReplacePairからのコピーで値が設定される()
+    internal void ReplacePairからのコピーで値が設定される()
     {
         var pair = new ReplacePair("検索", "置換", true);
 
@@ -32,7 +32,7 @@ public sealed class ReplacePairItemTests
     }
 
     [Fact]
-    public void 検索文字列が空の場合はエラーになる()
+    internal void 検索文字列が空の場合はエラーになる()
     {
         var item = new ReplacePairItem { Search = "", Replace = "置換" };
 
@@ -41,7 +41,7 @@ public sealed class ReplacePairItemTests
     }
 
     [Fact]
-    public void 置換文字列が空の場合はエラーになる()
+    internal void 置換文字列が空の場合はエラーになる()
     {
         var item = new ReplacePairItem { Search = "検索", Replace = "" };
 
@@ -50,7 +50,7 @@ public sealed class ReplacePairItemTests
     }
 
     [Fact]
-    public void 有効な値の場合はエラーが消える()
+    internal void 有効な値の場合はエラーが消える()
     {
         var item = new ReplacePairItem { Search = "検索", Replace = "置換" };
         item.Validate();
@@ -62,7 +62,7 @@ public sealed class ReplacePairItemTests
     }
 
     [Fact]
-    public void 正規表現が不正な場合はエラーになる()
+    internal void 正規表現が不正な場合はエラーになる()
     {
         var item = new ReplacePairItem { Search = "(", Replace = "x", IsRegex = true };
 
@@ -70,7 +70,7 @@ public sealed class ReplacePairItemTests
     }
 
     [Fact]
-    public void ToPairは現在の値を反映する()
+    internal void ToPairは現在の値を反映する()
     {
         var item = new ReplacePairItem { Search = "検索", Replace = "置換", IsRegex = true };
 
@@ -82,7 +82,7 @@ public sealed class ReplacePairItemTests
     }
 
     [Fact]
-    public void 編集値の変更は通知される()
+    internal void 編集値の変更は通知される()
     {
         var item = new ReplacePairItem();
         var changed = new List<string?>();
@@ -90,6 +90,6 @@ public sealed class ReplacePairItemTests
 
         item.Search = "検索";
 
-        Assert.Contains(nameof(ReplacePairItem.Search), changed);
+        Assert.Contains(nameof(ReplacePairItem.Search), changed, System.StringComparer.Ordinal);
     }
 }

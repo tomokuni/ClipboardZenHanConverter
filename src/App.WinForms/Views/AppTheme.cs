@@ -11,7 +11,7 @@ namespace EsUtil.ZenHanConverter.App.WinForms.Views;
 /// - 色・寸法をここへ集約し、各画面でのマジックナンバー・マジック文字列を排除<br/>
 /// - 他の 3 つの UI（MewUI / WinUI 3 / Avalonia UI）と同じ配色値を用い、見た目を揃える<br/>
 /// - 寸法は 96 DPI 基準の論理ピクセルで記述する。DPI による拡大縮小は WinForms の
-///   <see cref="Control.AutoScaleMode"/>（Font）が行うため、画面側で個別に換算しない<br/>
+///   <c>Control.AutoScaleMode</c>（Font）が行うため、画面側で個別に換算しない<br/>
 /// - フォントはポイント指定のため、DPI に依存せず物理的な大きさが揃う
 /// </remarks>
 internal static class AppTheme
