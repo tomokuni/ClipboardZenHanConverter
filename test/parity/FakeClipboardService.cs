@@ -1,4 +1,4 @@
-using EsUtil.ZenHanConverter.Core.Interfaces;
+using EsUtil.ZenHanConverter.App.Core.Interfaces;
 using System;
 using System.Threading.Tasks;
 

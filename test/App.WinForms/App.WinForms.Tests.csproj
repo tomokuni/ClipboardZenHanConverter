@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows10.0.17763.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <!-- 参照先の App.WinForms が WinForms を使用するため、テスト側でも同じフレームワーク参照が必要 -->
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>EsUtil.ZenHanConverter.Tests.App.WinForms</RootNamespace>
+    <AssemblyName>ZenHanConverter.Tests.App.WinForms</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.analyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.v3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\App.WinForms\App.WinForms.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- テスト共通ヘルパーは test 直下に単一所有し、各テストプロジェクトへリンクして共有する -->
+    <Compile Include="..\TestHelper.cs" Link="TestHelper.cs" />
+  </ItemGroup>
+
+</Project>

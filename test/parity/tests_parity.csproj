@@ -8,7 +8,7 @@
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <RootNamespace>EsUtil.ZenHanConverter.Tests.Parity</RootNamespace>
     <AssemblyName>ZenHanConverter.Tests.Parity</AssemblyName>
-    <!-- app_WinUI3（自己完結型）を参照するため Windows App SDK のビルド要件を満たす -->
+    <!-- App.WinUI3（自己完結型）を参照するため Windows App SDK のビルド要件を満たす -->
     <Platforms>x64</Platforms>
     <SelfContained>true</SelfContained>
     <!--
@@ -31,23 +31,23 @@
 
   <ItemGroup>
     <!-- 両 UI の app 層を同時に参照し、同じ入力に対する挙動を直接比較する -->
-    <ProjectReference Include="..\..\src\core\core.csproj" />
-    <ProjectReference Include="..\..\src\app_WinUI3\app_WinUI3.csproj" />
+    <ProjectReference Include="..\..\src\App.Core\App.Core.csproj" />
+    <ProjectReference Include="..\..\src\App.WinUI3\App.WinUI3.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <!--
       HomeViewModel は各 UI のスレッド委譲方式が異なるため UI ごとの実装のままです（未共通化）。
-      一方で app_MewUI / app_WinForms は非自己完結型 exe、app_WinUI3 は自己完結型 exe のため、
+      一方で App.MewUI / App.WinForms は非自己完結型 exe、App.WinUI3 は自己完結型 exe のため、
       1 つのプロジェクトから同時に参照すると NETSDK1150/1151 で失敗します。
       そこで MewUI 版・WinForms 版はソースをリンクして同一アセンブリへ取り込み、各実装を直接比較します。
-      （リンクのため、app_MewUI / app_WinForms 側の変更は自動的にこのテストへ反映されます）
+      （リンクのため、App.MewUI / App.WinForms 側の変更は自動的にこのテストへ反映されます）
 
       設定画面の ViewModel（SettingsViewModel / ZenHanConvertItem / ReplacePairItem 等）は
-      src/core_presentation に共通化済みのため、ここで比較する対象はありません。
+      src/App.Core.Presentation に共通化済みのため、ここで比較する対象はありません。
     -->
-    <Compile Include="..\..\src\app_MewUI\ViewModels\HomeViewModel.cs" Link="App.MewUI\ViewModels\HomeViewModel.cs" />
-    <Compile Include="..\..\src\app_WinForms\ViewModels\HomeViewModel.cs" Link="App.WinForms\ViewModels\HomeViewModel.cs" />
+    <Compile Include="..\..\src\App.MewUI\ViewModels\HomeViewModel.cs" Link="App.MewUI\ViewModels\HomeViewModel.cs" />
+    <Compile Include="..\..\src\App.WinForms\ViewModels\HomeViewModel.cs" Link="App.WinForms\ViewModels\HomeViewModel.cs" />
   </ItemGroup>
 
   <ItemGroup>

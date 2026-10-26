@@ -1,10 +1,10 @@
 # アプリ固有 ViewModel のパリティ検証
 
-`src/app_MewUI`・`src/app_WinUI3`・`src/app_WinForms` の**挙動が一致すること**を検証するテストプロジェクトです。
+`src/App.MewUI`・`src/App.WinUI3`・`src/App.WinForms` の**挙動が一致すること**を検証するテストプロジェクトです。
 
 ## 1. 目的
 
-共有コア（`src/core`）と設定画面の ViewModel（`src/core_presentation`）は 4 つの UI で共通です。
+共有コア（`src/App.Core`）と設定画面の ViewModel（`src/App.Core.Presentation`）は 4 つの UI で共通です。
 一方で `HomeViewModel` は UI スレッドへの委譲方法がフレームワークごとに異なるため、各アプリが個別に実装しています。
 本プロジェクトは、同じ入力に対するそれらの出力を直接比較し、共有コアの変更にどれかが追随し忘れる状態を検出します。
 
@@ -22,21 +22,21 @@ dotnet test --project test\parity\tests_parity.csproj
 | `WinFormsParityTests` | WinForms 版を加えた 3 実装の表示用変換・書き戻し |
 | `FakeClipboardService` | 各テストが共有するテスト用クリップボードサービス |
 
-設定画面の ViewModel は共通化済みのため、ここで比較する対象はありません（`test/core_presentation` が検証します）。
+設定画面の ViewModel は共通化済みのため、ここで比較する対象はありません（`test/App.Core.Presentation` が検証します）。
 
 ### 3.1 実装方式（ソースリンク）
 
-`app_MewUI` / `app_WinForms` は非自己完結型 exe、`app_WinUI3` は自己完結型 exe のため、1 つのプロジェクトから
+`App.MewUI` / `App.WinForms` は非自己完結型 exe、`App.WinUI3` は自己完結型 exe のため、1 つのプロジェクトから
 これらを同時に `ProjectReference` すると `NETSDK1150` / `NETSDK1151` で失敗します。
 
-そこで **`app_WinUI3` はプロジェクト参照**し、**`app_MewUI` / `app_WinForms` は `HomeViewModel` のソースをリンク**して
+そこで **`App.WinUI3` はプロジェクト参照**し、**`App.MewUI` / `App.WinForms` は `HomeViewModel` のソースをリンク**して
 同一アセンブリへ取り込んでいます（`tests_parity.csproj` の `Compile Include`）。
 リンク先の `HomeViewModel` は共有コアと共有プレゼンテーション層しか参照しないため、この方法で問題なくコンパイルできます。
 リンクのため変更は自動的にテストへ反映されます。
 
 > 注意: ソースリンク先のファイルを古いタイムスタンプで上書き（バックアップからの復元など）すると、
 > 増分ビルドが変更を検出せず古い内容で実行されることがあります。その場合は `--no-incremental` で再ビルドしてください。
-> リンク先のソースは共有プレゼンテーション層の型を `using EsUtil.ZenHanConverter.Presentation.ViewModels;` で参照するため、
+> リンク先のソースは共有プレゼンテーション層の型を `using EsUtil.ZenHanConverter.App.Core.Presentation.ViewModels;` で参照するため、
 > 本プロジェクトにも同じ名前空間の参照が必要です。
 
 ## 4. 検証済みの一致（自動テストで保証）

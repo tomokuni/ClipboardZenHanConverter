@@ -18,7 +18,7 @@ rem ============================================================
 
 rem Move from the script folder (buildScript) to the repository root.
 pushd "%~dp0.."
-call "%~dp0publish_ui.bat" avaloniaui "src\app_AvaloniaUI\app_AvaloniaUI.csproj" %*
+call "%~dp0publish_ui.bat" avaloniaui "src\App.AvaloniaUI\App.AvaloniaUI.csproj" %*
 set "RESULT=%ERRORLEVEL%"
 popd
 exit /b %RESULT%

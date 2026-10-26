@@ -1,0 +1,66 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- コンパイル時バインディングを既定にし、実行時リフレクション（AOT 非互換）を排除する -->
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <!--
+      Views は DI コンテナが ViewModel を注入して生成するため、既定コンストラクタを持ちません。
+      実行時 XAML ローダー（avares スキームでの読み込み）は使用しないため、その警告のみ抑止します。
+    -->
+    <NoWarn>$(NoWarn);AVLN3001</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RootNamespace>EsUtil.ZenHanConverter.App.AvaloniaUI</RootNamespace>
+    <AssemblyName>ZenHanConverter.App.AvaloniaUI</AssemblyName>
+    <Product>ZenHanConverter</Product>
+    <Description>ZenHanConverter (Avalonia UI) - clipboard text converter</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\App.Core\App.Core.csproj" />
+    <ProjectReference Include="..\App.Core.Presentation\App.Core.Presentation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 検証ロジック（internal static）をテストから参照するため -->
+    <InternalsVisibleTo Include="ZenHanConverter.Tests.App.AvaloniaUI" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="Avalonia.Fonts.Inter" />
+    <!-- 開発者ツールは Avalonia.Diagnostics（廃止）ではなく AvaloniaUI.DiagnosticsSupport を使用する。
+         **参照は構成で変えない**（`IncludeAssets` を構成で変えると packages.lock.json の解決が構成ごとに
+         変わり、参照側のテスト プロジェクトがロック モード復元で NU1004 になる。 実測 2026-10-26）。
+         Release では配布物から外す（下の RemoveDeveloperToolsPayload。 有効化は Program.cs の `#if DEBUG` のみ）。 -->
+    <PackageReference Include="AvaloniaUI.DiagnosticsSupport" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
+
+
+  <!--
+    Release の配布物から開発者ツール（AvaloniaUI.DiagnosticsSupport）を外す。
+    参照は構成で変えない（packages.lock.json の解決を構成に依存させないため）ので、
+    配布物からは発行の段階で除く。 開発者ツールの有効化は Program.cs の `#if DEBUG` だけが行う。
+  -->
+  <Target Name="RemoveDeveloperToolsPayload"
+          AfterTargets="ComputeResolvedFilesToPublishList"
+          BeforeTargets="CopyFilesToPublishDirectory"
+          Condition="'$(Configuration)' != 'Debug'">
+    <ItemGroup>
+      <_DeveloperToolsPayload Include="@(ResolvedFileToPublish)"
+          Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(Filename)%(Extension)', '^AvaloniaUI\.DiagnosticsSupport.*'))" />
+      <ResolvedFileToPublish Remove="@(_DeveloperToolsPayload)" />
+    </ItemGroup>
+    <Message Importance="high" Text="開発者ツールを配布物から除外: @(_DeveloperToolsPayload->Count()) ファイル" />
+  </Target>
+
+</Project>
+

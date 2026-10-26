@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <RootNamespace>EsUtil.ZenHanConverter.App.MewUI</RootNamespace>
+    <AssemblyName>ZenHanConverter.App.MewUI</AssemblyName>
+    <Product>ZenHanConverter</Product>
+    <Description>ZenHanConverter (MewUI) - clipboard text converter</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\App.Core\App.Core.csproj" />
+    <ProjectReference Include="..\App.Core.Presentation\App.Core.Presentation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aprillz.MewUI.Windows" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <!-- マルチカラム配置の計算は UI 非依存の EsUtil.Feature.ColumnPacking.Core へ委譲する -->
+    <PackageReference Include="EsUtil.Feature.ColumnPacking.Core" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
+
+</Project>

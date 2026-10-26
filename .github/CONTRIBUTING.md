@@ -33,25 +33,25 @@
 │   ├── verify.ps1                  # 検証の入口（合否 35 項目。 .github/検証手順.md が所有者）
 │   ├── verifyDocs.ps1 / VerifyCommon.ps1 / verifyPublish.ps1 / verifyInfoStyle.ps1
 ├── src/
-│   ├── app_MewUI/           # MewUI アプリ本体（MewUI 依存）
+│   ├── App.MewUI/           # MewUI アプリ本体（MewUI 依存）
 │   │   ├── README.md / SPEC_ExtFunc.md / SPEC_System.md
-│   ├── app_WinUI3/          # WinUI 3 アプリ本体（WinUI 3 依存）
+│   ├── App.WinUI3/          # WinUI 3 アプリ本体（WinUI 3 依存）
 │   │   ├── README.md / SPEC_ExtFunc.md / SPEC_System.md
-│   ├── app_AvaloniaUI/      # Avalonia UI アプリ本体（Avalonia UI 依存）
+│   ├── App.AvaloniaUI/      # Avalonia UI アプリ本体（Avalonia UI 依存）
 │   │   ├── README.md / SPEC_ExtFunc.md / SPEC_System.md
-│   ├── app_WinForms/        # WinForms アプリ本体（Windows Forms 依存）
+│   ├── App.WinForms/        # WinForms アプリ本体（Windows Forms 依存）
 │   │   ├── README.md / SPEC_ExtFunc.md / SPEC_System.md
 │   ├── core/                # 共有コア（モデル・変換ロジック・カテゴリ定義・Win32 API・アイコン。UI 非依存）
 │   │   ├── README.md / SPEC_ExtFunc.md / SPEC_System.md
-│   └── core_presentation/   # 共有プレゼンテーション層（設定画面の ViewModel。UI 非依存）
+│   └── App.Core.Presentation/   # 共有プレゼンテーション層（設定画面の ViewModel。UI 非依存）
 │       ├── README.md / SPEC_ExtFunc.md / SPEC_System.md
 └── test/                    # 単体テスト（xUnit v3）
-    ├── app_MewUI/           # app_MewUI のテスト
-    ├── app_WinUI3/          # app_WinUI3 のテスト
-    ├── app_AvaloniaUI/      # app_AvaloniaUI のテスト
-    ├── app_WinForms/        # app_WinForms のテスト
+    ├── App.MewUI/           # App.MewUI のテスト
+    ├── App.WinUI3/          # App.WinUI3 のテスト
+    ├── App.AvaloniaUI/      # App.AvaloniaUI のテスト
+    ├── App.WinForms/        # App.WinForms のテスト
     ├── core/                # core のテスト（UI フレームワーク非依存）
-    ├── core_presentation/   # core_presentation のテスト（UI フレームワーク非依存）
+    ├── App.Core.Presentation/   # App.Core.Presentation のテスト（UI フレームワーク非依存）
     └── parity/              # アプリ固有 ViewModel の挙動一致を検証（README.md に差異一覧）
 ```
 
@@ -59,18 +59,18 @@
 
 | プロジェクト | 説明 |
 | --- | --- |
-| `src/core` | 変換ロジック・モデル・変換カテゴリ定義・表示領域の補正・アイコンデータ（`CharConverter`, `ConvertConfig`, `SegmentDefinitions`, `ScreenVisibleArea`, `FluentIconData` など）。UI フレームワークに依存しない。Win32 実装と変換ペアは EsUtil が単一所有する。 |
-| `src/core_presentation` | 4 つの UI が共有する設定画面の ViewModel（`SettingsViewModel`, `ZenHanConvertItem`, `SegmentOption`, `ReplacePairItem`, `PresetEditDialogViewModel`）。UI フレームワークに依存しない。 |
-| `src/app_MewUI` | MewUI アプリ本体。クリップボード監視・ホーム/設定画面。 |
-| `src/app_WinUI3` | WinUI 3 アプリ本体。同上。 |
-| `src/app_AvaloniaUI` | Avalonia UI アプリ本体。同上。 |
-| `src/app_WinForms` | Windows Forms アプリ本体。同上。 |
-| `test/core` | `src/core` の単体テスト。ソースファイル 1 つにつき `{対象ソースファイル名}Tests.cs` を作成する。 |
-| `test/app_MewUI` | `src/app_MewUI` の単体テスト。同上。 |
-| `test/app_WinUI3` | `src/app_WinUI3` の単体テスト。同上。 |
-| `test/app_AvaloniaUI` | `src/app_AvaloniaUI` の単体テスト。同上。 |
-| `test/app_WinForms` | `src/app_WinForms` の単体テスト。同上。 |
-| `test/core_presentation` | `src/core_presentation` の単体テスト。 |
+| `src/App.Core` | 変換ロジック・モデル・変換カテゴリ定義・表示領域の補正・アイコンデータ（`CharConverter`, `ConvertConfig`, `SegmentDefinitions`, `ScreenVisibleArea`, `FluentIconData` など）。UI フレームワークに依存しない。Win32 実装と変換ペアは EsUtil が単一所有する。 |
+| `src/App.Core.Presentation` | 4 つの UI が共有する設定画面の ViewModel（`SettingsViewModel`, `ZenHanConvertItem`, `SegmentOption`, `ReplacePairItem`, `PresetEditDialogViewModel`）。UI フレームワークに依存しない。 |
+| `src/App.MewUI` | MewUI アプリ本体。クリップボード監視・ホーム/設定画面。 |
+| `src/App.WinUI3` | WinUI 3 アプリ本体。同上。 |
+| `src/App.AvaloniaUI` | Avalonia UI アプリ本体。同上。 |
+| `src/App.WinForms` | Windows Forms アプリ本体。同上。 |
+| `test/App.Core` | `src/App.Core` の単体テスト。ソースファイル 1 つにつき `{対象ソースファイル名}Tests.cs` を作成する。 |
+| `test/App.MewUI` | `src/App.MewUI` の単体テスト。同上。 |
+| `test/App.WinUI3` | `src/App.WinUI3` の単体テスト。同上。 |
+| `test/App.AvaloniaUI` | `src/App.AvaloniaUI` の単体テスト。同上。 |
+| `test/App.WinForms` | `src/App.WinForms` の単体テスト。同上。 |
+| `test/App.Core.Presentation` | `src/App.Core.Presentation` の単体テスト。 |
 | `test/parity` | アプリ固有の ViewModel（`HomeViewModel`）を同じ入力で比較し、挙動の一致を検証する。意図的な差異は `test/parity/README.md` を参照。 |
 
 ## ビルド
@@ -81,7 +81,7 @@ dotnet build ZenHanConverter.slnx
 
 ### 名前空間と using
 
-- 名前空間のルートは `EsUtil` 配下の製品名フォルダーです（例: `AppSetting` は `EsUtil.ZenHanConverter.Core.Models` にあります）。
+- 名前空間のルートは `EsUtil` 配下の製品名フォルダーです（例: `AppSetting` は `EsUtil.ZenHanConverter.App.Core.Models` にあります）。
 - アセンブリ名・exe 名・設定ファイルの保存先（`%LOCALAPPDATA%\ZenHanConverter`）は `ZenHanConverter` のままです（**リポジトリ名 `ZenHanConverter` とは別**。 利用者の設定と配布物の互換性を保つため）。
 - 暗黙の global using（`ImplicitUsings`）は無効です。各ソースファイルが使用する名前空間を `using` で明示し、プロジェクト共通の `GlobalUsings.cs` は置きません。
 
@@ -122,12 +122,12 @@ dotnet build ZenHanConverter.slnx
 dotnet test --solution ZenHanConverter.slnx
 
 # 個別に実行する場合（プロジェクトは --project で指定する）
-dotnet test --project test\core\tests_core.csproj
-dotnet test --project test\core_presentation\tests_core_presentation.csproj
-dotnet test --project test\app_MewUI\tests_app_MewUI.csproj
-dotnet test --project test\app_WinUI3\tests_app_WinUI3.csproj
-dotnet test --project test\app_AvaloniaUI\tests_app_AvaloniaUI.csproj
-dotnet test --project test\app_WinForms\tests_app_WinForms.csproj
+dotnet test --project test\App.Core\App.Core.Tests.csproj
+dotnet test --project test\App.Core.Presentation\App.Core.Presentation.Tests.csproj
+dotnet test --project test\App.MewUI\App.MewUI.Tests.csproj
+dotnet test --project test\App.WinUI3\App.WinUI3.Tests.csproj
+dotnet test --project test\App.AvaloniaUI\App.AvaloniaUI.Tests.csproj
+dotnet test --project test\App.WinForms\App.WinForms.Tests.csproj
 dotnet test --project test\parity\tests_parity.csproj
 ```
 
@@ -135,19 +135,19 @@ dotnet test --project test\parity\tests_parity.csproj
 実行され、位置引数（`dotnet test ZenHanConverter.slnx`）はテスト アプリへの引数として扱われて
 **0 件・終了コード 5** になります（実行基盤の指定は `global.json` の `test.runner` が単一所有します）。
 
-**WinUI 3 を参照するテスト（`test/app_WinUI3` / `test/parity`）から WinRT（Windows App SDK）を起動しないでください。**
+**WinUI 3 を参照するテスト（`test/App.WinUI3` / `test/parity`）から WinRT（Windows App SDK）を起動しないでください。**
 UI 型の実処理（`DispatcherQueue.GetForCurrentThread()` など）は Windows App SDK の初期化を伴い、`CoreMessagingXP.dll` を
 読み込みます。UI を持たない CI（非対話セッション）ではこれが**出力を出さないまま停止**します（Windows App Runtime が
 インストール済みのローカルでは再現しません）。UI スレッドへの依存は UI 層（`DependencyInjectionExtensions` が生成する
 `IUiDispatcher`）からコンストラクターで受け取り、ViewModel 側で静的に取得しないでください。
 
-**`src/app_WinUI3` は Windows App SDK を自己完結にしています**（`WindowsAppSDKSelfContained=true`）。未設定にすると
+**`src/App.WinUI3` は Windows App SDK を自己完結にしています**（`WindowsAppSDKSelfContained=true`）。未設定にすると
 アプリのアセンブリにブートストラップの自動初期化（`OnNoMatch_ShowUI`）が埋め込まれ、これを読み込むテストが
 Windows App Runtime の無い CI で導入ダイアログ待ちのまま停止します。テスト用プロジェクト側は
 `WindowsAppSdkAutoInitialize=false` で自動初期化を無効にしています。
 
-`test/core` は `src/core` のみを参照し、UI フレームワークに依存しないことを保証します。  
-`test/core_presentation` は `src/core_presentation` のみを参照し、同じく UI フレームワークに依存しないことを保証します。  
+`test/App.Core` は `src/App.Core` のみを参照し、UI フレームワークに依存しないことを保証します。  
+`test/App.Core.Presentation` は `src/App.Core.Presentation` のみを参照し、同じく UI フレームワークに依存しないことを保証します。  
 設定ファイルを書き込むテストは、実ユーザーの `%LOCALAPPDATA%` 配下を汚さないよう
 自動保存先を一時ディレクトリへ差し替えます。
 
@@ -155,16 +155,16 @@ Windows App Runtime の無い CI で導入ダイアログ待ちのまま停止�
 
 ```powershell
 # MewUI 版
-dotnet run --project src/app_MewUI/app_MewUI.csproj
+dotnet run --project src/App.MewUI/App.MewUI.csproj
 
 # WinUI 3 版
-dotnet run --project src/app_WinUI3/app_WinUI3.csproj
+dotnet run --project src/App.WinUI3/App.WinUI3.csproj
 
 # Avalonia UI 版
-dotnet run --project src/app_AvaloniaUI/app_AvaloniaUI.csproj
+dotnet run --project src/App.AvaloniaUI/App.AvaloniaUI.csproj
 
 # WinForms 版
-dotnet run --project src/app_WinForms/app_WinForms.csproj
+dotnet run --project src/App.WinForms/App.WinForms.csproj
 ```
 
 ### 配布用ビルド
@@ -180,11 +180,11 @@ dotnet run --project src/app_WinForms/app_WinForms.csproj
 
 - 第 1 引数に RID を渡すと対象を変更できます（既定: `win-x64`）。
 - MewUI 版は Native AOT のため完全な単一バイナリです。
-- WinUI 3 版は発行時に Windows App SDK の未使用ペイロード（AI / ML / Search / Widgets / WebView2）を自動除外します（約 55 MB 削減。詳細は `src/app_WinUI3/SPEC_System.md`）。
-- WinUI 3 版は単一ファイル化できますが、初回起動時に依存ファイルを `%TEMP%\.net\<AppName>\` へ展開します。また WinUI 3 は Native AOT に対応しないため、AOT は使用しません（詳細は `src/app_WinUI3/SPEC_System.md`）。
-- Avalonia UI 版は Native AOT ですが、描画に使う SkiaSharp のネイティブ DLL を exe へ同梱できないため、**exe 単体ではなくフォルダー単位で配布**します（`libSkiaSharp.dll` / `av_libglesv2.dll` / `libHarfBuzzSharp.dll` を同じフォルダーに置きます。詳細は `src/app_AvaloniaUI/SPEC_System.md`）。
-- WinForms 版は Native AOT に対応せず、トリミングもサポートされないため（`NETSDK1175`）、単一ファイル化のみを行います（詳細は `src/app_WinForms/SPEC_System.md`）。
-- WinUI 3 版の exe 名は `ZenHanConverter.App.WinUI3.exe`、WinForms 版は `ZenHanConverter.App.WinForms.exe` です（WinUI 3 版はアセンブリ名をプロジェクト名に合わせ、名前空間は `EsUtil.ZenHanConverter.App.WinUI` のままです）。
+- WinUI 3 版は発行時に Windows App SDK の未使用ペイロード（AI / ML / Search / Widgets / WebView2）を自動除外します（約 55 MB 削減。詳細は `src/App.WinUI3/SPEC_System.md`）。
+- WinUI 3 版は単一ファイル化できますが、初回起動時に依存ファイルを `%TEMP%\.net\<AppName>\` へ展開します。また WinUI 3 は Native AOT に対応しないため、AOT は使用しません（詳細は `src/App.WinUI3/SPEC_System.md`）。
+- Avalonia UI 版は Native AOT ですが、描画に使う SkiaSharp のネイティブ DLL を exe へ同梱できないため、**exe 単体ではなくフォルダー単位で配布**します（`libSkiaSharp.dll` / `av_libglesv2.dll` / `libHarfBuzzSharp.dll` を同じフォルダーに置きます。詳細は `src/App.AvaloniaUI/SPEC_System.md`）。
+- WinForms 版は Native AOT に対応せず、トリミングもサポートされないため（`NETSDK1175`）、単一ファイル化のみを行います（詳細は `src/App.WinForms/SPEC_System.md`）。
+- WinUI 3 版の exe 名は `ZenHanConverter.App.WinUI3.exe`、WinForms 版は `ZenHanConverter.App.WinForms.exe` です（WinUI 3 版はアセンブリ名をプロジェクト名に合わせ、名前空間は `EsUtil.ZenHanConverter.App.WinUI3` のままです）。
 - ここでの出力は展開済みの状態です。**Release に添付する配布物はすべて zip**（`release-config.json` の `uis[].zip`。`release.yml` が publish 後に zip 化）です。
 
 ### Release ビルドと実行
@@ -193,10 +193,10 @@ dotnet run --project src/app_WinForms/app_WinForms.csproj
 
 | スクリプト（`buildScript/` 配下） | 対象 | 出力先 |
 | --- | --- | --- |
-| `publish_MewUI.bat` | MewUI 版 | `src\app_MewUI\bin\Release\net10.0\` |
-| `publish_WinUI3.bat` | WinUI 3 版 | `src\app_WinUI3\bin\Release\net10.0-windows10.0.26100.0\win-x64\` |
-| `publish_AvaloniaUI.bat` | Avalonia UI 版 | `src\app_AvaloniaUI\bin\Release\net10.0\` |
-| `publish_WinForms.bat` | WinForms 版 | `src\app_WinForms\bin\Release\net10.0-windows\` |
+| `publish_MewUI.bat` | MewUI 版 | `src\App.MewUI\bin\Release\net10.0\` |
+| `publish_WinUI3.bat` | WinUI 3 版 | `src\App.WinUI3\bin\Release\net10.0-windows10.0.26100.0\win-x64\` |
+| `publish_AvaloniaUI.bat` | Avalonia UI 版 | `src\App.AvaloniaUI\bin\Release\net10.0\` |
+| `publish_WinForms.bat` | WinForms 版 | `src\App.WinForms\bin\Release\net10.0-windows\` |
 
 - 生成物はフレームワーク依存のため、実行には .NET 10 ランタイム（WinUI 3 版は Windows App SDK を含む）が必要です。
   - ただし **WinUI 3 版は .NET と Windows App SDK の両方が自己完結**（`SelfContained` / `WindowsAppSDKSelfContained`）のため、
