@@ -209,7 +209,7 @@ dotnet run --project src/App.WinForms/App.WinForms.csproj
 
 1. 復元（`dotnet restore <solutionFile> -p:RestoreLockedMode=true`）
 2. 検証（`pwsh -NoProfile -File buildScript/verify.ps1 -Solution <solutionFile> -Configuration Release -NoRestore`）
-   - ビルド（0 警告 / 0 エラー）、テスト全件、NuGet の健全性、文書とコードの走査（合計 35 項目）
+   - ビルド（0 警告 / 0 エラー）、テスト全件、NuGet の健全性、文書とコードの走査（合計 36 項目）
    - 配布物の作成は行いません（リリースの `publish.yml` が担当します）
 
 - 対象のソリューション ファイルは `release-config.json` の `solutionFile` が単一所有します（ワークフローには書きません）。
