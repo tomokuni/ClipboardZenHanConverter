@@ -4,6 +4,9 @@
 開発環境（ビルド・テスト・CI）は [`CONTRIBUTING.md`](CONTRIBUTING.md)、他のリポジトリへの流用方法は [`REUSING.md`](REUSING.md)、
 アプリの利用方法は [`../README.md`](../README.md) を参照してください。
 
+**リリース手順の所有者は本ドキュメント**です（[`workflows/release.yml`](workflows/release.yml) と
+[`workflows/publish.yml`](workflows/publish.yml) はその実装であり、手順を重複して書かない）。
+
 リリースは **手動実行のみ**です。バージョンの**自動インクリメントは行いません**。
 
 ## 構成
@@ -254,6 +257,8 @@ semver 形式で入力します。数値部分の**先頭 0 は使用できま�
 
 publish は `buildScript/` の `*_publish_*.bat` をそのまま実行するため、ローカルでの配布用ビルドと同一の手順・出力になります。
 スクリプトは `buildScript/` からリポジトリルートへ移動してから実行されるため、カレントディレクトリに依存しません。
+
+**配布物には由来の証明（build provenance）を付けます**（`actions/attest-build-provenance`。 `release` ジョブが Release の作成前に実行）。 どのワークフロー・どのコミットが成果物を作ったかを、`gh attestation verify <ファイル> --repo <リポジトリ>` で後から検証できます。 公開物は取り消せないため、**出所を後から確かめられる状態**にしておきます。
 
 ## 失敗した場合の復旧
 
