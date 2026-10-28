@@ -36,7 +36,7 @@
     <Description>ZenHanConverter (WinUI 3) - full-width / half-width text converter</Description>
     <RootNamespace>EsUtil.ZenHanConverter.App.WinUI3</RootNamespace>
     <!-- exe （アセンブリ）名はプロジェクト名に合せる。名前空間は既存の App.WinUI のまま（変更すると全ソース・XAML へ波及するため） -->
-    <AssemblyName>ZenHanConverter.App.WinUI3</AssemblyName>
+    <AssemblyName>ZenHanConverter.WinUI3</AssemblyName>
     <PackageTags>clipboard; zen; han; convert</PackageTags>
   </PropertyGroup>
 

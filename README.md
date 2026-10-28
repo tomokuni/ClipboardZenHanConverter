@@ -162,10 +162,10 @@ ZenHanConverter は、クリップボードにコピーされたテキストを�
 
 | UI | ファイル |
 | --- | --- |
-| Avalonia UI 版 | `ZenHanConverter.App.AvaloniaUI.zip` |
-| MewUI 版 | `ZenHanConverter.App.MewUI.zip` |
-| WinUI 3 版 | `ZenHanConverter.App.WinUI3.zip` |
-| WinForms 版 | `ZenHanConverter.App.WinForms.zip` |
+| Avalonia UI 版 | `ZenHanConverter.AvaloniaUI.zip` |
+| MewUI 版 | `ZenHanConverter.MewUI.zip` |
+| WinUI 3 版 | `ZenHanConverter.WinUI3.zip` |
+| WinForms 版 | `ZenHanConverter.WinForms.zip` |
 
 - いずれも zip を展開して使用します（インストーラーはありません）。
 - .NET ランタイムのインストールは不要です（自己完結）。
@@ -209,7 +209,7 @@ pwsh -NoProfile -File buildScript/verify.ps1
 
 ```text
 1. アプリケーション起動
-   └── 使う UI の実行ファイルを実行（例: ZenHanConverter.App.MewUI.exe）
+   └── 使う UI の実行ファイルを実行（例: ZenHanConverter.MewUI.exe）
    └── 前回終了時のウィンドウ位置・サイズが復元
 
 2. 変換設定の確認

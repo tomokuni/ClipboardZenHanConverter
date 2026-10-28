@@ -473,7 +473,7 @@
           "ZenHanConverter.App.Core": "[0.1.8, )"
         }
       },
-      "ZenHanConverter.App.MewUI": {
+      "ZenHanConverter.MewUI": {
         "type": "Project",
         "dependencies": {
           "Aprillz.MewUI.Windows": "[0.22.1, )",

@@ -561,20 +561,6 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
-      "ZenHanConverter.App.AvaloniaUI": {
-        "type": "Project",
-        "dependencies": {
-          "Avalonia": "[12.1.4, )",
-          "Avalonia.Desktop": "[12.1.4, )",
-          "Avalonia.Fonts.Inter": "[12.1.4, )",
-          "Avalonia.Themes.Fluent": "[12.1.4, )",
-          "AvaloniaUI.DiagnosticsSupport": "[2.2.3, )",
-          "CommunityToolkit.Mvvm": "[8.4.2, )",
-          "Microsoft.Extensions.Hosting": "[10.0.14, )",
-          "ZenHanConverter.App.Core": "[0.1.8, )",
-          "ZenHanConverter.App.Core.Presentation": "[0.1.8, )"
-        }
-      },
       "ZenHanConverter.App.Core": {
         "type": "Project",
         "dependencies": {
@@ -588,6 +574,20 @@
         "dependencies": {
           "CommunityToolkit.Mvvm": "[8.4.2, )",
           "ZenHanConverter.App.Core": "[0.1.8, )"
+        }
+      },
+      "ZenHanConverter.AvaloniaUI": {
+        "type": "Project",
+        "dependencies": {
+          "Avalonia": "[12.1.4, )",
+          "Avalonia.Desktop": "[12.1.4, )",
+          "Avalonia.Fonts.Inter": "[12.1.4, )",
+          "Avalonia.Themes.Fluent": "[12.1.4, )",
+          "AvaloniaUI.DiagnosticsSupport": "[2.2.3, )",
+          "CommunityToolkit.Mvvm": "[8.4.2, )",
+          "Microsoft.Extensions.Hosting": "[10.0.14, )",
+          "ZenHanConverter.App.Core": "[0.1.8, )",
+          "ZenHanConverter.App.Core.Presentation": "[0.1.8, )"
         }
       },
       "Avalonia": {

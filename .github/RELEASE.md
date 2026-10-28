@@ -85,6 +85,7 @@ UI の追加・変更は **`release-config.json` の `uis[]` を編集します*
 - Dependabot は**指定したディレクトリ直下のみを走査します**（再帰しません）。プロジェクトを増やした場合は
   `dependabot.yml` の `directories` にも追加してください。
 - Pull Request の内容を確認して `main` へマージします（マージ方式は Squash merge を推奨）。マージ後の `main` への push で `build.yml`（ゲート）が実行されます。
+- **Dependabot は `packages.lock.json` を一部のプロジェクトしか更新しません**（Dependabot の制限）。 そのため NuGet の Pull Request は、**そのままでは CI が `NU1004`（lock が古い）で失敗します**。 ブランチを取得して `dotnet restore <ソリューション> --force-evaluate` を実行し、lock を追加コミットしてからマージします（版の更新自体は PR の内容のままです）。
 - 破壊的な変更（`actions/upload-artifact` のメジャー更新など）は、CI が失敗した内容を確認して修正します。
 
 ## リポジトリの設定（初回のみ）
@@ -247,10 +248,10 @@ semver 形式で入力します。数値部分の**先頭 0 は使用できま�
 
 | UI | 添付ファイル | zip の中身 |
 | --- | --- | --- |
-| MewUI 版 | `ZenHanConverter.App.MewUI.zip` | exe 1 個（Native AOT） |
-| WinUI 3 版 | `ZenHanConverter.App.WinUI3.zip` | exe 1 個（自己完結） |
-| Avalonia UI 版 | `ZenHanConverter.App.AvaloniaUI.zip` | exe 1 個 + ネイティブ DLL 3 個 |
-| WinForms 版 | `ZenHanConverter.App.WinForms.zip` | exe 1 個（自己完結） |
+| MewUI 版 | `ZenHanConverter.MewUI.zip` | exe 1 個（Native AOT） |
+| WinUI 3 版 | `ZenHanConverter.WinUI3.zip` | exe 1 個（自己完結） |
+| Avalonia UI 版 | `ZenHanConverter.AvaloniaUI.zip` | exe 1 個 + ネイティブ DLL 3 個 |
+| WinForms 版 | `ZenHanConverter.WinForms.zip` | exe 1 個（自己完結） |
 
 **すべて zip で配布します。** `uis[].zip` が `true` の UI は、publish 後に配布物を zip 化してから保管します
 （出力が単一ファイル（exe）でもフォルダでも同じ指定で扱えます）。
