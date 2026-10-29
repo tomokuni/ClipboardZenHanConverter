@@ -16,9 +16,9 @@
       },
       "Microsoft.VisualStudio.Threading.Analyzers": {
         "type": "Direct",
-        "requested": "[17.14.15, )",
-        "resolved": "17.14.15",
-        "contentHash": "mXQPJsbuUD2ydq4/ffd8h8tSOFCXec+2xJOVNCvXjuMOq/+5EKHq3D2m2MC2+nUaXeFMSt66VS/J4HdKBixgcw=="
+        "requested": "[18.12.1, )",
+        "resolved": "18.12.1",
+        "contentHash": "sQt7NpnselT1gP1a7bTfhmfHYV0jbavst/8mOoWTMSjXhXzWPssqgBoIwrxNsgJUa7XQzD2raSRMAFfmlepxNw=="
       },
       "xunit.analyzers": {
         "type": "Direct",
@@ -401,8 +401,8 @@
         "type": "Project",
         "dependencies": {
           "CommunityToolkit.Mvvm": "[8.4.2, )",
-          "EsUtil.Feature.ZenHan.Core": "[0.1.0, )",
-          "EsUtil.Platform.Core": "[0.1.0, )"
+          "EsUtil.Feature.ZenHan.Core": "[0.2.0, )",
+          "EsUtil.Platform.Core": "[0.2.0, )"
         }
       },
       "ZenHanConverter.App.Core.Presentation": {
@@ -412,7 +412,7 @@
           "ZenHanConverter.App.Core": "[0.1.8, )"
         }
       },
-      "ZenHanConverter.App.WinForms": {
+      "ZenHanConverter.WinForms": {
         "type": "Project",
         "dependencies": {
           "CommunityToolkit.Mvvm": "[8.4.2, )",
@@ -429,15 +429,15 @@
       },
       "EsUtil.Feature.ZenHan.Core": {
         "type": "CentralTransitive",
-        "requested": "[0.1.0, )",
-        "resolved": "0.1.0",
-        "contentHash": "ngHkNLpjJNo7lcHveCshueaLz6S4Fi3ERao+AYXI0CF8P8r/f5bH+Ek4ahwMcJfIoNLSJYOIXOfNAX/3Da3/kQ=="
+        "requested": "[0.2.0, )",
+        "resolved": "0.2.0",
+        "contentHash": "F8kVoEOKapui1E+sX+9iraFQkO/IPekNaY7cKlUyd/fupWxdlJQKv8eGz7rCE24dPa774dnY/qkD6JfYpMu1NQ=="
       },
       "EsUtil.Platform.Core": {
         "type": "CentralTransitive",
-        "requested": "[0.1.0, )",
-        "resolved": "0.1.0",
-        "contentHash": "u6Egia91a61wnuKPxQN6MGg667XUBlPR9hoku+T5NNfr6WvOT+aP5FfEuJ4L6g4dXiufYfkzt+SbptjhGQODDw=="
+        "requested": "[0.2.0, )",
+        "resolved": "0.2.0",
+        "contentHash": "3iTyDtWPcO/0lBuEZ6CMVbYw1+XDlrzgrJIfgCBf/ux4OdwLVC99QVEx8n2Y74IwzB6N/WyM3eL650IQeOyhCA=="
       },
       "Microsoft.Extensions.Hosting": {
         "type": "CentralTransitive",

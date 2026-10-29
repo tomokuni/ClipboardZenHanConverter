@@ -18,7 +18,7 @@
 
   <PropertyGroup>
     <RootNamespace>EsUtil.ZenHanConverter.App.WinForms</RootNamespace>
-    <AssemblyName>ZenHanConverter.App.WinForms</AssemblyName>
+    <AssemblyName>ZenHanConverter.WinForms</AssemblyName>
     <Product>ZenHanConverter</Product>
     <Description>ZenHanConverter (WinForms) - full-width / half-width text converter</Description>
   </PropertyGroup>

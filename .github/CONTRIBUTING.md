@@ -184,7 +184,7 @@ dotnet run --project src/App.WinForms/App.WinForms.csproj
 - WinUI 3 版は単一ファイル化できますが、初回起動時に依存ファイルを `%TEMP%\.net\<AppName>\` へ展開します。また WinUI 3 は Native AOT に対応しないため、AOT は使用しません（詳細は `src/App.WinUI3/SPEC_System.md`）。
 - Avalonia UI 版は Native AOT ですが、描画に使う SkiaSharp のネイティブ DLL を exe へ同梱できないため、**exe 単体ではなくフォルダー単位で配布**します（`libSkiaSharp.dll` / `av_libglesv2.dll` / `libHarfBuzzSharp.dll` を同じフォルダーに置きます。詳細は `src/App.AvaloniaUI/SPEC_System.md`）。
 - WinForms 版は Native AOT に対応せず、トリミングもサポートされないため（`NETSDK1175`）、単一ファイル化のみを行います（詳細は `src/App.WinForms/SPEC_System.md`）。
-- WinUI 3 版の exe 名は `ZenHanConverter.App.WinUI3.exe`、WinForms 版は `ZenHanConverter.App.WinForms.exe` です（WinUI 3 版はアセンブリ名をプロジェクト名に合わせ、名前空間は `EsUtil.ZenHanConverter.App.WinUI3` のままです）。
+- WinUI 3 版の exe 名は `ZenHanConverter.WinUI3.exe`、WinForms 版は `ZenHanConverter.WinForms.exe` です（アセンブリ名は `<製品名>.<UI名>` で、プロジェクト名 `App.WinUI3` とは一致しません。 名前空間は `EsUtil.ZenHanConverter.App.WinUI3` のままです）。
 - ここでの出力は展開済みの状態です。**Release に添付する配布物はすべて zip**（`release-config.json` の `uis[].zip`。`release.yml` が publish 後に zip 化）です。
 
 ### Release ビルドと実行
