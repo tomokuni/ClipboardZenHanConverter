@@ -3,6 +3,13 @@
 本プロジェクトの**利用者に影響する変更**を時系列で記録します。 版は人が決めます（自動採番しません）。
 リリースの手順は [`.github/RELEASE.md`](.github/RELEASE.md) を参照してください。
 
+## 未リリース（0.2.0）
+
+### 変更（破壊的）
+
+- **配布物（zip）と実行ファイルの名前を `<製品名>.<UI名>` に統一しました**。 旧 `ZenHanConverter.App.<UI名>.exe` は **`ZenHanConverter.<UI名>.exe`** に、zip も `ZenHanConverter.<UI名>.zip` に変わります（例: `ZenHanConverter.App.MewUI.exe` → `ZenHanConverter.MewUI.exe`）。 ショートカットや起動スクリプトで exe 名を指定している場合は変更が必要です。
+- 依存パッケージを更新しました（アナライザー・テスト ランナー）。
+
 ## 0.1.8（2026-10-28）
 
 ### 変更（破壊的）
