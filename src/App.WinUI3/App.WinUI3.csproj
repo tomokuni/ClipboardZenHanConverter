@@ -6,7 +6,8 @@
     <TargetPlatformMinVersion>10.0.26100.0</TargetPlatformMinVersion>
     <SupportedOSPlatformVersion>10.0.26100.0</SupportedOSPlatformVersion>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <!-- 単数形で固定する（複数形は復元対象の一覧であり、ビルド対象を x64 に固定しない。 規則は .github/ビルド設定規約.md §4） -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <UseWinUI>true</UseWinUI>
     <WindowsPackageType>None</WindowsPackageType>
     <IncludeReferencedProjectsInXamlTypeResolution>false</IncludeReferencedProjectsInXamlTypeResolution>
